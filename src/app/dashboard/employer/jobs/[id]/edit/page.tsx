@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Loader2, CheckCircle } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import { useState, useTransition, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
@@ -35,12 +35,11 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>
 
-export default function PostJobPage() {
+export default function EditJobPage({ params }: { params: { id: string } }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
-  const [success, setSuccess] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([])
-  const [loadingCategories, setLoadingCategories] = useState(true)
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -56,67 +55,76 @@ export default function PostJobPage() {
   })
 
   useEffect(() => {
-    const loadCategories = async () => {
+    const load = async () => {
       try {
-        const res = await fetch("/api/categories")
-        const data = await res.json()
-        const items = data.categories || []
-        setCategories(items)
-        if (items.length > 0 && !form.getValues("categoryId")) {
-          form.setValue("categoryId", items[0].id)
-        }
+        const [jobRes, catRes] = await Promise.all([
+          fetch(`/api/jobs/${params.id}`),
+          fetch("/api/categories"),
+        ])
+        if (!jobRes.ok) throw new Error("Failed to load job")
+        const jobData = await jobRes.json()
+        const catData = await catRes.json()
+        const job = jobData.job
+        const cats = catData.categories || []
+        setCategories(cats)
+        form.reset({
+          title: job.title,
+          description: job.description,
+          requirements: job.requirements,
+          salaryMin: job.salaryMin ?? undefined,
+          salaryMax: job.salaryMax ?? undefined,
+          salaryType: job.salaryType ?? undefined,
+          location: job.location,
+          jobType: job.jobType,
+          experience: job.experience,
+          categoryId: job.categoryId,
+        })
       } catch (error) {
-        console.error("Failed to load categories")
+        toast.error("Failed to load job")
       } finally {
-        setLoadingCategories(false)
+        setLoading(false)
       }
     }
-    loadCategories()
-  }, [form])
+    load()
+  }, [form, params.id])
 
   const onSubmit = (data: FormData) => {
     startTransition(async () => {
       try {
-        const response = await fetch("/api/jobs", {
-          method: "POST",
+        const response = await fetch(`/api/jobs/${params.id}`, {
+          method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
         })
 
         if (!response.ok) {
           const error = await response.json()
-          toast.error(error.error || "Failed to post job")
+          toast.error(error.error || "Failed to update job")
           return
         }
 
-        toast.success("Job posted successfully!")
-        setSuccess(true)
-        setTimeout(() => router.push("/dashboard/employer/jobs"), 1500)
+        toast.success("Job updated successfully!")
+        router.push("/dashboard/employer/jobs")
       } catch (error) {
         toast.error("Something went wrong")
       }
     })
   }
 
-  if (success) {
+  if (loading) {
     return (
-      <div className="max-w-2xl mx-auto">
-        <Card className="border-0 shadow-2xl">
-          <CardHeader className="text-center">
-            <div className="w-20 h-20 bg-green-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="h-10 w-10 text-green-600" />
-            </div>
-            <CardTitle className="text-3xl font-bold text-gray-900 mb-2">
-              Job Posted Successfully!
-            </CardTitle>
-            <CardContent className="pt-0">
-              <p className="text-gray-600 text-lg">
-                Your job is now live and candidates can start applying.
-              </p>
-            </CardContent>
-          </CardHeader>
-        </Card>
-      </div>
+      <Card className="border-0 shadow-2xl">
+        <CardHeader>
+          <CardTitle className="text-3xl font-bold text-gray-400">
+            Loading...
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="h-12 bg-gray-100 rounded-xl animate-pulse" />
+          <div className="h-12 bg-gray-100 rounded-xl animate-pulse" />
+          <div className="h-40 bg-gray-100 rounded-xl animate-pulse" />
+        </CardContent>
+      </Card>
     )
   }
 
@@ -124,19 +132,20 @@ export default function PostJobPage() {
     <div className="max-w-4xl mx-auto">
       <Card className="border-0 shadow-2xl">
         <CardHeader>
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-            Post a New Job
+          <CardTitle className="text-3xl font-bold text-gray-900">
+            Edit Job
           </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            {/* Basic Info */}
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <Label htmlFor="title">Job Title *</Label>
                 <Input id="title" {...form.register("title")} className="mt-1 h-14" />
                 {form.formState.errors.title && (
-                  <p className="text-red-500 text-sm mt-1">{form.formState.errors.title.message}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {form.formState.errors.title.message}
+                  </p>
                 )}
               </div>
               <div>
@@ -145,35 +154,36 @@ export default function PostJobPage() {
               </div>
             </div>
 
-            {/* Salary */}
             <div className="grid md:grid-cols-3 gap-6">
               <div>
                 <Label>Salary Range (Optional)</Label>
-                  <Input 
-                    type="number" 
-                    placeholder="Min (e.g. 50000)"
-                    className="mt-1 h-14"
-                    onChange={(e) =>
-                      form.setValue(
-                        "salaryMin",
-                        e.target.value ? Number(e.target.value) : undefined
-                      )
-                    }
-                  />
-                </div>
-                <div>
-                  <Input 
-                    type="number" 
-                    placeholder="Max (e.g. 80000)"
-                    className="mt-1 h-14"
-                    onChange={(e) =>
-                      form.setValue(
-                        "salaryMax",
-                        e.target.value ? Number(e.target.value) : undefined
-                      )
-                    }
-                  />
-                </div>
+                <Input
+                  type="number"
+                  placeholder="Min (e.g. 50000)"
+                  className="mt-1 h-14"
+                  value={form.watch("salaryMin") ?? ""}
+                  onChange={(e) =>
+                    form.setValue(
+                      "salaryMin",
+                      e.target.value ? Number(e.target.value) : undefined
+                    )
+                  }
+                />
+              </div>
+              <div>
+                <Input
+                  type="number"
+                  placeholder="Max (e.g. 80000)"
+                  className="mt-1 h-14"
+                  value={form.watch("salaryMax") ?? ""}
+                  onChange={(e) =>
+                    form.setValue(
+                      "salaryMax",
+                      e.target.value ? Number(e.target.value) : undefined
+                    )
+                  }
+                />
+              </div>
               <div>
                 <Label htmlFor="salaryType">Salary Type</Label>
                 <Select
@@ -192,7 +202,6 @@ export default function PostJobPage() {
               </div>
             </div>
 
-            {/* Job Type + Experience */}
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <Label htmlFor="jobType">Job Type *</Label>
@@ -230,16 +239,14 @@ export default function PostJobPage() {
               </div>
             </div>
 
-            {/* Category */}
             <div>
               <Label htmlFor="categoryId">Category *</Label>
               <Select
                 value={form.watch("categoryId")}
                 onValueChange={(value) => form.setValue("categoryId", value)}
-                disabled={loadingCategories}
               >
                 <SelectTrigger className="mt-1 h-14">
-                  <SelectValue placeholder={loadingCategories ? "Loading..." : "Select category"} />
+                  <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((cat) => (
@@ -256,40 +263,36 @@ export default function PostJobPage() {
               )}
             </div>
 
-            {/* Description */}
             <div>
               <Label>Job Description *</Label>
-              <Textarea 
-                {...form.register("description")} 
-                rows={6} 
+              <Textarea
+                {...form.register("description")}
+                rows={6}
                 className="mt-1 resize-vertical"
-                placeholder="Tell candidates about this role, what they will be doing day to day..."
               />
             </div>
 
-            {/* Requirements */}
             <div>
               <Label>Requirements *</Label>
-              <Textarea 
-                {...form.register("requirements")} 
-                rows={4} 
+              <Textarea
+                {...form.register("requirements")}
+                rows={4}
                 className="mt-1 resize-vertical"
-                placeholder="What skills and experience are required?..."
               />
             </div>
 
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full h-16 bg-gradient-to-r from-blue-600 via-green-600 to-emerald-600 hover:from-blue-700 text-white font-bold text-xl shadow-2xl rounded-2xl"
               disabled={isPending}
             >
               {isPending ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Posting job...
+                  Saving changes...
                 </>
               ) : (
-                "Post Job Now"
+                "Save Changes"
               )}
             </Button>
           </form>
@@ -298,4 +301,3 @@ export default function PostJobPage() {
     </div>
   )
 }
-

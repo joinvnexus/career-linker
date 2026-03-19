@@ -15,8 +15,39 @@ const createJobSchema = z.object({
   location: z.string().min(2),
   jobType: z.enum(["FULL_TIME", "PART_TIME", "REMOTE", "CONTRACT", "INTERNSHIP"]),
   experience: z.enum(["ENTRY", "MID", "SENIOR"]),
-  categoryId: z.string(),
+  categoryId: z.string().min(1).optional(),
 })
+
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")
+}
+
+async function getUniqueSlug(base: string) {
+  let slug = slugify(base)
+  if (!slug) slug = "job"
+  let suffix = 2
+  while (await prisma.job.findUnique({ where: { slug } })) {
+    slug = `${slugify(base)}-${suffix}`
+    suffix += 1
+  }
+  return slug
+}
+
+async function getOrCreateDefaultCategoryId() {
+  const existing = await prisma.jobCategory.findUnique({
+    where: { slug: "general" },
+  })
+  if (existing) return existing.id
+
+  const created = await prisma.jobCategory.create({
+    data: { name: "General", slug: "general" },
+  })
+  return created.id
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -25,40 +56,54 @@ export async function GET(req: NextRequest) {
     const location = searchParams.get("location") || ""
     const category = searchParams.get("category") || ""
     const jobType = searchParams.get("jobType") || ""
+    const experience = searchParams.get("experience") || ""
+    const page = Math.max(Number(searchParams.get("page") || "1"), 1)
+    const limit = Math.min(Math.max(Number(searchParams.get("limit") || "12"), 1), 50)
 
     const where = {
-      title: { contains: search, mode: "insensitive" as const },
+      OR: search
+        ? [
+            { title: { contains: search, mode: "insensitive" as const } },
+            { description: { contains: search, mode: "insensitive" as const } },
+          ]
+        : undefined,
       location: location ? { contains: location, mode: "insensitive" as const } : undefined,
       categoryId: category || undefined,
       jobType: (jobType as JobType) || undefined,
+      experience: experience || undefined,
       published: true,
-      status: JobStatus.ACTIVE
+      status: JobStatus.ACTIVE,
     }
 
-    const jobs = await prisma.job.findMany({
-      where,
-      include: {
-        employer: {
-          select: {
-            id: true,
-            name: true,
-            employerProfile: {
-              select: {
-                companyName: true
-              }
-            }
-          }
+    const [jobs, total] = await Promise.all([
+      prisma.job.findMany({
+        where,
+        include: {
+          employer: {
+            select: {
+              id: true,
+              name: true,
+              employerProfile: {
+                select: {
+                  companyName: true,
+                },
+              },
+            },
+          },
+          category: {
+            select: {
+              name: true,
+            },
+          },
         },
-        category: {
-          select: {
-            name: true
-          }
-        }
-      },
-      orderBy: { createdAt: "desc" }
-    })
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      prisma.job.count({ where }),
+    ])
 
-    return NextResponse.json({ jobs })
+    return NextResponse.json({ jobs, total, page, pageSize: limit })
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch jobs" }, { status: 500 })
   }
@@ -74,17 +119,20 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const data = createJobSchema.parse(body)
 
-    const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
-
-    // Check slug uniqueness
-    const existing = await prisma.job.findUnique({ where: { slug } })
-    if (existing) {
-      return NextResponse.json({ error: "Job title already exists" }, { status: 400 })
+    if (data.salaryMin && data.salaryMax && data.salaryMin > data.salaryMax) {
+      return NextResponse.json(
+        { error: "Minimum salary cannot exceed maximum salary" },
+        { status: 400 }
+      )
     }
+
+    const categoryId = data.categoryId || (await getOrCreateDefaultCategoryId())
+    const slug = await getUniqueSlug(data.title)
 
     const job = await prisma.job.create({
       data: {
         ...data,
+        categoryId,
         slug,
         employerId: session.user.id as string,
       },

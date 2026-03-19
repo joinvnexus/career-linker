@@ -25,11 +25,12 @@ interface JobCardProps {
   }
   employerId: string
   userRole?: string
+  userId?: string
 }
 
-export function JobCard({ job, employerId, userRole }: JobCardProps) {
+export function JobCard({ job, employerId, userRole, userId }: JobCardProps) {
   const isExpired = job.status !== "ACTIVE"
-  const isOwnJob = userRole === "EMPLOYER" && employerId === "current-user-id" // Replace with session
+  const isOwnJob = userRole === "EMPLOYER" && userId && employerId === userId
   const companyName = job.companyName || "Company"
 
   return (
@@ -85,8 +86,14 @@ export function JobCard({ job, employerId, userRole }: JobCardProps) {
                 <Link href={`/dashboard/employer/jobs/${job.id}/edit`}>Edit</Link>
               </Button>
             ) : (
-              <Button size="sm" className="bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-xs h-9 px-4">
-                {userRole === "JOB_SEEKER" ? "Apply Now" : "View Details"}
+              <Button
+                size="sm"
+                className="bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-xs h-9 px-4"
+                asChild
+              >
+                <Link href={`/jobs/${job.slug}`}>
+                  {userRole === "JOB_SEEKER" ? "Apply Now" : "View Details"}
+                </Link>
               </Button>
             )}
             <Button variant="ghost" size="icon" className="h-9 w-9 p-0">

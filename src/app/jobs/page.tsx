@@ -12,23 +12,47 @@ import { useSession } from "next-auth/react"
 export default function JobsPage() {
   const [jobs, setJobs] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([])
+  const [total, setTotal] = useState(0)
+  const [page, setPage] = useState(1)
+  const pageSize = 12
   const [filters, setFilters] = useState({
     search: "",
     location: "",
     category: "",
     jobType: "",
+    experience: "",
   })
   const { data: session } = useSession()
 
   useEffect(() => {
     // Fetch jobs with filters
     fetchJobs()
-  }, [filters])
+  }, [filters, page])
+
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const res = await fetch("/api/categories")
+        const data = await res.json()
+        setCategories(data.categories || [])
+      } catch (error) {
+        console.error("Failed to load categories")
+      }
+    }
+    loadCategories()
+  }, [])
 
   const fetchJobs = async () => {
     try {
-      const params = new URLSearchParams(filters)
-      const res = await fetch(`/api/jobs?${params}`)
+      if (page === 1) setLoading(true)
+      const params = new URLSearchParams({
+        ...filters,
+        page: String(page),
+        limit: String(pageSize),
+      })
+      const res = await fetch(`/api/jobs?${params.toString()}`)
       const data = await res.json()
       const mappedJobs = (data.jobs || []).map((job: any) => ({
         ...job,
@@ -37,7 +61,8 @@ export default function JobsPage() {
           job.employer?.name ||
           "Company",
       }))
-      setJobs(mappedJobs)
+      setTotal(data.total || 0)
+      setJobs((prev) => (page === 1 ? mappedJobs : [...prev, ...mappedJobs]))
     } catch (error) {
       console.error("Failed to fetch jobs:", error)
     } finally {
@@ -74,7 +99,10 @@ export default function JobsPage() {
                     placeholder="Job title, company, or keywords..."
                     className="h-14 pl-12 rounded-2xl border-2 border-gray-200 focus:border-blue-500 focus-visible:ring-0"
                     value={filters.search}
-                    onChange={(e) => setFilters({...filters, search: e.target.value})}
+                    onChange={(e) => {
+                      setFilters({ ...filters, search: e.target.value })
+                      setPage(1)
+                    }}
                   />
                 </div>
                 <div className="w-64">
@@ -82,14 +110,20 @@ export default function JobsPage() {
                     <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <Input
                       placeholder="Location"
-                      className="h-14 pl-12 rounded-2xl border-2 border-gray-200 focus:border-blue-500"
-                      value={filters.location}
-                      onChange={(e) => setFilters({...filters, location: e.target.value})}
-                    />
+                    className="h-14 pl-12 rounded-2xl border-2 border-gray-200 focus:border-blue-500"
+                    value={filters.location}
+                    onChange={(e) => {
+                      setFilters({ ...filters, location: e.target.value })
+                      setPage(1)
+                    }}
+                  />
                   </div>
                 </div>
               </div>
-              <Button className="h-14 px-8 bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white font-bold text-lg shadow-xl whitespace-nowrap">
+              <Button
+                className="h-14 px-8 bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white font-bold text-lg shadow-xl whitespace-nowrap"
+                onClick={() => setPage(1)}
+              >
                 Find Jobs
               </Button>
             </div>
@@ -109,11 +143,18 @@ export default function JobsPage() {
               <div className="space-y-6">
                 <div>
                   <label className="text-sm font-semibold text-gray-700 mb-3 block">Job Type</label>
-                  <Select>
+                  <Select
+                    value={filters.jobType || "ALL"}
+                    onValueChange={(value) => {
+                      setFilters({ ...filters, jobType: value === "ALL" ? "" : value })
+                      setPage(1)
+                    }}
+                  >
                     <SelectTrigger className="h-12 rounded-xl">
                       <SelectValue placeholder="All types" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="ALL">All types</SelectItem>
                       <SelectItem value="FULL_TIME">Full-time</SelectItem>
                       <SelectItem value="PART_TIME">Part-time</SelectItem>
                       <SelectItem value="REMOTE">Remote</SelectItem>
@@ -123,14 +164,44 @@ export default function JobsPage() {
                 
                 <div>
                   <label className="text-sm font-semibold text-gray-700 mb-3 block">Experience</label>
-                  <Select>
+                  <Select
+                    value={filters.experience || "ALL"}
+                    onValueChange={(value) => {
+                      setFilters({ ...filters, experience: value === "ALL" ? "" : value })
+                      setPage(1)
+                    }}
+                  >
                     <SelectTrigger className="h-12 rounded-xl">
                       <SelectValue placeholder="All levels" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="ALL">All levels</SelectItem>
                       <SelectItem value="ENTRY">Entry Level</SelectItem>
                       <SelectItem value="MID">Mid Level</SelectItem>
                       <SelectItem value="SENIOR">Senior Level</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="text-sm font-semibold text-gray-700 mb-3 block">Category</label>
+                  <Select
+                    value={filters.category || "ALL"}
+                    onValueChange={(value) => {
+                      setFilters({ ...filters, category: value === "ALL" ? "" : value })
+                      setPage(1)
+                    }}
+                  >
+                    <SelectTrigger className="h-12 rounded-xl">
+                      <SelectValue placeholder="All categories" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ALL">All categories</SelectItem>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat.id} value={cat.id}>
+                          {cat.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -144,7 +215,7 @@ export default function JobsPage() {
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                 <span className="text-2xl font-bold text-gray-900">
-                  {loading ? "Loading..." : `${jobs.length} jobs found`}
+                  {loading ? "Loading..." : `${total} jobs found`}
                 </span>
               </div>
               <Button variant="outline" className="border-2">
@@ -171,8 +242,21 @@ export default function JobsPage() {
                     job={job}
                     employerId={job.employerId}
                     userRole={session?.user?.role}
+                    userId={session?.user?.id}
                   />
                 ))}
+              </div>
+            )}
+
+            {!loading && jobs.length > 0 && jobs.length < total && (
+              <div className="flex justify-center mt-10">
+                <Button
+                  variant="outline"
+                  className="border-2"
+                  onClick={() => setPage((p) => p + 1)}
+                >
+                  Load more
+                </Button>
               </div>
             )}
           </div>
