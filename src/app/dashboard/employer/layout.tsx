@@ -61,9 +61,9 @@ export default function EmployerLayout({
               <Users className="h-5 w-5" />
               <span>Applicants</span>
             </Link>
-            <Link href="/dashboard/employer/settings" className="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-500 hover:bg-gray-50">
+            <Link href="/dashboard/employer/profile" className="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-500 hover:bg-gray-50">
               <Settings className="h-5 w-5" />
-              <span>Company Settings</span>
+              <span>Company Profile</span>
             </Link>
           </nav>
         </aside>

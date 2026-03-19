@@ -1,9 +1,9 @@
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
-import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { MapPin, Briefcase, DollarSign, Clock } from "lucide-react"
 import { formatCurrency, formatDate } from "@/lib/utils"
+import { JobApplyCard } from "@/components/job-apply-card"
 
 export default async function JobDetailsPage({
   params,
@@ -63,12 +63,6 @@ export default async function JobDetailsPage({
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              <Button
-                asChild
-                className="bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white font-semibold"
-              >
-                <Link href="/login">Apply Now</Link>
-              </Button>
               <Link
                 href={`/companies/${job.employer?.id}`}
                 className="text-blue-600 hover:text-blue-700 text-sm font-semibold text-center"
@@ -113,6 +107,7 @@ export default async function JobDetailsPage({
                 {job.requirements}
               </p>
             </div>
+            <JobApplyCard jobId={job.id} />
           </div>
         </div>
       </div>
