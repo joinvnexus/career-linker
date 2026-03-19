@@ -97,7 +97,7 @@ export default function LoginPage() {
             <Input
               id="password"
               type="password"
-              placeholder="••••••••"
+              placeholder="********"
               {...form.register("password")}
               className="h-12"
               disabled={isPending}

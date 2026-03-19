@@ -58,7 +58,7 @@ export default function RegisterPage() {
 
         if (!response.ok) {
           const errorData = await response.json()
-          setError(errorData.message || "Registration failed")
+          setError(errorData.message || errorData.error || "Registration failed")
           return
         }
 
@@ -70,7 +70,9 @@ export default function RegisterPage() {
         })
 
         if (!result?.error) {
-          router.push(`/dashboard/${values.role.toLowerCase()}`)
+          const target =
+            values.role === "EMPLOYER" ? "/dashboard/employer" : "/dashboard/job-seeker"
+          router.push(target)
           router.refresh()
         }
       } catch (err) {
@@ -108,6 +110,48 @@ export default function RegisterPage() {
           )}
 
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {step === "role" && (
+              <div className="space-y-4">
+                <p className="text-sm font-semibold text-gray-700">Select your role</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <button
+                    type="button"
+                    onClick={() => form.setValue("role", "JOB_SEEKER")}
+                    className={`border-2 rounded-xl p-4 text-left transition-all ${
+                      form.watch("role") === "JOB_SEEKER"
+                        ? "border-blue-600 bg-blue-50"
+                        : "border-gray-200 hover:border-blue-300"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <User className="h-5 w-5 text-blue-600" />
+                      <div>
+                        <p className="font-semibold text-gray-900">Job Seeker</p>
+                        <p className="text-sm text-gray-600">Find and apply to jobs</p>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => form.setValue("role", "EMPLOYER")}
+                    className={`border-2 rounded-xl p-4 text-left transition-all ${
+                      form.watch("role") === "EMPLOYER"
+                        ? "border-emerald-600 bg-emerald-50"
+                        : "border-gray-200 hover:border-emerald-300"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Briefcase className="h-5 w-5 text-emerald-600" />
+                      <div>
+                        <p className="font-semibold text-gray-900">Employer</p>
+                        <p className="text-sm text-gray-600">Post jobs and hire</p>
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            )}
+
             {step === "details" && (
               <>
                 <div className="space-y-2">
@@ -160,9 +204,12 @@ export default function RegisterPage() {
             )}
 
             <Button 
-              type="submit"
+              type={step === "role" ? "button" : "submit"}
               className="w-full h-14 bg-gradient-to-r from-blue-600 via-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white font-bold text-lg shadow-xl rounded-xl transform hover:-translate-y-0.5 transition-all duration-200"
               disabled={isPending}
+              onClick={() => {
+                if (step === "role") setStep("details")
+              }}
             >
               {isPending ? (
                 <>
