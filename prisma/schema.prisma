@@ -81,6 +81,10 @@ model Job {
   status      JobStatus @default(ACTIVE)
   applicationDeadline DateTime?
   applications JobApplication[]
+  paymentStatus PaymentStatus @default(UNPAID)
+  stripeSessionId String?
+  paymentIntentId String?
+  paidAt      DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   published   Boolean  @default(true)
@@ -186,4 +190,10 @@ enum ApplicationStatus {
   INTERVIEW
   REJECTED
   HIRED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+  FAILED
 }

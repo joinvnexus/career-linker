@@ -135,6 +135,9 @@ export async function POST(req: NextRequest) {
         categoryId,
         slug,
         employerId: session.user.id as string,
+        status: "DRAFT",
+        published: false,
+        paymentStatus: "UNPAID",
       },
       include: {
         employer: {
@@ -147,7 +150,7 @@ export async function POST(req: NextRequest) {
       }
     })
 
-    return NextResponse.json({ job }, { status: 201 })
+    return NextResponse.json({ job, paymentRequired: true }, { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.issues }, { status: 400 })

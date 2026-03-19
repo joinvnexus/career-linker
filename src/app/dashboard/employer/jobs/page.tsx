@@ -14,6 +14,8 @@ type EmployerJob = {
   createdAt: string
   location: string
   salaryMin?: number | null
+  paymentStatus?: string
+  published?: boolean
 }
 
 export default function EmployerJobsPage() {
@@ -47,6 +49,24 @@ export default function EmployerJobsPage() {
       fetchMyJobs() // Refresh list
     } catch (error) {
       console.error("Failed to delete job")
+    }
+  }
+
+  const payForJob = async (jobId: string) => {
+    try {
+      const res = await fetch("/api/billing/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jobId }),
+      })
+      const data = await res.json()
+      if (!res.ok || !data.url) {
+        console.error("Failed to start payment")
+        return
+      }
+      window.location.href = data.url
+    } catch (error) {
+      console.error("Failed to start payment")
     }
   }
 
@@ -104,16 +124,28 @@ export default function EmployerJobsPage() {
                     <CardTitle className="text-xl font-bold text-gray-900 group-hover:text-blue-600">
                       {job.title}
                     </CardTitle>
-                    <CardDescription className="flex items-center gap-2 pt-1">
-                      <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
-                        {job.status.replace("_", " ")}
-                      </span>
-                      <span className="text-sm text-gray-500">
-                        Posted {new Date(job.createdAt).toLocaleDateString()}
-                      </span>
-                    </CardDescription>
+                  <CardDescription className="flex items-center gap-2 pt-1">
+                    <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+                      {job.status.replace("_", " ")}
+                    </span>
+                    <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">
+                      {job.paymentStatus === "PAID" ? "Paid" : "Unpaid"}
+                    </span>
+                    <span className="text-sm text-gray-500">
+                      Posted {new Date(job.createdAt).toLocaleDateString()}
+                    </span>
+                  </CardDescription>
                   </div>
                   <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all ml-auto">
+                    {job.paymentStatus !== "PAID" && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => payForJob(job.id)}
+                      >
+                        Pay
+                      </Button>
+                    )}
                     <Link href={`/dashboard/employer/jobs/${job.id}/edit`}>
                       <Button variant="outline" size="sm">
                         <Edit className="h-4 w-4" />

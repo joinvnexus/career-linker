@@ -14,6 +14,16 @@ export async function GET() {
     where: {
       employerId: session.user.id,
     },
+    select: {
+      id: true,
+      title: true,
+      status: true,
+      createdAt: true,
+      location: true,
+      salaryMin: true,
+      paymentStatus: true,
+      published: true,
+    },
     orderBy: { createdAt: "desc" },
   })
 

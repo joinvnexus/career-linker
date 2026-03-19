@@ -89,6 +89,21 @@ export default function PostJobPage() {
           return
         }
 
+        const payload = await response.json()
+        if (payload.paymentRequired) {
+          const checkoutRes = await fetch("/api/billing/checkout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ jobId: payload.job.id }),
+          })
+          const checkoutData = await checkoutRes.json()
+          if (!checkoutRes.ok || !checkoutData.url) {
+            toast.error(checkoutData.error || "Failed to start payment")
+            return
+          }
+          window.location.href = checkoutData.url
+          return
+        }
         toast.success("Job posted successfully!")
         setSuccess(true)
         setTimeout(() => router.push("/dashboard/employer/jobs"), 1500)
