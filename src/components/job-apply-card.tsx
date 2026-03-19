@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Loader2 } from "lucide-react"
+import { ResumeUploader } from "@/components/resume-uploader"
 
 export function JobApplyCard({ jobId }: { jobId: string }) {
   const { data: session, status } = useSession()
@@ -88,6 +89,9 @@ export function JobApplyCard({ jobId }: { jobId: string }) {
             onChange={(e) => setResumeUrl(e.target.value)}
             placeholder="https://..."
           />
+          <div className="pt-2">
+            <ResumeUploader onUploaded={(url) => setResumeUrl(url)} />
+          </div>
         </div>
         <div className="space-y-2">
           <Label>Cover Letter (optional)</Label>

@@ -7,6 +7,7 @@ const config: Config = {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
+    './node_modules/@uploadthing/react/dist/**/*.{js,ts,jsx,tsx}',
 	],
   prefix: "",
   theme: {

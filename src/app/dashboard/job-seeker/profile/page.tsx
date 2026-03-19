@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
+import { ResumeUploader } from "@/components/resume-uploader"
 
 const schema = z.object({
   headline: z.string().min(2).max(120).optional(),
@@ -125,6 +126,14 @@ export default function JobSeekerProfilePage() {
               {...form.register("resumeUrl")}
               placeholder="https://..."
             />
+            <div className="mt-3">
+              <ResumeUploader
+                onUploaded={(url) => {
+                  form.setValue("resumeUrl", url, { shouldDirty: true })
+                  form.handleSubmit(onSubmit)()
+                }}
+              />
+            </div>
           </div>
           <Button
             type="submit"
