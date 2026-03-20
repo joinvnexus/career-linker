@@ -33,7 +33,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="font-sans">
+      <body className="min-h-screen bg-background font-sans text-foreground antialiased">
         <AuthProvider>
           {children}
           <Toaster />

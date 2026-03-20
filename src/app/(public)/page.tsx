@@ -4,8 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { careerTips, topCompanies } from "@/data";
-import { Footer } from "@/components/shared/footer";
-import { Navbar } from "@/components/shared/navbar";
 import { JobCard } from "@/components/job-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -85,9 +83,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-blue-50 to-emerald-50">
-      <Navbar />
-
+    <div className="bg-gradient-to-b from-slate-50 via-blue-50 to-emerald-50">
       <section className="pt-24 pb-20">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
           <h1 className="mb-6 text-5xl font-bold leading-tight text-transparent md:text-7xl">
@@ -347,8 +343,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 }

@@ -18,5 +18,5 @@ export default function JobDetailsLoading() {
         </div>
       </div>
     </div>
-  )
+  );
 }

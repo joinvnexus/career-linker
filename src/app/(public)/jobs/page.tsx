@@ -199,9 +199,9 @@ export default function JobsPage() {
                   />
                 </div>
               </div>
-                <Button className="h-14 px-8 text-lg font-bold" onClick={() => setPage(1)}>
-                  Find Jobs
-                </Button>
+              <Button className="h-14 px-8 text-lg font-bold" onClick={() => setPage(1)}>
+                Find Jobs
+              </Button>
             </div>
           </div>
         </div>
