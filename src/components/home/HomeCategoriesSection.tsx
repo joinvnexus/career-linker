@@ -3,7 +3,6 @@ import {
   ArrowRight,
   BriefcaseBusiness,
   Code2,
-  FileText,
   Megaphone,
   Palette,
   ShieldCheck,
@@ -17,71 +16,26 @@ type HomeCategoriesSectionProps = {
   loading: boolean;
 };
 
-const categoryHighlights = [
-  { label: "Fast-moving teams", value: "6 sectors" },
-  { label: "Remote-friendly roles", value: "Daily" },
-  { label: "New listings", value: "Fresh" },
-] as const;
-
 const getCategoryMeta = (name: string) => {
   const normalized = name.toLowerCase();
 
-  if (
-    normalized.includes("design") ||
-    normalized.includes("ui") ||
-    normalized.includes("ux") ||
-    normalized.includes("creative")
-  ) {
-    return {
-      icon: Palette,
-      accent: "from-fuchsia-500 to-pink-500",
-      badge: "Visual + product",
-    };
+  if (normalized.includes("design") || normalized.includes("ui") || normalized.includes("ux")) {
+    return { icon: Palette, accent: "bg-fuchsia-100 text-fuchsia-700", hint: "Creative systems" };
   }
 
-  if (
-    normalized.includes("market") ||
-    normalized.includes("brand") ||
-    normalized.includes("sales") ||
-    normalized.includes("growth")
-  ) {
-    return {
-      icon: Megaphone,
-      accent: "from-amber-500 to-orange-500",
-      badge: "Growth driven",
-    };
+  if (normalized.includes("market") || normalized.includes("growth") || normalized.includes("sales")) {
+    return { icon: Megaphone, accent: "bg-amber-100 text-amber-700", hint: "Growth teams" };
   }
 
-  if (
-    normalized.includes("security") ||
-    normalized.includes("compliance") ||
-    normalized.includes("risk")
-  ) {
-    return {
-      icon: ShieldCheck,
-      accent: "from-emerald-500 to-teal-500",
-      badge: "High trust",
-    };
+  if (normalized.includes("security") || normalized.includes("risk") || normalized.includes("compliance")) {
+    return { icon: ShieldCheck, accent: "bg-emerald-100 text-emerald-700", hint: "Trusted operations" };
   }
 
-  if (
-    normalized.includes("developer") ||
-    normalized.includes("engineer") ||
-    normalized.includes("tech") ||
-    normalized.includes("software")
-  ) {
-    return {
-      icon: Code2,
-      accent: "from-sky-500 to-cyan-500",
-      badge: "Build + scale",
-    };
+  if (normalized.includes("developer") || normalized.includes("engineer") || normalized.includes("software")) {
+    return { icon: Code2, accent: "bg-sky-100 text-sky-700", hint: "Build products" };
   }
 
-  return {
-    icon: BriefcaseBusiness,
-    accent: "from-sky-500 to-emerald-500",
-    badge: "Popular roles",
-  };
+  return { icon: BriefcaseBusiness, accent: "bg-slate-100 text-slate-700", hint: "Popular paths" };
 };
 
 export function HomeCategoriesSection({
@@ -89,49 +43,42 @@ export function HomeCategoriesSection({
   loading,
 }: HomeCategoriesSectionProps) {
   return (
-    <section className="relative overflow-hidden bg-white/45 py-24">
-      <div className="absolute inset-x-0 top-0 -z-10 h-40 bg-[radial-gradient(circle_at_top,_rgba(14,165,233,0.12),_transparent_55%)]" />
-
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
-          <div>
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-sky-200 bg-white/80 px-4 py-2 text-sm font-semibold text-sky-700 shadow-sm backdrop-blur">
+    <section className="bg-white/45 py-16 sm:py-18 lg:py-20">
+      <div className="mx-auto grid max-w-7xl gap-6 px-4 sm:gap-8 sm:px-6 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-10 lg:px-8">
+        <div className="lg:sticky lg:top-24 lg:self-start">
+          <div className="rounded-[2rem] bg-slate-950 p-6 text-white shadow-[0_30px_70px_-35px_rgba(15,23,42,0.7)] sm:p-7">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-sky-200">
               <Sparkles className="h-4 w-4" />
-              High-demand role clusters
+              Category map
             </div>
-            <h2 className="max-w-3xl text-4xl font-bold tracking-[-0.03em] text-slate-950 sm:text-5xl">
-              Trending categories built for how people actually search.
+            <h2 className="mt-5 text-3xl font-bold tracking-[-0.03em]">
+              Trending categories.
             </h2>
-            <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-600">
-              Browse focused role groups instead of digging through a flat job
-              list. These categories surface the areas candidates and hiring
-              teams are moving through most often.
+            <p className="mt-4 text-sm leading-7 text-slate-300">
+              Jump into the role clusters candidates open first when they want
+              faster signal and less scrolling.
             </p>
-          </div>
-
-          <div className="rounded-[1.75rem] border border-white/70 bg-white/80 p-5 shadow-[0_20px_60px_-35px_rgba(15,23,42,0.35)] backdrop-blur">
-            <div className="grid grid-cols-3 gap-3">
-              {categoryHighlights.map((item) => (
-                <div
-                  key={item.label}
-                  className="rounded-2xl bg-slate-50 px-3 py-4 text-center"
-                >
-                  <p className="text-lg font-bold text-slate-950">{item.value}</p>
-                  <p className="mt-1 text-xs leading-5 text-slate-500">{item.label}</p>
-                </div>
-              ))}
+            <div className="mt-8 space-y-3">
+              <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                <p className="text-2xl font-bold">6</p>
+                <p className="text-sm text-slate-400">High-demand groups surfaced</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                <p className="text-2xl font-bold">Daily</p>
+                <p className="text-sm text-slate-400">Fresh roles routed into search</p>
+              </div>
             </div>
           </div>
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {Array.from({ length: 6 }).map((_, index) => (
-              <Skeleton key={index} className="h-44 rounded-[1.75rem]" />
+              <Skeleton key={index} className="h-40 rounded-[1.75rem]" />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {categories.slice(0, 6).map((category, index) => {
               const meta = getCategoryMeta(category.name);
               const Icon = meta.icon;
@@ -140,46 +87,24 @@ export function HomeCategoriesSection({
                 <Link
                   key={category.id}
                   href={`/jobs?category=${category.id}`}
-                  className="group relative overflow-hidden rounded-[1.75rem] border border-white/70 bg-white/80 p-6 shadow-[0_20px_55px_-35px_rgba(15,23,42,0.35)] backdrop-blur transition-all duration-300 hover:-translate-y-1.5 hover:border-sky-100 hover:shadow-[0_30px_70px_-35px_rgba(14,165,233,0.35)]"
+                  className="group rounded-[1.75rem] border border-white/70 bg-white/85 p-5 shadow-[0_18px_55px_-35px_rgba(15,23,42,0.35)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_28px_70px_-35px_rgba(15,23,42,0.35)] sm:p-6"
                 >
-                  <div
-                    className={`absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r ${meta.accent}`}
-                  />
-                  <div className="absolute right-0 top-0 h-28 w-28 translate-x-8 -translate-y-8 rounded-full bg-slate-100/70 blur-2xl transition-transform duration-300 group-hover:scale-125" />
-
-                  <div className="relative">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-lg">
-                        <Icon className="h-6 w-6" />
-                      </div>
-                      <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-                        0{index + 1}
-                      </span>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${meta.accent}`}>
+                      <Icon className="h-5 w-5" />
                     </div>
-
-                    <div className="mt-6">
-                      <p className="inline-flex rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-700">
-                        {meta.badge}
-                      </p>
-                      <h3 className="mt-4 text-2xl font-bold tracking-[-0.02em] text-slate-950">
-                        {category.name}
-                      </h3>
-                      <p className="mt-3 text-sm leading-7 text-slate-600">
-                        Explore current openings, role-specific matches, and fast
-                        paths into this category.
-                      </p>
-                    </div>
-
-                    <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-5">
-                      <div className="flex items-center gap-2 text-sm font-medium text-slate-500">
-                        <FileText className="h-4 w-4" />
-                        Browse open roles
-                      </div>
-                      <span className="inline-flex items-center text-sm font-semibold text-slate-900 transition-transform duration-300 group-hover:translate-x-1">
-                        View jobs
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </span>
-                    </div>
+                    <span className="text-sm font-semibold text-slate-300">0{index + 1}</span>
+                  </div>
+                  <h3 className="mt-5 text-xl font-bold tracking-[-0.02em] text-slate-950">
+                    {category.name}
+                  </h3>
+                  <p className="mt-2 text-sm font-medium text-slate-500">{meta.hint}</p>
+                  <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
+                    <span className="text-sm text-slate-500">Open category</span>
+                    <span className="inline-flex items-center text-sm font-semibold text-slate-900 transition-transform group-hover:translate-x-1">
+                      View jobs
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </span>
                   </div>
                 </Link>
               );

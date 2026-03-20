@@ -56,33 +56,33 @@ export function HomeHeroSection({
   onSubmit,
 }: HomeHeroSectionProps) {
   return (
-    <section className="relative overflow-hidden pb-20 pt-14 sm:pt-18 lg:pb-24 lg:pt-20">
+    <section className="relative overflow-hidden pb-14 pt-10 sm:pb-16 sm:pt-14 lg:pb-22 lg:pt-18">
       <div className="absolute inset-x-0 top-0 -z-10 h-[34rem] bg-[radial-gradient(circle_at_top_left,_rgba(14,165,233,0.18),_transparent_36%),radial-gradient(circle_at_top_right,_rgba(16,185,129,0.16),_transparent_32%),linear-gradient(180deg,_rgba(255,255,255,0.68)_0%,_rgba(248,250,252,0.22)_100%)]" />
       <div className="absolute left-[8%] top-20 -z-10 hidden h-40 w-40 rounded-full bg-sky-200/30 blur-3xl lg:block" />
       <div className="absolute right-[10%] top-12 -z-10 hidden h-48 w-48 rounded-full bg-emerald-200/30 blur-3xl lg:block" />
 
-      <div className="mx-auto grid max-w-7xl gap-14 px-4 sm:px-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)] lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:gap-12 sm:px-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)] lg:gap-14 lg:px-8">
         <div className="max-w-3xl">
           <div className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-white/80 px-4 py-2 text-sm font-semibold text-sky-700 shadow-sm backdrop-blur">
             <Sparkles className="h-4 w-4" />
             Smarter job search for candidates and employers
           </div>
 
-          <h1 className="mt-6 text-5xl font-bold leading-[0.96] tracking-[-0.04em] text-slate-950 sm:text-6xl lg:text-7xl">
+          <h1 className="mt-6 text-4xl font-bold leading-[1] tracking-[-0.04em] text-slate-950 sm:text-5xl lg:text-6xl">
             Build your next move
             <span className="mt-2 block bg-gradient-to-r from-sky-600 via-cyan-600 to-emerald-500 bg-clip-text text-transparent">
               without the noisy workflow.
             </span>
           </h1>
 
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600 sm:text-xl">
+          <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
             HireHub helps job seekers discover strong opportunities and gives
             employers a cleaner way to publish roles, review applicants, and
             hire faster.
           </p>
 
           <form
-            className="mt-8 rounded-[2rem] border border-white/60 bg-white/80 p-3 shadow-[0_24px_80px_-32px_rgba(15,23,42,0.35)] backdrop-blur-xl"
+            className="mt-7 rounded-[2rem] border border-white/60 bg-white/80 p-2.5 shadow-[0_24px_80px_-32px_rgba(15,23,42,0.35)] backdrop-blur-xl sm:p-3"
             onSubmit={onSubmit}
           >
             <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_280px_auto]">
@@ -136,7 +136,7 @@ export function HomeHeroSection({
             </div>
           </form>
 
-          <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
+          <div className="mt-7 flex flex-col gap-4 sm:flex-row sm:items-center">
             <Link href="/jobs">
               <Button className="rounded-full px-6" size="lg">
                 Explore Opportunities
@@ -149,13 +149,13 @@ export function HomeHeroSection({
             </Link>
           </div>
 
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-7 flex flex-wrap gap-3">
             {heroStats.map((item) => (
               <div
                 key={item.label}
                 className="min-w-[140px] rounded-2xl border border-white/70 bg-white/75 px-4 py-4 shadow-sm backdrop-blur"
               >
-                <p className="text-2xl font-bold text-slate-950">{item.value}</p>
+                <p className="text-xl font-bold text-slate-950">{item.value}</p>
                 <p className="mt-1 text-sm text-slate-500">{item.label}</p>
               </div>
             ))}
@@ -163,7 +163,7 @@ export function HomeHeroSection({
         </div>
 
         <div className="relative">
-          <div className="relative overflow-hidden rounded-[2rem] border border-white/60 bg-slate-950 p-6 text-white shadow-[0_30px_80px_-35px_rgba(15,23,42,0.65)] sm:p-8">
+          <div className="relative overflow-hidden rounded-[2rem] border border-white/60 bg-slate-950 p-5 text-white shadow-[0_30px_80px_-35px_rgba(15,23,42,0.65)] sm:p-8">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.2),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(16,185,129,0.22),_transparent_24%)]" />
 
             <div className="relative">
@@ -172,7 +172,7 @@ export function HomeHeroSection({
                   <p className="text-sm font-semibold uppercase tracking-[0.2em] text-sky-200">
                     Hiring Snapshot
                   </p>
-                  <h2 className="mt-2 text-3xl font-bold leading-tight">
+                  <h2 className="mt-2 text-2xl font-bold leading-tight">
                     One workspace for search, apply, and review.
                   </h2>
                 </div>
@@ -181,7 +181,7 @@ export function HomeHeroSection({
                 </div>
               </div>
 
-              <div className="mt-8 grid gap-4">
+              <div className="mt-6 grid gap-3 sm:mt-8 sm:gap-4">
                 {featureCards.map(({ icon: Icon, title, description }) => (
                   <div
                     key={title}
@@ -192,7 +192,7 @@ export function HomeHeroSection({
                         <Icon className="h-5 w-5" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-white">{title}</h3>
+                        <h3 className="text-base font-semibold text-white">{title}</h3>
                         <p className="mt-2 text-sm leading-6 text-slate-300">
                           {description}
                         </p>
@@ -206,7 +206,7 @@ export function HomeHeroSection({
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-200">
                   Employer flow
                 </p>
-                <p className="mt-3 text-lg font-semibold text-white">
+                <p className="mt-3 text-base font-semibold text-white">
                   Publish a role, review candidates, and manage hiring from one dashboard.
                 </p>
                 <Link

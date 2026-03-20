@@ -35,7 +35,7 @@ export function JobCard({ job, employerId, userRole, userId }: JobCardProps) {
   const companyName = job.companyName || "Company"
 
   return (
-    <Card className="group hover:shadow-xl transition-all duration-300 border-0 bg-white overflow-hidden">
+    <Card className="group overflow-hidden border-0 bg-white transition-all duration-300 hover:shadow-xl">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
@@ -53,7 +53,7 @@ export function JobCard({ job, employerId, userRole, userId }: JobCardProps) {
         </div>
         
         <Link href={`/jobs/${job.slug}`} className="block">
-          <CardTitle className="group-hover:text-blue-600 transition-colors font-bold text-xl leading-tight line-clamp-2">
+          <CardTitle className="line-clamp-2 text-lg font-bold leading-snug transition-colors group-hover:text-blue-600">
             {job.title}
           </CardTitle>
         </Link>
