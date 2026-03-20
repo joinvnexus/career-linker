@@ -1,21 +1,21 @@
-"use client"
+"use client";
 
-import { UploadButton } from "@/lib/uploadthing"
+import { UploadButton } from "@/lib/uploadthing";
 
 export function ResumeUploader({
   onUploaded,
 }: {
-  onUploaded: (url: string) => void
+  onUploaded: (url: string) => void;
 }) {
   return (
     <UploadButton
       endpoint="resumeUploader"
       onClientUploadComplete={(res) => {
-        const url = res?.[0]?.ufsUrl
-        if (url) onUploaded(url)
+        const url = res?.[0]?.serverData?.url ?? res?.[0]?.url;
+        if (url) onUploaded(url);
       }}
       onUploadError={(error) => {
-        console.error("Upload failed:", error)
+        console.error("Upload failed:", error);
       }}
       appearance={{
         button:
@@ -27,5 +27,5 @@ export function ResumeUploader({
         button: "Upload Resume (PDF)",
       }}
     />
-  )
+  );
 }

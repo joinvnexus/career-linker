@@ -24,6 +24,7 @@ model User {
   employerProfile  EmployerProfile?  @relation("Employer")
   jobs             Job[]             @relation("EmployerJobs")
   applications     JobApplication[]  @relation("JobSeekerApplications")
+  savedJobs        SavedJob[]
   accounts         Account[]
   sessions         Session[]
 
@@ -32,14 +33,20 @@ model User {
 }
 
 model JobSeekerProfile {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  user        User     @relation("JobSeeker", fields: [userId], references: [id], onDelete: Cascade)
-  resumeUrl   String?
-  phone       String?
-  headline    String?
-  location    String?
-  isComplete  Boolean  @default(false)
+  id           String                 @id @default(cuid())
+  userId       String                 @unique
+  user         User                   @relation("JobSeeker", fields: [userId], references: [id], onDelete: Cascade)
+  resumeUrl    String?
+  phone        String?
+  headline     String?
+  bio          String?
+  location     String?
+  websiteUrl   String?
+  linkedinUrl  String?
+  isComplete   Boolean                @default(false)
+  skills       JobSeekerSkill[]
+  experiences  JobSeekerExperience[]
+  educations   JobSeekerEducation[]
 
   @@index([userId])
   @@map("job_seeker_profiles")
@@ -81,6 +88,7 @@ model Job {
   status      JobStatus @default(ACTIVE)
   applicationDeadline DateTime?
   applications JobApplication[]
+  savedBy     SavedJob[]
   paymentStatus PaymentStatus @default(UNPAID)
   stripeSessionId String?
   paymentIntentId String?
@@ -93,6 +101,9 @@ model Job {
   @@index([employerId])
   @@index([categoryId])
   @@index([published])
+  @@index([status, published])
+  @@index([jobType, location])
+  @@index([createdAt])
   @@map("jobs")
 }
 
@@ -122,6 +133,68 @@ model JobCategory {
   jobs  Job[]
 
   @@map("job_categories")
+}
+
+model SavedJob {
+  id        String   @id @default(cuid())
+  userId    String
+  jobId     String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, jobId])
+  @@index([userId])
+  @@index([jobId])
+  @@map("saved_jobs")
+}
+
+model JobSeekerSkill {
+  id         String           @id @default(cuid())
+  profileId  String
+  profile    JobSeekerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  name       String
+  createdAt  DateTime         @default(now())
+
+  @@index([profileId])
+  @@map("job_seeker_skills")
+}
+
+model JobSeekerExperience {
+  id           String           @id @default(cuid())
+  profileId    String
+  profile      JobSeekerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title        String
+  company      String
+  location     String?
+  employmentType String?
+  startDate    DateTime
+  endDate      DateTime?
+  isCurrent    Boolean          @default(false)
+  description  String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@index([profileId])
+  @@map("job_seeker_experiences")
+}
+
+model JobSeekerEducation {
+  id           String           @id @default(cuid())
+  profileId    String
+  profile      JobSeekerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  institution  String
+  degree       String
+  fieldOfStudy String?
+  startDate    DateTime?
+  endDate      DateTime?
+  isCurrent    Boolean          @default(false)
+  description  String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@index([profileId])
+  @@map("job_seeker_educations")
 }
 
 model Account {
@@ -178,6 +251,7 @@ enum JobType {
 }
 
 enum JobStatus {
+  PENDING
   ACTIVE
   EXPIRED
   DRAFT
@@ -186,6 +260,7 @@ enum JobStatus {
 
 enum ApplicationStatus {
   PENDING
+  REVIEWED
   SHORTLISTED
   INTERVIEW
   REJECTED

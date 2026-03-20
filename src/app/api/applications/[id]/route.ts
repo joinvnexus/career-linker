@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
+import { sendApplicationStatusEmail } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { ApplicationStatus } from "@prisma/client"
@@ -11,9 +12,10 @@ const updateSchema = z.object({
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -41,7 +43,29 @@ export async function PATCH(
     const updated = await prisma.jobApplication.update({
       where: { id: application.id },
       data: { status: data.status },
+      include: {
+        job: {
+          select: {
+            title: true,
+          },
+        },
+        seeker: {
+          select: {
+            email: true,
+            name: true,
+          },
+        },
+      },
     })
+
+    if (updated.seeker.email) {
+      void sendApplicationStatusEmail({
+        applicantEmail: updated.seeker.email,
+        applicantName: updated.seeker.name || "Candidate",
+        jobTitle: updated.job.title,
+        status: updated.status,
+      }).catch(() => undefined)
+    }
 
     return NextResponse.json({ application: updated })
   } catch (error) {

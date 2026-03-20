@@ -33,7 +33,7 @@ export default function ApplicationsPage() {
         const res = await fetch("/api/applications/my")
         const data = await res.json()
         setApplications(data.applications || [])
-      } catch (error) {
+      } catch {
         console.error("Failed to load applications")
       } finally {
         setLoading(false)

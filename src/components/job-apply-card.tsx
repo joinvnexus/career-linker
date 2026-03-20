@@ -35,7 +35,7 @@ export function JobApplyCard({ jobId }: { jobId: string }) {
         setMessage("Application submitted!")
         setResumeUrl("")
         setCoverLetter("")
-      } catch (error) {
+      } catch {
         setMessage("Something went wrong")
       }
     })

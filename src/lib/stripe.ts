@@ -1,10 +1,20 @@
-import Stripe from "stripe"
+import Stripe from "stripe";
 
-const secretKey = process.env.STRIPE_SECRET_KEY
-if (!secretKey) {
-  throw new Error("STRIPE_SECRET_KEY is not set")
-}
+let stripeInstance: Stripe | null = null;
 
-export const stripe = new Stripe(secretKey, {
-  apiVersion: "2025-01-27.acacia",
-})
+export const getStripe = (): Stripe => {
+  if (stripeInstance) {
+    return stripeInstance;
+  }
+
+  const secretKey = process.env.STRIPE_SECRET_KEY;
+  if (!secretKey) {
+    throw new Error("STRIPE_SECRET_KEY is not set");
+  }
+
+  stripeInstance = new Stripe(secretKey, {
+    apiVersion: "2026-02-25.clover",
+  });
+
+  return stripeInstance;
+};

@@ -21,11 +21,14 @@ const updateJobSchema = z.object({
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const job = await prisma.job.findUnique({
-      where: { id: params.id },
+    const params = await context.params;
+    const job = await prisma.job.findFirst({
+      where: {
+        OR: [{ id: params.id }, { slug: params.id }],
+      },
       include: {
         employer: {
           select: {
@@ -55,16 +58,17 @@ export async function GET(
     }
 
     return NextResponse.json({ job });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to fetch job" }, { status: 500 });
   }
 }
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params;
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== "EMPLOYER") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -96,10 +100,11 @@ export async function PUT(
 }
 
 export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  _req: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params;
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== "EMPLOYER") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -118,8 +123,7 @@ export async function DELETE(
     });
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to delete job" }, { status: 500 });
   }
 }
-

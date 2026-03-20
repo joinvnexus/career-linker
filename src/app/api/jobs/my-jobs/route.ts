@@ -31,8 +31,7 @@ export async function GET() {
     });
 
     return NextResponse.json({ jobs });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to fetch jobs" }, { status: 500 });
   }
 }
-

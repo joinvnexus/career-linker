@@ -9,7 +9,7 @@ export default defineConfig({
   migrations: {
     path: "prisma/migrations",
 
-    seed: 'node --loader ts-node/esm ./prisma/seed.ts',
+    seed: "ts-node --transpile-only ./prisma/seed.ts",
 
   },
 

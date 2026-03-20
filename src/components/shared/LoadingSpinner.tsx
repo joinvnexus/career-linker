@@ -1,14 +1,13 @@
-"use client"
+"use client";
 
-import { Loader2 } from 'lucide-react'
+import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function LoadingSpinner({
-  className = 'h-8 w-8',
+  className = "h-8 w-8",
 }: {
-  className?: string
+  className?: string;
 }) {
-  return (
-    <Loader2 className={cn('animate-spin', className)} />
-  )
+  return <Loader2 className={cn("animate-spin", className)} />;
 }
 

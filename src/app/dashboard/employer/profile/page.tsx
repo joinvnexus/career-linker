@@ -1,33 +1,36 @@
-"use client"
+"use client";
 
-import { useEffect, useState, useTransition } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Loader2 } from "lucide-react"
-import { toast } from "sonner"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+const optionalString = (schema: z.ZodString) =>
+  z.preprocess((value) => (value === "" ? undefined : value), schema.optional());
 
 const schema = z.object({
-  companyName: z.string().min(2).max(120).optional(),
-  companyWebsite: z.string().url().optional(),
-  companySize: z.string().min(1).max(50).optional(),
-  industry: z.string().min(2).max(80).optional(),
-  location: z.string().min(2).max(120).optional(),
-  companyLogo: z.string().url().optional(),
-})
+  companyName: optionalString(z.string().min(2).max(120)),
+  companyWebsite: optionalString(z.string().url()),
+  companySize: optionalString(z.string().min(1).max(50)),
+  industry: optionalString(z.string().min(2).max(80)),
+  location: optionalString(z.string().min(2).max(120)),
+  companyLogo: optionalString(z.string().url()),
+});
 
-type FormData = z.infer<typeof schema>
+type FormInput = z.input<typeof schema>;
 
 export default function EmployerProfilePage() {
-  const [isPending, startTransition] = useTransition()
-  const [loading, setLoading] = useState(true)
+  const [isPending, startTransition] = useTransition();
+  const [loading, setLoading] = useState(true);
 
-  const form = useForm<FormData>({
-    resolver: zodResolver(schema),
+  const form = useForm<FormInput>({
+    resolver: zodResolver(schema) as never,
     defaultValues: {
       companyName: "",
       companyWebsite: "",
@@ -36,13 +39,13 @@ export default function EmployerProfilePage() {
       location: "",
       companyLogo: "",
     },
-  })
+  });
 
   useEffect(() => {
-    const load = async () => {
+    const load = async (): Promise<void> => {
       try {
-        const res = await fetch("/api/profile/employer")
-        const data = await res.json()
+        const res = await fetch("/api/profile/employer");
+        const data = (await res.json()) as { profile?: Partial<FormInput> };
         if (data.profile) {
           form.reset({
             companyName: data.profile.companyName || "",
@@ -51,36 +54,37 @@ export default function EmployerProfilePage() {
             industry: data.profile.industry || "",
             location: data.profile.location || "",
             companyLogo: data.profile.companyLogo || "",
-          })
+          });
         }
-      } catch (error) {
-        toast.error("Failed to load profile")
+      } catch {
+        toast.error("Failed to load profile");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-    load()
-  }, [form])
+    };
 
-  const onSubmit = (values: FormData) => {
+    void load();
+  }, [form]);
+
+  const onSubmit = (values: FormInput): void => {
     startTransition(async () => {
       try {
         const res = await fetch("/api/profile/employer", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(values),
-        })
+        });
         if (!res.ok) {
-          const error = await res.json()
-          toast.error(error.error || "Failed to update profile")
-          return
+          const error = (await res.json()) as { error?: string };
+          toast.error(error.error || "Failed to update profile");
+          return;
         }
-        toast.success("Profile updated")
-      } catch (error) {
-        toast.error("Something went wrong")
+        toast.success("Profile updated");
+      } catch {
+        toast.error("Something went wrong");
       }
-    })
-  }
+    });
+  };
 
   if (loading) {
     return (
@@ -94,7 +98,7 @@ export default function EmployerProfilePage() {
           <div className="h-24 bg-gray-100 rounded-xl animate-pulse" />
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -151,5 +155,5 @@ export default function EmployerProfilePage() {
         </form>
       </CardContent>
     </Card>
-  )
+  );
 }

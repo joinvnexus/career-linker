@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { sendApplicationReceivedEmail } from "@/lib/email";
 import { z } from "zod";
 
 const applySchema = z.object({
@@ -59,7 +60,7 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to fetch applications" }, { status: 500 });
   }
 }
@@ -103,6 +104,15 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    const employerEmail = application.job.employer.email;
+    if (employerEmail) {
+      void sendApplicationReceivedEmail({
+        applicantName: session.user.name || session.user.email || "A candidate",
+        employerEmail,
+        jobTitle: application.job.title,
+      }).catch(() => undefined);
+    }
+
     return NextResponse.json({ application }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -111,4 +121,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to apply" }, { status: 500 });
   }
 }
-

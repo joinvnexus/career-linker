@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Users, FileText, Bookmark, TrendingUp, Award, Calendar } from "lucide-react";
+import { FileText, Bookmark, TrendingUp, Award, Calendar } from "lucide-react";
 import Link from "next/link";
 
 export default function JobSeekerOverview() {
@@ -123,7 +123,7 @@ export default function JobSeekerOverview() {
               </div>
               <div className="flex-1">
                 <p className="font-medium">Applied to Frontend Developer</p>
-                <p className="text-sm text-gray-600">TechCorp • Pending</p>
+                <p className="text-sm text-gray-600">TechCorp | Pending</p>
               </div>
               <div className="text-sm text-gray-500">2 days ago</div>
             </div>
@@ -133,7 +133,7 @@ export default function JobSeekerOverview() {
               </div>
               <div className="flex-1">
                 <p className="font-medium">Interview Scheduled</p>
-                <p className="text-sm text-gray-600">Senior Product Manager • Interview</p>
+                <p className="text-sm text-gray-600">Senior Product Manager | Interview</p>
               </div>
               <div className="text-sm text-gray-500">1 day ago</div>
             </div>
@@ -143,4 +143,3 @@ export default function JobSeekerOverview() {
     </div>
   );
 }
-

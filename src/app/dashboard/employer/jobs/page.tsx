@@ -34,7 +34,7 @@ export default function EmployerJobsPage() {
       const res = await fetch(`/api/jobs/my-jobs`)
       const data = await res.json()
       setJobs(data.jobs || [])
-    } catch (error) {
+    } catch {
       console.error("Failed to fetch jobs")
     } finally {
       setLoading(false)
@@ -47,7 +47,7 @@ export default function EmployerJobsPage() {
     try {
       await fetch(`/api/jobs/${jobId}`, { method: "DELETE" })
       fetchMyJobs() // Refresh list
-    } catch (error) {
+    } catch {
       console.error("Failed to delete job")
     }
   }
@@ -65,7 +65,7 @@ export default function EmployerJobsPage() {
         return
       }
       window.location.href = data.url
-    } catch (error) {
+    } catch {
       console.error("Failed to start payment")
     }
   }
@@ -116,7 +116,7 @@ export default function EmployerJobsPage() {
         </Card>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {jobs.map((job: any) => (
+          {jobs.map((job) => (
             <Card key={job.id} className="hover:shadow-xl transition-all group">
               <CardHeader>
                 <div className="flex items-start justify-between mb-4">

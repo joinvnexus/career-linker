@@ -2,8 +2,9 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Briefcase, MapPin, DollarSign, Clock, Bookmark } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { SaveJobButton } from "@/components/save-job-button"
+import { Briefcase, MapPin, DollarSign, Clock } from "lucide-react"
 import { JobType, JobStatus } from "@prisma/client"
 import { formatCurrency, formatDate } from "@/lib/utils"
 
@@ -12,7 +13,7 @@ interface JobCardProps {
     id: string
     slug: string
     title: string
-    companyName: string
+    companyName?: string
     companySlug?: string
     location: string
     salaryMin?: number
@@ -57,7 +58,7 @@ export function JobCard({ job, employerId, userRole, userId }: JobCardProps) {
           </CardTitle>
         </Link>
         
-        <CardDescription className="flex items-center gap-4 text-sm pt-1">
+        <div className="flex items-center gap-4 pt-1 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
             <DollarSign className="h-4 w-4 text-green-600" />
             <span>
@@ -71,7 +72,7 @@ export function JobCard({ job, employerId, userRole, userId }: JobCardProps) {
               <span>Closes {formatDate(job.applicationDeadline)}</span>
             </div>
           )}
-        </CardDescription>
+        </div>
       </CardHeader>
       
       <CardContent className="pt-0 pb-4">
@@ -96,9 +97,7 @@ export function JobCard({ job, employerId, userRole, userId }: JobCardProps) {
                 </Link>
               </Button>
             )}
-            <Button variant="ghost" size="icon" className="h-9 w-9 p-0">
-              <Bookmark className="h-4 w-4" />
-            </Button>
+            <SaveJobButton jobId={job.id} />
           </div>
         </div>
       </CardContent>

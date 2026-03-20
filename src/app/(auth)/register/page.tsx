@@ -2,7 +2,7 @@
 
 import { signIn, useSession } from "next-auth/react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import * as z from "zod"
 import Link from "next/link"
 import { useState, useTransition, useEffect } from "react"
@@ -10,8 +10,8 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { getDashboardPathForRole } from "@/config/roles"
 import { Loader2, User, Briefcase, Mail, Lock, CheckCircle } from "lucide-react"
-type Role = "JOB_SEEKER" | "EMPLOYER"
 
 const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(50),
@@ -38,10 +38,14 @@ export default function RegisterPage() {
       role: "JOB_SEEKER",
     },
   })
+  const selectedRole = useWatch({
+    control: form.control,
+    name: "role",
+  })
 
   useEffect(() => {
     if (session) {
-      router.push("/dashboard")
+      router.push(getDashboardPathForRole(session.user.role))
     }
   }, [session, router])
 
@@ -75,7 +79,7 @@ export default function RegisterPage() {
           router.push(target)
           router.refresh()
         }
-      } catch (err) {
+      } catch {
         setError("Registration failed. Please try again.")
       }
     })
@@ -118,7 +122,7 @@ export default function RegisterPage() {
                     type="button"
                     onClick={() => form.setValue("role", "JOB_SEEKER")}
                     className={`border-2 rounded-xl p-4 text-left transition-all ${
-                      form.watch("role") === "JOB_SEEKER"
+                      selectedRole === "JOB_SEEKER"
                         ? "border-blue-600 bg-blue-50"
                         : "border-gray-200 hover:border-blue-300"
                     }`}
@@ -135,7 +139,7 @@ export default function RegisterPage() {
                     type="button"
                     onClick={() => form.setValue("role", "EMPLOYER")}
                     className={`border-2 rounded-xl p-4 text-left transition-all ${
-                      form.watch("role") === "EMPLOYER"
+                      selectedRole === "EMPLOYER"
                         ? "border-emerald-600 bg-emerald-50"
                         : "border-gray-200 hover:border-emerald-300"
                     }`}

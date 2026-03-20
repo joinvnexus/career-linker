@@ -1,46 +1,67 @@
-"use client"
+"use client";
 
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
+import { useEffect, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { useForm, useWatch } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Loader2 } from "lucide-react"
-import { useState, useTransition, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { toast } from "sonner"
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
-const schema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters"),
-  description: z.string().min(50, "Description too short"),
-  requirements: z.string().min(20, "Requirements too short"),
-  salaryMin: z.number().optional(),
-  salaryMax: z.number().optional(),
-  salaryType: z.enum(["Fixed", "Range", "Negotiable"]).optional(),
-  location: z.string().min(2, "Location required"),
-  jobType: z.enum(["FULL_TIME", "PART_TIME", "REMOTE", "CONTRACT", "INTERNSHIP"]),
-  experience: z.enum(["ENTRY", "MID", "SENIOR"]),
-  categoryId: z.string(),
-})
+const schema = z
+  .object({
+    title: z.string().min(3, "Title must be at least 3 characters"),
+    description: z.string().min(50, "Description too short"),
+    requirements: z.string().min(20, "Requirements too short"),
+    salaryMin: z.number().optional(),
+    salaryMax: z.number().optional(),
+    salaryType: z.enum(["Fixed", "Range", "Negotiable"]).optional(),
+    location: z.string().min(2, "Location required"),
+    jobType: z.enum([
+      "FULL_TIME",
+      "PART_TIME",
+      "REMOTE",
+      "CONTRACT",
+      "INTERNSHIP",
+    ]),
+    experience: z.enum(["ENTRY", "MID", "SENIOR"]),
+    categoryId: z.string().min(1, "Category is required"),
+  })
+  .refine(
+    (data) =>
+      data.salaryMin === undefined ||
+      data.salaryMax === undefined ||
+      data.salaryMin <= data.salaryMax,
+    {
+      message: "Minimum salary cannot exceed maximum salary",
+      path: ["salaryMax"],
+    }
+  );
 
-type FormData = z.infer<typeof schema>
+type FormData = z.infer<typeof schema>;
+type Category = { id: string; name: string };
 
-export default function EditJobPage({ params }: { params: { id: string } }) {
-  const router = useRouter()
-  const [isPending, startTransition] = useTransition()
-  const [loading, setLoading] = useState(true)
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>([])
-
+export default function EditJobPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<Category[]>([]);
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -51,144 +72,151 @@ export default function EditJobPage({ params }: { params: { id: string } }) {
       jobType: "FULL_TIME",
       experience: "ENTRY",
       categoryId: "",
+      salaryType: "Range",
     },
-  })
+  });
+  const salaryType = useWatch({ control: form.control, name: "salaryType" });
+  const salaryMin = useWatch({ control: form.control, name: "salaryMin" });
+  const salaryMax = useWatch({ control: form.control, name: "salaryMax" });
+  const jobType = useWatch({ control: form.control, name: "jobType" });
+  const experience = useWatch({ control: form.control, name: "experience" });
+  const categoryId = useWatch({ control: form.control, name: "categoryId" });
 
   useEffect(() => {
-    const load = async () => {
+    const load = async (): Promise<void> => {
       try {
-        const [jobRes, catRes] = await Promise.all([
+        const [jobResponse, categoriesResponse] = await Promise.all([
           fetch(`/api/jobs/${params.id}`),
           fetch("/api/categories"),
-        ])
-        if (!jobRes.ok) throw new Error("Failed to load job")
-        const jobData = await jobRes.json()
-        const catData = await catRes.json()
-        const job = jobData.job
-        const cats = catData.categories || []
-        setCategories(cats)
-        form.reset({
-          title: job.title,
-          description: job.description,
-          requirements: job.requirements,
-          salaryMin: job.salaryMin ?? undefined,
-          salaryMax: job.salaryMax ?? undefined,
-          salaryType: job.salaryType ?? undefined,
-          location: job.location,
-          jobType: job.jobType,
-          experience: job.experience,
-          categoryId: job.categoryId,
-        })
-      } catch (error) {
-        toast.error("Failed to load job")
-      } finally {
-        setLoading(false)
-      }
-    }
-    load()
-  }, [form, params.id])
+        ]);
 
-  const onSubmit = (data: FormData) => {
+        if (!jobResponse.ok) {
+          throw new Error("Failed to load job");
+        }
+
+        const jobData = (await jobResponse.json()) as {
+          job: FormData & {
+            salaryMin?: number | null;
+            salaryMax?: number | null;
+            salaryType?: FormData["salaryType"] | null;
+          };
+        };
+        const categoriesData = (await categoriesResponse.json()) as {
+          categories?: Category[];
+        };
+
+        setCategories(categoriesData.categories ?? []);
+        form.reset({
+          ...jobData.job,
+          salaryMin: jobData.job.salaryMin ?? undefined,
+          salaryMax: jobData.job.salaryMax ?? undefined,
+          salaryType: jobData.job.salaryType ?? "Range",
+        });
+      } catch {
+        toast.error("Failed to load job");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    void load();
+  }, [form, params.id]);
+
+  const onSubmit = (data: FormData): void => {
     startTransition(async () => {
       try {
         const response = await fetch(`/api/jobs/${params.id}`, {
-          method: "PATCH",
+          method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
-        })
+        });
+        const payload = (await response.json()) as { error?: string };
 
         if (!response.ok) {
-          const error = await response.json()
-          toast.error(error.error || "Failed to update job")
-          return
+          toast.error(payload.error || "Failed to update job");
+          return;
         }
 
-        toast.success("Job updated successfully!")
-        router.push("/dashboard/employer/jobs")
-      } catch (error) {
-        toast.error("Something went wrong")
+        toast.success("Job updated successfully");
+        router.push("/dashboard/employer/jobs");
+      } catch {
+        toast.error("Something went wrong");
       }
-    })
-  }
+    });
+  };
 
   if (loading) {
     return (
       <Card className="border-0 shadow-2xl">
         <CardHeader>
-          <CardTitle className="text-3xl font-bold text-gray-400">
-            Loading...
-          </CardTitle>
+          <CardTitle className="text-3xl font-bold text-gray-400">Loading...</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="h-12 bg-gray-100 rounded-xl animate-pulse" />
-          <div className="h-12 bg-gray-100 rounded-xl animate-pulse" />
-          <div className="h-40 bg-gray-100 rounded-xl animate-pulse" />
+          <div className="h-12 animate-pulse rounded-xl bg-gray-100" />
+          <div className="h-12 animate-pulse rounded-xl bg-gray-100" />
+          <div className="h-40 animate-pulse rounded-xl bg-gray-100" />
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="mx-auto max-w-4xl">
       <Card className="border-0 shadow-2xl">
         <CardHeader>
-          <CardTitle className="text-3xl font-bold text-gray-900">
-            Edit Job
-          </CardTitle>
+          <CardTitle className="text-3xl font-bold text-gray-900">Edit Job</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="grid md:grid-cols-2 gap-6">
+          <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="grid gap-6 md:grid-cols-2">
               <div>
                 <Label htmlFor="title">Job Title *</Label>
-                <Input id="title" {...form.register("title")} className="mt-1 h-14" />
-                {form.formState.errors.title && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {form.formState.errors.title.message}
-                  </p>
-                )}
+                <Input className="mt-1 h-14" id="title" {...form.register("title")} />
               </div>
               <div>
                 <Label htmlFor="location">Location *</Label>
-                <Input id="location" {...form.register("location")} className="mt-1 h-14" />
+                <Input className="mt-1 h-14" id="location" {...form.register("location")} />
               </div>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid gap-6 md:grid-cols-3">
               <div>
-                <Label>Salary Range (Optional)</Label>
+                <Label htmlFor="salaryMin">Minimum Salary</Label>
                 <Input
-                  type="number"
-                  placeholder="Min (e.g. 50000)"
                   className="mt-1 h-14"
-                  value={form.watch("salaryMin") ?? ""}
-                  onChange={(e) =>
+                  id="salaryMin"
+                  onChange={(event) =>
                     form.setValue(
                       "salaryMin",
-                      e.target.value ? Number(e.target.value) : undefined
+                      event.target.value ? Number(event.target.value) : undefined
                     )
                   }
+                  type="number"
+                  value={salaryMin ?? ""}
                 />
               </div>
               <div>
+                <Label htmlFor="salaryMax">Maximum Salary</Label>
                 <Input
-                  type="number"
-                  placeholder="Max (e.g. 80000)"
                   className="mt-1 h-14"
-                  value={form.watch("salaryMax") ?? ""}
-                  onChange={(e) =>
+                  id="salaryMax"
+                  onChange={(event) =>
                     form.setValue(
                       "salaryMax",
-                      e.target.value ? Number(e.target.value) : undefined
+                      event.target.value ? Number(event.target.value) : undefined
                     )
                   }
+                  type="number"
+                  value={salaryMax ?? ""}
                 />
               </div>
               <div>
                 <Label htmlFor="salaryType">Salary Type</Label>
                 <Select
-                  value={form.watch("salaryType")}
-                  onValueChange={(value) => form.setValue("salaryType" as any, value)}
+                  onValueChange={(value) =>
+                    form.setValue("salaryType", value as FormData["salaryType"])
+                  }
+                  value={salaryType}
                 >
                   <SelectTrigger className="mt-1 h-14">
                     <SelectValue placeholder="Select type" />
@@ -202,12 +230,14 @@ export default function EditJobPage({ params }: { params: { id: string } }) {
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid gap-6 md:grid-cols-3">
               <div>
                 <Label htmlFor="jobType">Job Type *</Label>
                 <Select
-                  value={form.watch("jobType")}
-                  onValueChange={(value) => form.setValue("jobType" as any, value)}
+                  onValueChange={(value) =>
+                    form.setValue("jobType", value as FormData["jobType"])
+                  }
+                  value={jobType}
                 >
                   <SelectTrigger className="mt-1 h-14">
                     <SelectValue />
@@ -222,10 +252,12 @@ export default function EditJobPage({ params }: { params: { id: string } }) {
                 </Select>
               </div>
               <div>
-                <Label htmlFor="experience">Experience Level *</Label>
+                <Label htmlFor="experience">Experience *</Label>
                 <Select
-                  value={form.watch("experience")}
-                  onValueChange={(value) => form.setValue("experience" as any, value)}
+                  onValueChange={(value) =>
+                    form.setValue("experience", value as FormData["experience"])
+                  }
+                  value={experience}
                 >
                   <SelectTrigger className="mt-1 h-14">
                     <SelectValue />
@@ -237,55 +269,47 @@ export default function EditJobPage({ params }: { params: { id: string } }) {
                   </SelectContent>
                 </Select>
               </div>
+              <div>
+                <Label htmlFor="categoryId">Category *</Label>
+                <Select
+                  onValueChange={(value) => form.setValue("categoryId", value)}
+                  value={categoryId}
+                >
+                  <SelectTrigger className="mt-1 h-14">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <div>
-              <Label htmlFor="categoryId">Category *</Label>
-              <Select
-                value={form.watch("categoryId")}
-                onValueChange={(value) => form.setValue("categoryId", value)}
-              >
-                <SelectTrigger className="mt-1 h-14">
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {form.formState.errors.categoryId && (
-                <p className="text-red-500 text-sm mt-1">
-                  {form.formState.errors.categoryId.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <Label>Job Description *</Label>
+              <Label htmlFor="description">Job Description *</Label>
               <Textarea
-                {...form.register("description")}
+                className="mt-1 resize-y"
+                id="description"
                 rows={6}
-                className="mt-1 resize-vertical"
+                {...form.register("description")}
               />
             </div>
 
             <div>
-              <Label>Requirements *</Label>
+              <Label htmlFor="requirements">Requirements *</Label>
               <Textarea
-                {...form.register("requirements")}
+                className="mt-1 resize-y"
+                id="requirements"
                 rows={4}
-                className="mt-1 resize-vertical"
+                {...form.register("requirements")}
               />
             </div>
 
-            <Button
-              type="submit"
-              className="w-full h-16 bg-gradient-to-r from-blue-600 via-green-600 to-emerald-600 hover:from-blue-700 text-white font-bold text-xl shadow-2xl rounded-2xl"
-              disabled={isPending}
-            >
+            <Button className="h-16 w-full text-xl font-bold" disabled={isPending} type="submit">
               {isPending ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
@@ -299,5 +323,5 @@ export default function EditJobPage({ params }: { params: { id: string } }) {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

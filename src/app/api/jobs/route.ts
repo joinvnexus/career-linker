@@ -52,15 +52,19 @@ async function getOrCreateDefaultCategoryId() {
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
+    const slug = searchParams.get("slug") || ""
     const search = searchParams.get("search") || ""
     const location = searchParams.get("location") || ""
     const category = searchParams.get("category") || ""
     const jobType = searchParams.get("jobType") || ""
     const experience = searchParams.get("experience") || ""
+    const salaryMin = Number(searchParams.get("salaryMin") || "0")
+    const includeApplications = searchParams.get("includeApplications") === "1"
     const page = Math.max(Number(searchParams.get("page") || "1"), 1)
     const limit = Math.min(Math.max(Number(searchParams.get("limit") || "12"), 1), 50)
 
     const where = {
+      slug: slug || undefined,
       OR: search
         ? [
             { title: { contains: search, mode: "insensitive" as const } },
@@ -71,6 +75,7 @@ export async function GET(req: NextRequest) {
       categoryId: category || undefined,
       jobType: (jobType as JobType) || undefined,
       experience: experience || undefined,
+      salaryMin: salaryMin > 0 ? { gte: salaryMin } : undefined,
       published: true,
       status: JobStatus.ACTIVE,
     }
@@ -95,6 +100,20 @@ export async function GET(req: NextRequest) {
               name: true,
             },
           },
+          applications: includeApplications
+            ? {
+                take: 5,
+                orderBy: { createdAt: "desc" as const },
+                include: {
+                  seeker: {
+                    select: {
+                      id: true,
+                      name: true,
+                    },
+                  },
+                },
+              }
+            : false,
         },
         orderBy: { createdAt: "desc" },
         skip: (page - 1) * limit,
@@ -104,7 +123,7 @@ export async function GET(req: NextRequest) {
     ])
 
     return NextResponse.json({ jobs, total, page, pageSize: limit })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to fetch jobs" }, { status: 500 })
   }
 }

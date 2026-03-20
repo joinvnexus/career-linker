@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { stripe } from "@/lib/stripe"
+import { getStripe } from "@/lib/stripe"
 
 export async function POST(req: NextRequest) {
   try {
@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
     const priceCents = Number(process.env.STRIPE_JOB_POST_PRICE_CENTS || "5000")
     const currency = process.env.STRIPE_CURRENCY || "usd"
     const appUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
+    const stripe = getStripe()
 
     const checkout = await stripe.checkout.sessions.create({
       mode: "payment",

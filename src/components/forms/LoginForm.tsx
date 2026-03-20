@@ -23,7 +23,7 @@ export default function LoginForm() {
     },
   })
 
-  function onSubmit(data: LoginFormData) {
+  function onSubmit() {
     // handle login
   }
 
