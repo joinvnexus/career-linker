@@ -1,32 +1,38 @@
-# HireHub Phase 1 ✅ COMPLETE
+# HireHub MVP Completion TODO
 
-## ✅ Completed Steps
-- [✅] Dependencies: package.json + authjs/next-auth
-- [✅] Prisma Schema: Ready (User+Role+Profiles)
-- [✅] Auth Config: lib/auth.ts + API routes + middleware + types
-- [✅] Auth UI: login/register pages + Tailwind design system (#2563EB blue)
-- [✅] Components: Button/Input/Card + utils.ts
-- [✅] Register API + layouts + env.example
+## Current Status
+- ✅ Phase 1: Auth complete
+- 🔄 Phase 2: Partial (UI advanced, backend partial)
 
-## 🚀 Setup & Test Commands
-```bash
-npm install
-npm install react-hook-form @hookform/resolvers/zod @radix-ui/react-slot class-variance-authority lucide-react sonner
-npx prisma generate
-npx prisma db push
-npm run dev
-```
+## MVP Steps (Approved Plan)
 
-## 🎯 Test Phase 1
-1. Visit http://localhost:3000/register
-2. Create account (Job Seeker/Employer)
-3. Auto-redirect to /dashboard/[role]
-4. Test login http://localhost:3000/login
-5. Role protection working via middleware
+### 1. **DB Setup & Seeds** [✅ COMPLETE]
+- [ ] `npx prisma db push`
+- [ ] `npx prisma generate`
+- [ ] Create prisma/seed.ts (categories, test data)
+- [ ] `npx prisma db seed`
 
-## 📝 Copy .env.example → .env + set DATABASE_URL + AUTH_SECRET
-```bash
-openssl rand -base64 32  # Generate AUTH_SECRET
-```
+### 2. **Backend Completion** [✅ COMPLETE]
+- [ ] src/app/api/jobs/route.ts: Add PUT/DELETE/my-jobs
+- [✅] src/app/api/categories/route.ts: GET
+- [✅] src/app/api/applications/route.ts: POST/GETs
+- [✅] src/app/api/profiles/seeker/route.ts: GET/PUT
+- [✅] src/app/api/profiles/employer/route.ts: GET/PUT
+- [✅] src/app/api/jobs/my-jobs/route.ts: GET
+- [✅] src/app/api/jobs/[id]/route.ts: GET/PUT/DELETE
 
-**Phase 1 COMPLETE! Ready for Phase 2 (Job CRUD).**
+### 3. **Frontend Core** [✅ COMPLETE]
+- [✅] src/app/page.tsx: Homepage (hero/featured)
+- [✅] src/app/jobs/[slug]/page.tsx: Details + apply
+- [✅] src/app/dashboard/job-seeker/: Layout + overview/applied/profile
+
+### 4. **Utils & Polish** [PENDING]
+- [ ] src/lib/utils.ts: formatCurrency/formatDate
+- [ ] Test all flows
+
+### 5. **Deploy** [PENDING]
+- [ ] Vercel deploy
+- [ ] ✅ Complete!
+
+**Progress: 0/5 steps**
+

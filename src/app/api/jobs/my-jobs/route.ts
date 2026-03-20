@@ -1,31 +1,38 @@
-import { NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function GET() {
-  const session = await getServerSession(authOptions)
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || session.user.role !== "EMPLOYER") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  if (!session?.user?.id || session.user.role !== "EMPLOYER") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    const jobs = await prisma.job.findMany({
+      where: {
+        employerId: session.user.id as string,
+      },
+      include: {
+        employer: {
+          select: {
+            employerProfile: {
+              select: {
+                companyName: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return NextResponse.json({ jobs });
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to fetch jobs" }, { status: 500 });
   }
-
-  const jobs = await prisma.job.findMany({
-    where: {
-      employerId: session.user.id,
-    },
-    select: {
-      id: true,
-      title: true,
-      status: true,
-      createdAt: true,
-      location: true,
-      salaryMin: true,
-      paymentStatus: true,
-      published: true,
-    },
-    orderBy: { createdAt: "desc" },
-  })
-
-  return NextResponse.json({ jobs })
 }
+

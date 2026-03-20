@@ -1,9 +1,8 @@
-import { NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
-import { z } from "zod"
-import { JobStatus } from "@prisma/client"
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { z } from "zod";
 
 const updateJobSchema = z.object({
   title: z.string().min(3).max(100).optional(),
@@ -15,136 +14,112 @@ const updateJobSchema = z.object({
   location: z.string().min(2).optional(),
   jobType: z.enum(["FULL_TIME", "PART_TIME", "REMOTE", "CONTRACT", "INTERNSHIP"]).optional(),
   experience: z.enum(["ENTRY", "MID", "SENIOR"]).optional(),
-  categoryId: z.string().min(1).optional(),
-  status: z.nativeEnum(JobStatus).optional(),
+  categoryId: z.string().optional(),
   published: z.boolean().optional(),
-  applicationDeadline: z.string().datetime().optional(),
-})
-
-function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "")
-}
-
-async function getUniqueSlug(base: string, currentId: string) {
-  let slug = slugify(base)
-  if (!slug) slug = "job"
-  let suffix = 2
-  while (
-    await prisma.job.findFirst({
-      where: { slug, NOT: { id: currentId } },
-    })
-  ) {
-    slug = `${slugify(base)}-${suffix}`
-    suffix += 1
-  }
-  return slug
-}
-
-async function requireEmployerJob(id: string, userId: string, isAdmin: boolean) {
-  const job = await prisma.job.findUnique({ where: { id } })
-  if (!job) return null
-  if (isAdmin || job.employerId === userId) return job
-  return null
-}
+  applicationDeadline: z.string().optional(),
+});
 
 export async function GET(
-  _req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const session = await getServerSession(authOptions)
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  }
-
-  const job = await requireEmployerJob(
-    params.id,
-    session.user.id,
-    session.user.role === "ADMIN"
-  )
-  if (!job) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 })
-  }
-
-  return NextResponse.json({ job })
-}
-
-export async function PATCH(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    const existing = await requireEmployerJob(
-      params.id,
-      session.user.id,
-      session.user.role === "ADMIN"
-    )
-    if (!existing) {
-      return NextResponse.json({ error: "Not found" }, { status: 404 })
-    }
-
-    const body = await req.json()
-    const data = updateJobSchema.parse(body)
-
-    if (data.salaryMin && data.salaryMax && data.salaryMin > data.salaryMax) {
-      return NextResponse.json(
-        { error: "Minimum salary cannot exceed maximum salary" },
-        { status: 400 }
-      )
-    }
-
-    let slug: string | undefined
-    if (data.title && data.title !== existing.title) {
-      slug = await getUniqueSlug(data.title, existing.id)
-    }
-
-    const job = await prisma.job.update({
-      where: { id: existing.id },
-      data: {
-        ...data,
-        ...(slug ? { slug } : {}),
-        ...(data.applicationDeadline
-          ? { applicationDeadline: new Date(data.applicationDeadline) }
-          : {}),
+    const job = await prisma.job.findUnique({
+      where: { id: params.id },
+      include: {
+        employer: {
+          select: {
+            id: true,
+            name: true,
+            employerProfile: true,
+          },
+        },
+        category: true,
+        applications: {
+          include: {
+            seeker: {
+              select: {
+                id: true,
+                name: true,
+                jobSeekerProfile: true,
+              },
+            },
+          },
+          take: 5,
+        },
       },
-    })
+    });
 
-    return NextResponse.json({ job })
+    if (!job) {
+      return NextResponse.json({ error: "Job not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ job });
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to fetch job" }, { status: 500 });
+  }
+}
+
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || session.user.role !== "EMPLOYER") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const job = await prisma.job.findUnique({
+      where: { id: params.id },
+    });
+
+    if (!job || job.employerId !== session.user.id) {
+      return NextResponse.json({ error: "Not found or unauthorized" }, { status: 403 });
+    }
+
+    const body = await req.json();
+    const data = updateJobSchema.parse(body);
+
+    const updatedJob = await prisma.job.update({
+      where: { id: params.id },
+      data,
+    });
+
+    return NextResponse.json({ job: updatedJob });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.issues }, { status: 400 })
+      return NextResponse.json({ error: error.issues }, { status: 400 });
     }
-    console.error("[UPDATE_JOB]", error)
-    return NextResponse.json({ error: "Failed to update job" }, { status: 500 })
+    return NextResponse.json({ error: "Failed to update job" }, { status: 500 });
   }
 }
 
 export async function DELETE(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const session = await getServerSession(authOptions)
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  }
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || session.user.role !== "EMPLOYER") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  const job = await requireEmployerJob(
-    params.id,
-    session.user.id,
-    session.user.role === "ADMIN"
-  )
-  if (!job) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 })
-  }
+    const job = await prisma.job.findUnique({
+      where: { id: params.id },
+    });
 
-  await prisma.job.delete({ where: { id: job.id } })
-  return NextResponse.json({ success: true })
+    if (!job || job.employerId !== session.user.id) {
+      return NextResponse.json({ error: "Not found or unauthorized" }, { status: 404 });
+    }
+
+    await prisma.job.delete({
+      where: { id: params.id },
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to delete job" }, { status: 500 });
+  }
 }
+

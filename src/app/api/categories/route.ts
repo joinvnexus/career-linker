@@ -1,41 +1,14 @@
-import { NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
-
-function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "")
-}
-
-const defaultCategories = [
-  "General",
-  "Engineering",
-  "Design",
-  "Marketing",
-  "Sales",
-  "Customer Support",
-]
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma"; // Assuming lib/prisma.ts exists from auth setup
 
 export async function GET() {
-  let categories = await prisma.jobCategory.findMany({
-    orderBy: { name: "asc" },
-  })
-
-  if (categories.length === 0) {
-    await prisma.jobCategory.createMany({
-      data: defaultCategories.map((name) => ({
-        name,
-        slug: slugify(name),
-      })),
-      skipDuplicates: true,
-    })
-
-    categories = await prisma.jobCategory.findMany({
+  try {
+    const categories = await prisma.jobCategory.findMany({
       orderBy: { name: "asc" },
-    })
+    });
+    return NextResponse.json({ categories });
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to fetch categories" }, { status: 500 });
   }
-
-  return NextResponse.json({ categories })
 }
+

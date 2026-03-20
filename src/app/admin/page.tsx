@@ -1,5 +1,9 @@
-import { redirect } from "next/navigation"
-
-export default function AdminPage() {
-  redirect("/admin/jobs")
+export default function AdminDashboard() {
+  return (
+    <div>
+      <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+      <p>Manage users, jobs, companies.</p>
+    </div>
+  )
 }
+
