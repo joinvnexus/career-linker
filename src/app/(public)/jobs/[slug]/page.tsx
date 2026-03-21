@@ -1,21 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import {
-  ArrowLeft,
-  Briefcase,
-  Building2,
-  Clock,
-  DollarSign,
-  FileText,
-  MapPin,
-  User,
-} from "lucide-react";
+import { Briefcase, FileText, Building2, Lightbulb } from "lucide-react";
 import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -23,6 +12,11 @@ import { Label } from "@/components/ui/label";
 import { Modal } from "@/components/ui/modal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { JobDetailHeader } from "@/components/jobs/job-detail-header";
+import { JobSummaryCard } from "@/components/jobs/job-summary-card";
+import { SimilarJobs } from "@/components/jobs/similar-jobs";
+import { ApplicationTips } from "@/components/jobs/application-tips";
 
 type JobApplication = {
   id: string;
@@ -49,6 +43,7 @@ type JobDetails = {
   experience: string;
   employerId: string;
   applicationDeadline?: string | null;
+  createdAt: string;
   employer?: {
     id: string;
     name?: string | null;
@@ -57,6 +52,7 @@ type JobDetails = {
       industry?: string | null;
       companyWebsite?: string | null;
       location?: string | null;
+      companySize?: string | null;
     } | null;
   };
   applications?: JobApplication[];
@@ -72,6 +68,7 @@ export default function JobDetailsPage() {
   const [showApplyModal, setShowApplyModal] = useState(false);
   const [coverLetter, setCoverLetter] = useState("");
   const [resumeUrl, setResumeUrl] = useState("");
+  const [showMobileBar, setShowMobileBar] = useState(false);
 
   useEffect(() => {
     const fetchJob = async (): Promise<void> => {
@@ -93,6 +90,17 @@ export default function JobDetailsPage() {
       void fetchJob();
     }
   }, [params.slug]);
+
+  // Show/hide mobile sticky bar on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrolled = window.scrollY > 400;
+      setShowMobileBar(scrolled);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleApply = async (): Promise<void> => {
     if (!job || !session?.user?.id) {
@@ -132,15 +140,15 @@ export default function JobDetailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
-        <div className="mx-auto max-w-6xl px-4">
-          <Skeleton className="mb-8 h-12 w-48" />
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white pb-24">
+        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+          <Skeleton className="mb-8 h-48 w-full rounded-2xl" />
           <div className="grid gap-8 lg:grid-cols-3">
             <div className="space-y-6 lg:col-span-2">
-              <Skeleton className="h-96" />
-              <Skeleton className="h-80" />
+              <Skeleton className="h-96 w-full rounded-2xl" />
+              <Skeleton className="h-64 w-full rounded-2xl" />
             </div>
-            <Skeleton className="h-96" />
+            <Skeleton className="h-96 w-full rounded-2xl" />
           </div>
         </div>
       </div>
@@ -149,13 +157,17 @@ export default function JobDetailsPage() {
 
   if (!job) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 py-12">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-slate-50 to-white py-12">
         <div className="text-center">
-          <Briefcase className="mx-auto mb-4 h-16 w-16 text-gray-400" />
-          <h1 className="mb-2 text-3xl font-bold text-gray-900">Job Not Found</h1>
-          <Button className="mt-4" onClick={() => router.push("/jobs")}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to jobs
+          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-slate-100">
+            <Briefcase className="h-10 w-10 text-slate-400" />
+          </div>
+          <h1 className="mb-2 text-3xl font-bold text-slate-900">Job Not Found</h1>
+          <p className="mb-6 text-slate-500">
+            The job you&apos;re looking for doesn&apos;t exist or has been removed.
+          </p>
+          <Button onClick={() => router.push("/jobs")}>
+            Browse All Jobs
           </Button>
         </div>
       </div>
@@ -170,184 +182,216 @@ export default function JobDetailsPage() {
   );
   const isOwner =
     session?.user?.role === "EMPLOYER" && session.user.id === job.employerId;
+  const isJobSeeker = session?.user?.role === "JOB_SEEKER";
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow-sm">
-        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-          <Button className="mb-6" onClick={() => router.push("/jobs")} variant="ghost">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to results
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white pb-24">
+      {/* Main Content */}
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+        {/* Header */}
+        <JobDetailHeader
+          job={job}
+          isApplied={isApplied}
+          isOwner={isOwner}
+          userRole={session?.user?.role}
+          onApplyClick={() => setShowApplyModal(true)}
+        />
+
+        {/* Main Content Area */}
+        <div className="mt-8 grid gap-8 lg:grid-cols-3">
+          {/* Left Column - Tabbed Content */}
+          <div className="lg:col-span-2">
+            <Tabs defaultValue="overview" className="w-full">
+              {/* Tab Navigation */}
+              <TabsList className="mb-6 w-full justify-start overflow-x-auto sm:grid sm:w-auto sm:grid-cols-3">
+                <TabsTrigger value="overview" className="gap-2">
+                  <FileText className="h-4 w-4" />
+                  Overview
+                </TabsTrigger>
+                <TabsTrigger value="company" className="gap-2">
+                  <Building2 className="h-4 w-4" />
+                  Company
+                </TabsTrigger>
+                <TabsTrigger value="tips" className="gap-2">
+                  <Lightbulb className="h-4 w-4" />
+                  Tips
+                </TabsTrigger>
+              </TabsList>
+
+              {/* Overview Tab */}
+              <TabsContent value="overview">
+                <Card className="border-0 shadow-xl">
+                  <CardHeader>
+                    <CardTitle className="text-2xl">Job Details</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-8 pt-0">
+                    {/* Responsibilities */}
+                    {(job.responsibilities || job.description) && (
+                      <div>
+                        <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900">
+                          <FileText className="h-5 w-5 text-blue-500" />
+                          {job.responsibilities ? "Responsibilities" : "About this Role"}
+                        </h3>
+                        <div className="space-y-3 text-slate-700">
+                          {(job.responsibilities || job.description)
+                            .split("\n")
+                            .filter(Boolean)
+                            .map((line, index) => (
+                              <div key={index} className="flex items-start gap-3">
+                                <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-emerald-500" />
+                                <span>{line.trim()}</span>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Requirements */}
+                    {job.requirements && (
+                      <div>
+                        <h3 className="mb-4 text-xl font-bold text-slate-900">
+                          Requirements
+                        </h3>
+                        <div className="whitespace-pre-wrap rounded-2xl bg-blue-50 p-6 text-slate-700">
+                          {job.requirements}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Full Description */}
+                    {job.description && !job.responsibilities && (
+                      <div>
+                        <h3 className="mb-4 text-xl font-bold text-slate-900">
+                          Job Description
+                        </h3>
+                        <div className="whitespace-pre-wrap text-slate-700">
+                          {job.description}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Company Tab */}
+              <TabsContent value="company">
+                <Card className="border-0 shadow-xl">
+                  <CardHeader>
+                    <CardTitle className="text-2xl">About {companyName}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6 pt-0">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600">
+                        <Building2 className="h-8 w-8 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-slate-900">{companyName}</h3>
+                        <p className="text-slate-500">
+                          {job.employer?.employerProfile?.industry || "Technology Company"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl bg-slate-50 p-6">
+                      <p className="text-slate-700">
+                        {companyName} is a great place to work. We value innovation,
+                        collaboration, and personal growth. Join our team to make an
+                        impact and advance your career.
+                      </p>
+                    </div>
+
+                    {job.employer?.employerProfile?.companyWebsite && (
+                      <a
+                        href={job.employer.employerProfile.companyWebsite}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700"
+                      >
+                        Visit company website →
+                      </a>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Tips Tab */}
+              <TabsContent value="tips">
+                {isJobSeeker ? (
+                  <ApplicationTips
+                    jobTitle={job.title}
+                    requirements={job.requirements}
+                    jobType={job.jobType}
+                    experience={job.experience}
+                  />
+                ) : (
+                  <Card className="border-0 shadow-xl">
+                    <CardContent className="py-12 text-center">
+                      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
+                        <Lightbulb className="h-8 w-8 text-slate-400" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-slate-900">
+                        Tips for Job Seekers
+                      </h3>
+                      <p className="mt-2 text-slate-500">
+                        Sign in as a job seeker to access application tips and advice.
+                      </p>
+                      <Button
+                        className="mt-4"
+                        onClick={() => router.push("/login")}
+                      >
+                        Sign In
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )}
+              </TabsContent>
+            </Tabs>
+
+            {/* Similar Jobs */}
+            <div className="mt-8">
+              <SimilarJobs
+                currentJobId={job.id}
+                jobType={job.jobType}
+                location={job.location}
+              />
+            </div>
+          </div>
+
+          {/* Right Column - Sidebar */}
+          <div className="space-y-6">
+            <JobSummaryCard
+              job={job}
+              isApplied={isApplied}
+              isOwner={isOwner}
+              userRole={session?.user?.role}
+              onApplyClick={() => setShowApplyModal(true)}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Sticky Apply Bar */}
+      <div
+        className={`fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white/95 backdrop-blur-sm transition-transform duration-300 lg:hidden ${
+          showMobileBar ? "translate-y-0" : "translate-y-full"
+        }`}
+      >
+        <div className="flex items-center justify-between gap-4 p-4">
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold text-slate-900">{job.title}</p>
+            <p className="truncate text-xs text-slate-500">{companyName}</p>
+          </div>
+          <Button
+            className="flex-shrink-0 bg-gradient-to-r from-blue-500 to-emerald-500 font-bold"
+            disabled={isApplied || !isJobSeeker}
+            onClick={() => setShowApplyModal(true)}
+          >
+            {isApplied ? "Applied" : "Apply"}
           </Button>
         </div>
       </div>
 
-      <div className="relative z-10 mx-auto -mt-8 max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-12 lg:grid-cols-3">
-          <div className="space-y-8 lg:col-span-2">
-            <Card className="overflow-hidden border-0 bg-gradient-to-r from-blue-50 to-emerald-50 shadow-xl">
-              <CardContent className="p-8 pt-12">
-                <div className="mb-6 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-r from-blue-500 to-emerald-500">
-                      <Building2 className="h-10 w-10 text-white" />
-                    </div>
-                    <div>
-                      <h1 className="text-3xl font-bold text-gray-900">{companyName}</h1>
-                      <p className="mt-1 bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-2xl font-bold text-transparent">
-                        {job.title}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2">
-                    {isOwner ? (
-                      <Link href={`/dashboard/employer/jobs/${job.id}/edit`}>
-                        <Button variant="outline">Edit Job</Button>
-                      </Link>
-                    ) : (
-                      <Button
-                        className="px-8 text-lg font-bold"
-                        disabled={isApplied || status !== "authenticated"}
-                        onClick={() => setShowApplyModal(true)}
-                      >
-                        {isApplied ? "Applied" : "Apply Now"}
-                      </Button>
-                    )}
-                  </div>
-                </div>
-
-                <div className="mb-8 flex flex-wrap gap-4 text-sm">
-                  <div className="flex items-center gap-2 rounded-xl bg-white/60 px-4 py-2">
-                    <MapPin className="h-4 w-4" />
-                    {job.location}
-                  </div>
-                  <div className="flex items-center gap-2 rounded-xl bg-white/60 px-4 py-2">
-                    <DollarSign className="h-4 w-4 text-green-600" />
-                    {job.salaryMin ? `${job.salaryMin.toLocaleString()}` : "Competitive"}
-                    {job.salaryMax ? ` - ${job.salaryMax.toLocaleString()}` : ""}
-                  </div>
-                  <Badge variant="secondary">{job.jobType.replaceAll("_", " ")}</Badge>
-                  <Badge variant="outline">{job.experience} Level</Badge>
-                  {job.applicationDeadline ? (
-                    <div className="flex items-center gap-2 rounded-xl bg-white/60 px-4 py-2">
-                      <Clock className="h-4 w-4" />
-                      Closes {new Date(job.applicationDeadline).toLocaleDateString()}
-                    </div>
-                  ) : null}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-xl">
-              <CardHeader>
-                <CardTitle className="text-2xl">About the Role</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-8 pt-0">
-                <div>
-                  <h3 className="mb-4 flex items-center gap-2 text-xl font-bold">
-                    <FileText className="h-5 w-5" />
-                    Responsibilities
-                  </h3>
-                  <div className="space-y-3 text-gray-700">
-                    {(job.responsibilities || "")
-                      .split("\n")
-                      .filter(Boolean)
-                      .map((line) => (
-                        <div key={line} className="flex items-start gap-3">
-                          <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-emerald-500" />
-                          <span>{line.trim()}</span>
-                        </div>
-                      ))}
-                    {!job.responsibilities ? <p>No responsibilities listed.</p> : null}
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="mb-4 text-xl font-bold">Requirements</h3>
-                  <div className="whitespace-pre-wrap rounded-2xl bg-blue-50 p-6">
-                    {job.requirements}
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="mb-4 text-xl font-bold">Job Description</h3>
-                  <div className="whitespace-pre-wrap text-gray-700">{job.description}</div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="space-y-8">
-            <Card className="sticky top-24 border-0 shadow-xl">
-              <CardHeader>
-                <CardTitle>Company</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="mb-6 text-center">
-                  <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-r from-emerald-500 to-green-600">
-                    <Building2 className="h-12 w-12 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold">{companyName}</h3>
-                  <p className="text-sm text-gray-500">
-                    {job.employer?.employerProfile?.industry || "Hiring company"}
-                  </p>
-                </div>
-                {job.employer?.employerProfile?.location ? (
-                  <p className="text-sm text-gray-600">
-                    Location: {job.employer.employerProfile.location}
-                  </p>
-                ) : null}
-                {job.employer?.employerProfile?.companyWebsite ? (
-                  <Link
-                    className="text-sm font-medium text-blue-600 hover:text-blue-700"
-                    href={job.employer.employerProfile.companyWebsite}
-                    target="_blank"
-                  >
-                    Visit website
-                  </Link>
-                ) : null}
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-xl">
-              <CardHeader>
-                <CardTitle>Recent Applications</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {job.applications?.length ? (
-                  job.applications.slice(0, 5).map((application) => (
-                    <div
-                      key={application.id}
-                      className="flex items-center gap-3 rounded-xl bg-gray-50 p-3"
-                    >
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
-                        <User className="h-5 w-5 text-blue-600" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium">
-                          {application.seeker.name || "Candidate"}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {application.status.replaceAll("_", " ")}
-                        </p>
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        {new Date(application.createdAt).toLocaleDateString()}
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="py-8 text-center text-sm text-gray-500">
-                    No applications yet
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-
+      {/* Application Modal */}
       <Modal
         description="Submit your application details for this role."
         footer={
@@ -373,13 +417,16 @@ export default function JobDetailsPage() {
               placeholder="https://your-resume-link"
               value={resumeUrl}
             />
+            <p className="mt-1 text-xs text-slate-500">
+              Paste a link to your resume (Google Drive, Dropbox, etc.)
+            </p>
           </div>
           <div>
             <Label htmlFor="coverLetter">Cover Letter</Label>
             <Textarea
               id="coverLetter"
               onChange={(event) => setCoverLetter(event.target.value)}
-              placeholder="Tell the employer why you are a good fit..."
+              placeholder="Tell the employer why you are a good fit for this role..."
               rows={5}
               value={coverLetter}
             />
