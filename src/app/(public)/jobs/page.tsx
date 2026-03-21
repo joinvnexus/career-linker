@@ -2,23 +2,15 @@
 
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
-import { Briefcase, Filter, MapPin, Search } from "lucide-react";
+import { Briefcase } from "lucide-react";
 import { JobCard } from "@/components/job-card";
+import { JobsFiltersPanel } from "@/components/jobs/JobsFiltersPanel";
+import { JobsResultsHeader } from "@/components/jobs/JobsResultsHeader";
+import { JobsSearchHeader } from "@/components/jobs/JobsSearchHeader";
+import type { JobsCategory, JobsFilterState } from "@/components/jobs/types";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Modal } from "@/components/ui/modal";
 import { Skeleton } from "@/components/ui/skeleton";
-
-type Category = {
-  id: string;
-  name: string;
-};
 
 type JobListItem = {
   id: string;
@@ -59,12 +51,14 @@ type JobCardItem = JobListItem & {
 export default function JobsPage() {
   const { data: session } = useSession();
   const [jobs, setJobs] = useState<JobCardItem[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<JobsCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
+  const [sort, setSort] = useState("newest");
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const pageSize = 12;
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<JobsFilterState>({
     search: "",
     location: "",
     category: "",
@@ -75,12 +69,38 @@ export default function JobsPage() {
   const deferredSearch = useDeferredValue(filters.search);
   const deferredLocation = useDeferredValue(filters.location);
   const totalPages = useMemo(() => Math.max(Math.ceil(total / pageSize), 1), [total]);
+  const sortedJobs = useMemo(() => {
+    const nextJobs = [...jobs];
+
+    switch (sort) {
+      case "deadline":
+        nextJobs.sort((a, b) => {
+          const aValue = a.applicationDeadline ? new Date(a.applicationDeadline).getTime() : Number.MAX_SAFE_INTEGER;
+          const bValue = b.applicationDeadline ? new Date(b.applicationDeadline).getTime() : Number.MAX_SAFE_INTEGER;
+          return aValue - bValue;
+        });
+        break;
+      case "salary":
+        nextJobs.sort(
+          (a, b) => (b.salaryMax ?? b.salaryMin ?? 0) - (a.salaryMax ?? a.salaryMin ?? 0)
+        );
+        break;
+      case "newest":
+      default:
+        nextJobs.sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        break;
+    }
+
+    return nextJobs;
+  }, [jobs, sort]);
 
   useEffect(() => {
     const loadCategories = async (): Promise<void> => {
       try {
         const response = await fetch("/api/categories");
-        const data = (await response.json()) as { categories?: Category[] };
+        const data = (await response.json()) as { categories?: JobsCategory[] };
         setCategories(data.categories ?? []);
       } catch {
         console.error("Failed to load categories");
@@ -140,6 +160,18 @@ export default function JobsPage() {
     page,
   ]);
 
+  const setFilter = (key: keyof JobsFilterState, value: string): void => {
+    setFilters((current) => ({
+      ...current,
+      [key]: value,
+    }));
+    setPage(1);
+  };
+
+  const removeFilter = (key: keyof JobsFilterState): void => {
+    setFilter(key, "");
+  };
+
   const resetFilters = (): void => {
     setFilters({
       search: "",
@@ -153,214 +185,71 @@ export default function JobsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white py-12">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 text-center">
-          <h1 className="mb-6 text-4xl font-bold text-transparent md:text-5xl">
-            <span className="bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text">
-              Find Your Dream Job
-            </span>
-          </h1>
-          <p className="mx-auto mb-8 max-w-2xl text-xl text-gray-600">
-            Discover thousands of job opportunities from top companies.
-          </p>
-
-          <div className="mx-auto max-w-4xl rounded-3xl border border-white/50 bg-white/70 p-1 shadow-2xl backdrop-blur-md">
-            <div className="flex flex-col gap-2 p-1 lg:flex-row">
-              <div className="flex flex-1 gap-2">
-                <div className="relative flex-1">
-                  <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
-                  <Input
-                    className="h-14 rounded-2xl border-2 border-gray-200 pl-12 focus:border-blue-500 focus-visible:ring-0"
-                    onChange={(event) => {
-                      setFilters((current) => ({
-                        ...current,
-                        search: event.target.value,
-                      }));
-                      setPage(1);
-                    }}
-                    placeholder="Job title, company, or keywords..."
-                    value={filters.search}
-                  />
-                </div>
-                <div className="relative hidden w-64 md:block">
-                  <MapPin className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
-                  <Input
-                    className="h-14 rounded-2xl border-2 border-gray-200 pl-12 focus:border-blue-500"
-                    onChange={(event) => {
-                      setFilters((current) => ({
-                        ...current,
-                        location: event.target.value,
-                      }));
-                      setPage(1);
-                    }}
-                    placeholder="Location"
-                    value={filters.location}
-                  />
-                </div>
-              </div>
-              <Button className="h-14 px-8 text-lg font-bold" onClick={() => setPage(1)}>
-                Find Jobs
-              </Button>
-            </div>
-          </div>
-        </div>
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white py-8 sm:py-10 lg:py-12">
+      <div className="mx-auto max-w-7xl space-y-8 px-4 sm:space-y-10 sm:px-6 lg:px-8">
+        <JobsSearchHeader
+          filters={filters}
+          loading={loading}
+          onQuickApply={setFilter}
+          onSearchChange={setFilter}
+          onSearchSubmit={() => setPage(1)}
+          total={total}
+        />
 
         <div className="flex flex-col gap-8 lg:flex-row">
           <div className="hidden lg:block lg:w-80 lg:flex-shrink-0">
-            <div className="sticky top-24 rounded-3xl border border-gray-100 bg-white p-8 shadow-xl">
-              <div className="mb-8 flex items-center gap-2">
-                <Filter className="h-6 w-6 text-blue-600" />
-                <h3 className="text-xl font-bold text-gray-900">Filters</h3>
-              </div>
-
-              <div className="space-y-6">
-                <div>
-                  <label className="mb-3 block text-sm font-semibold text-gray-700">
-                    Job Type
-                  </label>
-                  <Select
-                    onValueChange={(value) => {
-                      setFilters((current) => ({
-                        ...current,
-                        jobType: value === "ALL" ? "" : value,
-                      }));
-                      setPage(1);
-                    }}
-                    value={filters.jobType || "ALL"}
-                  >
-                    <SelectTrigger className="h-12 rounded-xl">
-                      <SelectValue placeholder="All types" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ALL">All types</SelectItem>
-                      <SelectItem value="FULL_TIME">Full-time</SelectItem>
-                      <SelectItem value="PART_TIME">Part-time</SelectItem>
-                      <SelectItem value="REMOTE">Remote</SelectItem>
-                      <SelectItem value="CONTRACT">Contract</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label className="mb-3 block text-sm font-semibold text-gray-700">
-                    Experience
-                  </label>
-                  <Select
-                    onValueChange={(value) => {
-                      setFilters((current) => ({
-                        ...current,
-                        experience: value === "ALL" ? "" : value,
-                      }));
-                      setPage(1);
-                    }}
-                    value={filters.experience || "ALL"}
-                  >
-                    <SelectTrigger className="h-12 rounded-xl">
-                      <SelectValue placeholder="All levels" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ALL">All levels</SelectItem>
-                      <SelectItem value="ENTRY">Entry Level</SelectItem>
-                      <SelectItem value="MID">Mid Level</SelectItem>
-                      <SelectItem value="SENIOR">Senior Level</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label className="mb-3 block text-sm font-semibold text-gray-700">
-                    Category
-                  </label>
-                  <Select
-                    onValueChange={(value) => {
-                      setFilters((current) => ({
-                        ...current,
-                        category: value === "ALL" ? "" : value,
-                      }));
-                      setPage(1);
-                    }}
-                    value={filters.category || "ALL"}
-                  >
-                    <SelectTrigger className="h-12 rounded-xl">
-                      <SelectValue placeholder="All categories" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ALL">All categories</SelectItem>
-                      {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label className="mb-3 block text-sm font-semibold text-gray-700">
-                    Minimum Salary
-                  </label>
-                  <Select
-                    onValueChange={(value) => {
-                      setFilters((current) => ({
-                        ...current,
-                        salaryMin: value === "ALL" ? "" : value,
-                      }));
-                      setPage(1);
-                    }}
-                    value={filters.salaryMin || "ALL"}
-                  >
-                    <SelectTrigger className="h-12 rounded-xl">
-                      <SelectValue placeholder="Any salary" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ALL">Any salary</SelectItem>
-                      <SelectItem value="30000">30,000+</SelectItem>
-                      <SelectItem value="50000">50,000+</SelectItem>
-                      <SelectItem value="80000">80,000+</SelectItem>
-                      <SelectItem value="120000">120,000+</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <Button className="w-full" onClick={resetFilters} variant="outline">
-                  Clear Filters
-                </Button>
-              </div>
+            <div className="sticky top-24">
+              <JobsFiltersPanel
+                categories={categories}
+                filters={filters}
+                onFilterChange={setFilter}
+                onReset={resetFilters}
+              />
             </div>
           </div>
 
           <div className="flex-1">
-            <div className="mb-8 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
-                <span className="text-2xl font-bold text-gray-900">
-                  {loading ? "Loading..." : `${total} jobs found`}
-                </span>
-              </div>
-            </div>
+            <JobsResultsHeader
+              categories={categories}
+              filters={filters}
+              loading={loading}
+              onClearAll={resetFilters}
+              onOpenFilters={() => setMobileFiltersOpen(true)}
+              onRemoveFilter={removeFilter}
+              onSortChange={setSort}
+              sort={sort}
+              total={total}
+            />
 
             {loading ? (
-              <div className="space-y-4">
-                {Array.from({ length: 4 }).map((_, index) => (
-                  <Skeleton key={index} className="h-32 w-full" />
+              <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <Skeleton key={index} className="h-[18rem] rounded-[1.75rem]" />
                 ))}
               </div>
             ) : jobs.length === 0 ? (
-              <div className="py-24 text-center">
-                <Briefcase className="mx-auto mb-4 h-16 w-16 text-gray-400" />
-                <h3 className="mb-2 text-2xl font-bold text-gray-900">
+              <div className="mt-6 rounded-[2rem] border-2 border-dashed border-slate-200 bg-gradient-to-br from-white to-slate-50 py-20 text-center shadow-sm transition-all duration-300 hover:shadow-md">
+                <div className="relative inline-flex">
+                  <div className="absolute inset-0 bg-amber-100 rounded-full blur-xl opacity-50 animate-pulse" />
+                  <Briefcase className="relative mx-auto mb-4 h-16 w-16 text-amber-400" />
+                </div>
+                <h3 className="mb-2 text-2xl font-bold text-slate-900">
                   No jobs found
                 </h3>
-                <p className="mb-6 text-gray-500">
-                  Try adjusting your filters or search terms.
+                <p className="mb-6 text-slate-500 max-w-md mx-auto">
+                  We couldn&apos;t find any jobs matching your criteria. Try adjusting your filters or search terms.
                 </p>
-                <Button onClick={resetFilters}>Browse all jobs</Button>
+                <Button 
+                  onClick={resetFilters}
+                  className="bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-600 hover:to-emerald-600 transition-all duration-200 hover:scale-105"
+                >
+                  🔍 Browse all jobs
+                </Button>
               </div>
             ) : (
-              <div className="space-y-8">
+              <div className="mt-6 space-y-8">
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-                  {jobs.map((job) => (
+                  {sortedJobs.map((job) => (
                     <JobCard
                       key={job.id}
                       employerId={job.employerId}
@@ -371,32 +260,50 @@ export default function JobsPage() {
                   ))}
                 </div>
 
-                <div className="flex flex-col items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row">
-                  <p className="text-sm text-slate-500">
-                    Page {page} of {totalPages}
+                {totalPages > 1 && (
+                <div className="flex flex-col items-center justify-between gap-4 rounded-2xl border border-border bg-card p-4 shadow-sm transition-all duration-300 hover:shadow-md sm:flex-row">
+                  <p className="text-sm text-muted-foreground">
+                    📄 Page <span className="font-semibold text-card-foreground">{page}</span> of <span className="font-semibold text-card-foreground">{totalPages}</span>
                   </p>
                   <div className="flex items-center gap-3">
                     <Button
                       disabled={page <= 1}
                       onClick={() => setPage((current) => Math.max(current - 1, 1))}
                       variant="outline"
+                      className="transition-all duration-200 hover:scale-105"
                     >
-                      Previous
+                      ← Previous
                     </Button>
                     <Button
                       disabled={page >= totalPages}
                       onClick={() => setPage((current) => Math.min(current + 1, totalPages))}
                       variant="outline"
+                      className="transition-all duration-200 hover:scale-105"
                     >
-                      Next
+                      Next →
                     </Button>
                   </div>
                 </div>
+                )}
               </div>
             )}
           </div>
         </div>
       </div>
+
+      <Modal
+        description="Adjust job filters and apply them to the current listing."
+        onClose={() => setMobileFiltersOpen(false)}
+        open={mobileFiltersOpen}
+        title="Job Filters"
+      >
+        <JobsFiltersPanel
+          categories={categories}
+          filters={filters}
+          onFilterChange={setFilter}
+          onReset={resetFilters}
+        />
+      </Modal>
     </div>
   );
 }
