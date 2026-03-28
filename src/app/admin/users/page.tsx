@@ -1,12 +1,13 @@
 "use client";
 
 import { Role } from "@prisma/client";
-import { useEffect, useState } from "react";
-import { ArrowRightLeft, ShieldCheck, UserCog, Users } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowRightLeft, Search, ShieldCheck, UserCog, Users } from "lucide-react";
 import { toast } from "sonner";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -29,6 +30,9 @@ const roleOptions = [Role.JOB_SEEKER, Role.EMPLOYER, Role.ADMIN];
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState("ALL");
+  const [sortOrder, setSortOrder] = useState("NEWEST");
 
   useEffect(() => {
     const loadUsers = async (): Promise<void> => {
@@ -69,6 +73,33 @@ export default function AdminUsersPage() {
     }
   };
 
+  const employerCount = users.filter((user) => user.role === Role.EMPLOYER).length;
+  const adminCount = users.filter((user) => user.role === Role.ADMIN).length;
+  const recentCount = users.filter((user) => {
+    const joinedAt = new Date(user.createdAt).getTime();
+    return Date.now() - joinedAt <= 1000 * 60 * 60 * 24 * 30;
+  }).length;
+  const filteredUsers = useMemo(() => {
+    return [...users]
+      .filter((user) => {
+        const query = searchQuery.toLowerCase();
+        const matchesSearch =
+          (user.name || "").toLowerCase().includes(query) ||
+          user.email.toLowerCase().includes(query);
+        const matchesRole = roleFilter === "ALL" || user.role === roleFilter;
+        return matchesSearch && matchesRole;
+      })
+      .sort((a, b) => {
+        if (sortOrder === "OLDEST") {
+          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        }
+        if (sortOrder === "NAME") {
+          return (a.name || a.email).localeCompare(b.name || b.email);
+        }
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
+  }, [roleFilter, searchQuery, sortOrder, users]);
+
   if (loading) {
     return (
       <div className="space-y-4">
@@ -79,13 +110,6 @@ export default function AdminUsersPage() {
       </div>
     );
   }
-
-  const employerCount = users.filter((user) => user.role === Role.EMPLOYER).length;
-  const adminCount = users.filter((user) => user.role === Role.ADMIN).length;
-  const recentCount = users.filter((user) => {
-    const joinedAt = new Date(user.createdAt).getTime();
-    return Date.now() - joinedAt <= 1000 * 60 * 60 * 24 * 30;
-  }).length;
 
   return (
     <div className="space-y-8">
@@ -158,7 +182,47 @@ export default function AdminUsersPage() {
           </Badge>
         </CardHeader>
         <CardContent className="space-y-4">
-          {users.map((user) => (
+          <div className="flex flex-col gap-3 lg:flex-row">
+            <div className="relative flex-1">
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Input
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="Search name or email..."
+                className="h-11 rounded-full border-slate-300 bg-white pl-10"
+              />
+            </div>
+            <Select value={roleFilter} onValueChange={setRoleFilter}>
+              <SelectTrigger className="h-11 w-full rounded-full border-slate-300 bg-white lg:w-48">
+                <SelectValue placeholder="Filter role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All roles</SelectItem>
+                {roleOptions.map((role) => (
+                  <SelectItem key={role} value={role}>
+                    {role.replaceAll("_", " ")}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={sortOrder} onValueChange={setSortOrder}>
+              <SelectTrigger className="h-11 w-full rounded-full border-slate-300 bg-white lg:w-48">
+                <SelectValue placeholder="Sort users" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="NEWEST">Newest first</SelectItem>
+                <SelectItem value="OLDEST">Oldest first</SelectItem>
+                <SelectItem value="NAME">Name A-Z</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {filteredUsers.length === 0 ? (
+            <div className="rounded-3xl border border-dashed border-slate-300 p-6 text-sm text-slate-500">
+              No users matched the current filters.
+            </div>
+          ) : (
+            filteredUsers.map((user) => (
             <div
               key={user.id}
               className="flex flex-col gap-4 rounded-3xl border border-slate-200/80 bg-slate-50/80 p-4 lg:flex-row lg:items-center lg:justify-between"
@@ -191,7 +255,8 @@ export default function AdminUsersPage() {
                 </Select>
               </div>
             </div>
-          ))}
+            ))
+          )}
         </CardContent>
       </Card>
     </div>

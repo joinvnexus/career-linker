@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { BriefcaseBusiness, Clock3, ShieldCheck } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { BriefcaseBusiness, Clock3, Search, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -36,6 +37,8 @@ export default function AdminJobsPage() {
   const [jobs, setJobs] = useState<JobItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [visibilityFilter, setVisibilityFilter] = useState("ALL");
 
   useEffect(() => {
     const load = async (): Promise<void> => {
@@ -80,6 +83,27 @@ export default function AdminJobsPage() {
     }
   };
 
+  const activeCount = jobs.filter((job) => job.status === "ACTIVE").length;
+  const pendingCount = jobs.filter((job) => job.status === "PENDING").length;
+  const rejectedCount = jobs.filter((job) => job.status === "REJECTED").length;
+  const filteredJobs = useMemo(() => {
+    return jobs.filter((job) => {
+      const employerName =
+        job.employer?.employerProfile?.companyName || job.employer?.name || "Employer";
+      const query = searchQuery.toLowerCase();
+      const matchesSearch =
+        job.title.toLowerCase().includes(query) ||
+        employerName.toLowerCase().includes(query) ||
+        (job.employer?.email || "").toLowerCase().includes(query) ||
+        (job.category?.name || "").toLowerCase().includes(query);
+      const matchesVisibility =
+        visibilityFilter === "ALL" ||
+        (visibilityFilter === "PUBLISHED" && job.published) ||
+        (visibilityFilter === "HIDDEN" && !job.published);
+      return matchesSearch && matchesVisibility;
+    });
+  }, [jobs, searchQuery, visibilityFilter]);
+
   if (loading) {
     return (
       <div className="space-y-4">
@@ -90,10 +114,6 @@ export default function AdminJobsPage() {
       </div>
     );
   }
-
-  const activeCount = jobs.filter((job) => job.status === "ACTIVE").length;
-  const pendingCount = jobs.filter((job) => job.status === "PENDING").length;
-  const rejectedCount = jobs.filter((job) => job.status === "REJECTED").length;
 
   return (
     <div className="space-y-8">
@@ -132,7 +152,7 @@ export default function AdminJobsPage() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <StatsCard
           title="Jobs in View"
-          value={jobs.length}
+          value={filteredJobs.length}
           change={statusFilter === "ALL" ? "Full inventory" : `${statusFilter} filter applied`}
           trend="neutral"
           icon={<BriefcaseBusiness className="h-7 w-7" />}
@@ -153,18 +173,42 @@ export default function AdminJobsPage() {
         />
       </div>
 
-      {jobs.length === 0 ? (
+      <Card className="rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
+        <CardContent className="flex flex-col gap-3 p-5 lg:flex-row">
+          <div className="relative flex-1">
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Input
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Search title, company, email, category..."
+              className="h-11 rounded-full border-slate-300 bg-white pl-10"
+            />
+          </div>
+          <Select value={visibilityFilter} onValueChange={setVisibilityFilter}>
+            <SelectTrigger className="h-11 w-full rounded-full border-slate-300 bg-white lg:w-48">
+              <SelectValue placeholder="Visibility" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">All visibility</SelectItem>
+              <SelectItem value="PUBLISHED">Published only</SelectItem>
+              <SelectItem value="HIDDEN">Hidden only</SelectItem>
+            </SelectContent>
+          </Select>
+        </CardContent>
+      </Card>
+
+      {filteredJobs.length === 0 ? (
         <Card className="rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">No jobs found</CardTitle>
           </CardHeader>
           <CardContent className="text-center text-gray-600">
-            Try a different moderation filter.
+            Try a different moderation or search filter.
           </CardContent>
         </Card>
       ) : (
         <div className="grid gap-4">
-          {jobs.map((job) => {
+          {filteredJobs.map((job) => {
             const employerName =
               job.employer?.employerProfile?.companyName || job.employer?.name || "Employer";
 
