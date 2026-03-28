@@ -1,40 +1,92 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BellRing, LockKeyhole, Settings2, ShieldCheck } from "lucide-react";
+import {
+  BellRing,
+  CreditCard,
+  LockKeyhole,
+  Settings2,
+  ShieldCheck,
+  Upload,
+} from "lucide-react";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type AdminStats = {
-  roleBreakdown: {
-    admins: number;
+type AdminSettingsData = {
+  moderation: {
+    pendingJobs: number;
+    activeJobs: number;
+    suggestedSlaHours: number;
   };
-  jobs: {
-    pending: number;
-    active: number;
+  access: {
+    adminSeats: number;
+    oauthProvidersEnabled: number;
+    nextAuthConfigured: boolean;
+  };
+  alerts: {
+    failedPayments: number;
+    hiredApplications: number;
+    queueSpikeThreshold: number;
+  };
+  platform: {
+    stripeConfigured: boolean;
+    billingWebhookConfigured: boolean;
+    uploadsConfigured: boolean;
+    emailConfigured: boolean;
+    jobPostPriceCents: number;
+    currency: string;
+    appUrl?: string | null;
   };
 };
 
+function formatMoney(amountCents: number, currency: string): string {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency,
+    maximumFractionDigits: 0,
+  }).format(amountCents / 100);
+}
+
+function StatusPill({ ready, label }: { ready: boolean; label: string }) {
+  return (
+    <Badge
+      variant={ready ? "success" : "secondary"}
+      className="rounded-full px-3 py-1"
+    >
+      {label}: {ready ? "Ready" : "Missing"}
+    </Badge>
+  );
+}
+
 export default function SettingsPage() {
-  const [stats, setStats] = useState<AdminStats | null>(null);
+  const [data, setData] = useState<AdminSettingsData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadStats = async (): Promise<void> => {
+    const loadSettings = async (): Promise<void> => {
       try {
-        const response = await fetch("/api/admin/stats");
-        const data = (await response.json()) as AdminStats;
-        setStats(data);
+        const response = await fetch("/api/admin/settings");
+        const json = (await response.json()) as AdminSettingsData & { error?: string };
+
+        if (!response.ok) {
+          toast.error(json.error || "Failed to load settings");
+          return;
+        }
+
+        setData(json);
+      } catch {
+        toast.error("Failed to load settings");
       } finally {
         setLoading(false);
       }
     };
 
-    void loadStats();
+    void loadSettings();
   }, []);
 
-  if (loading || !stats) {
+  if (loading || !data) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-44 w-full rounded-[28px]" />
@@ -54,12 +106,11 @@ export default function SettingsPage() {
           System Settings
         </Badge>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
-          Governance defaults and operational safeguards at a glance.
+          Runtime configuration and operational safeguards in one place.
         </h1>
         <p className="mt-3 max-w-2xl text-sm text-slate-200 sm:text-base">
-          These cards frame the most important policy areas while the backend
-          settings layer evolves. Current marketplace activity is surfaced beside
-          each area to keep decisions grounded in live usage.
+          This admin surface now reads real platform readiness signals from environment
+          configuration and live marketplace activity, so the team can audit setup quickly.
         </p>
       </section>
 
@@ -72,9 +123,9 @@ export default function SettingsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-slate-600">
-            <p>Pending jobs currently waiting: {stats.jobs.pending}</p>
-            <p>Live jobs currently visible: {stats.jobs.active}</p>
-            <p>Use this section for approval rules, escalation flows, and moderation SLAs.</p>
+            <p>Pending jobs currently waiting: {data.moderation.pendingJobs}</p>
+            <p>Live jobs currently visible: {data.moderation.activeJobs}</p>
+            <p>Suggested moderation SLA: {data.moderation.suggestedSlaHours} hours</p>
           </CardContent>
         </Card>
 
@@ -86,8 +137,9 @@ export default function SettingsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-slate-600">
-            <p>Admin seats in use: {stats.roleBreakdown.admins}</p>
-            <p>Extend here with audit logging, invite controls, and emergency lockouts.</p>
+            <p>Admin seats in use: {data.access.adminSeats}</p>
+            <p>OAuth providers enabled: {data.access.oauthProvidersEnabled}</p>
+            <p>NextAuth secret status: {data.access.nextAuthConfigured ? "Configured" : "Missing"}</p>
           </CardContent>
         </Card>
 
@@ -99,8 +151,9 @@ export default function SettingsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-slate-600">
-            <p>Operational alerts should prioritize queue spikes and unusual approval patterns.</p>
-            <p>This responsive shell is ready for future alert thresholds and routing controls.</p>
+            <p>Failed payments currently flagged: {data.alerts.failedPayments}</p>
+            <p>Successful hires tracked: {data.alerts.hiredApplications}</p>
+            <p>Queue spike alert threshold: {data.alerts.queueSpikeThreshold} pending jobs</p>
           </CardContent>
         </Card>
 
@@ -111,11 +164,58 @@ export default function SettingsPage() {
               Platform Configuration
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm text-slate-600">
-            <p>Use this area for feature flags, review automation, and global defaults.</p>
+          <CardContent className="space-y-4 text-sm text-slate-600">
             <p>
-              The UI intentionally avoids fake controls until writable config APIs are available.
+              Job post price:{" "}
+              <span className="font-semibold text-slate-900">
+                {formatMoney(data.platform.jobPostPriceCents, data.platform.currency)}
+              </span>
             </p>
+            <p>App URL: {data.platform.appUrl || "Not configured"}</p>
+            <div className="flex flex-wrap gap-2">
+              <StatusPill ready={data.platform.stripeConfigured} label="Stripe" />
+              <StatusPill ready={data.platform.billingWebhookConfigured} label="Webhook" />
+              <StatusPill ready={data.platform.emailConfigured} label="Email" />
+              <StatusPill ready={data.platform.uploadsConfigured} label="Uploads" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <Card className="rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-3 text-lg text-slate-950">
+              <CreditCard className="h-5 w-5 text-indigo-600" />
+              Billing Readiness
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm text-slate-600">
+            Stripe secret and webhook state are now surfaced from runtime config so billing issues are easier to spot early.
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-3 text-lg text-slate-950">
+              <Upload className="h-5 w-5 text-emerald-600" />
+              Asset Pipeline
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm text-slate-600">
+            Upload infrastructure is checked from environment state, helping admins understand if employer logos and future file flows are ready.
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-3 text-lg text-slate-950">
+              <ShieldCheck className="h-5 w-5 text-sky-600" />
+              Operational Confidence
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm text-slate-600">
+            This page is now API-backed and responsive, so it can grow into writable controls later without redesigning the admin shell again.
           </CardContent>
         </Card>
       </div>
