@@ -1,50 +1,82 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertTriangle, Briefcase, Target, TrendingUp, Users } from "lucide-react";
+import {
+  AlertTriangle,
+  Briefcase,
+  CreditCard,
+  Target,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import { toast } from "sonner";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type AdminStats = {
-  totalUsers: number;
-  roleBreakdown: {
-    jobSeekers: number;
+type ReportsData = {
+  overview: {
+    totalUsers: number;
     employers: number;
+    jobSeekers: number;
     admins: number;
+    totalJobs: number;
+    activeJobs: number;
+    pendingJobs: number;
+    rejectedJobs: number;
+    totalApplications: number;
+    hiredApplications: number;
   };
-  jobs: {
-    total: number;
-    pending: number;
-    active: number;
-    rejected: number;
+  funnel: {
+    shortlistedApplications: number;
+    interviewApplications: number;
+    hiredApplications: number;
   };
-  applications: {
-    total: number;
-    hired: number;
+  payments: {
+    paidJobs: number;
+    failedPayments: number;
+    unpaidJobs: number;
   };
+  categories: Array<{
+    name: string;
+    jobs: number;
+  }>;
+  trends: Array<{
+    label: string;
+    users: number;
+    jobs: number;
+    applications: number;
+  }>;
 };
 
 export default function ReportsPage() {
-  const [stats, setStats] = useState<AdminStats | null>(null);
+  const [data, setData] = useState<ReportsData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadStats = async (): Promise<void> => {
+    const loadReports = async (): Promise<void> => {
       try {
-        const response = await fetch("/api/admin/stats");
-        const data = (await response.json()) as AdminStats;
-        setStats(data);
+        const response = await fetch("/api/admin/reports");
+        const json = (await response.json()) as ReportsData & { error?: string };
+
+        if (!response.ok) {
+          toast.error(json.error || "Failed to load reports");
+          return;
+        }
+
+        setData(json);
+      } catch {
+        toast.error("Failed to load reports");
       } finally {
         setLoading(false);
       }
     };
 
-    void loadStats();
+    void loadReports();
   }, []);
 
-  if (loading || !stats) {
+  if (loading || !data) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-44 w-full rounded-[28px]" />
@@ -57,11 +89,16 @@ export default function ReportsPage() {
     );
   }
 
-  const moderationRisk = stats.jobs.pending + stats.jobs.rejected;
+  const moderationRisk = data.overview.pendingJobs + data.overview.rejectedJobs;
   const hireRate =
-    stats.applications.total > 0
-      ? Math.round((stats.applications.hired / stats.applications.total) * 100)
+    data.overview.totalApplications > 0
+      ? Math.round((data.overview.hiredApplications / data.overview.totalApplications) * 100)
       : 0;
+  const maxTrendValue = Math.max(
+    1,
+    ...data.trends.flatMap((item) => [item.users, item.jobs, item.applications])
+  );
+  const maxCategoryJobs = Math.max(1, ...data.categories.map((category) => category.jobs));
 
   return (
     <div className="space-y-8">
@@ -72,11 +109,11 @@ export default function ReportsPage() {
         <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
             <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Convert raw platform activity into operational signals.
+              See marketplace health through trendlines, funnel data, and billing signals.
             </h1>
             <p className="mt-3 text-sm text-slate-200 sm:text-base">
-              These summaries surface moderation pressure, supply balance, and hiring
-              conversion so the admin team can spot problems before they spread.
+              This report now pulls a dedicated analytics dataset so admins can read growth,
+              moderation pressure, and hiring quality from one responsive screen.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:w-[24rem]">
@@ -100,87 +137,180 @@ export default function ReportsPage() {
         <StatsCard
           title="Moderation Queue"
           value={moderationRisk}
-          change={`${stats.jobs.pending} pending review`}
+          change={`${data.overview.pendingJobs} pending review`}
           trend={moderationRisk > 0 ? "down" : "neutral"}
           icon={<AlertTriangle className="h-7 w-7" />}
         />
         <StatsCard
           title="Employer Base"
-          value={stats.roleBreakdown.employers}
-          change={`${stats.jobs.total} total jobs`}
+          value={data.overview.employers}
+          change={`${data.overview.totalJobs} total jobs`}
           trend="up"
           icon={<Briefcase className="h-7 w-7" />}
         />
         <StatsCard
           title="Candidate Supply"
-          value={stats.roleBreakdown.jobSeekers}
-          change={`${stats.applications.total} total applications`}
+          value={data.overview.jobSeekers}
+          change={`${data.overview.totalApplications} total applications`}
           trend="up"
           icon={<Users className="h-7 w-7" />}
         />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 xl:grid-cols-[1.35fr_0.95fr]">
         <Card className="rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
           <CardHeader>
-            <CardTitle className="text-xl text-slate-950">Operational Summary</CardTitle>
+            <CardTitle className="text-xl text-slate-950">6-Month Activity Trend</CardTitle>
+            <p className="text-sm text-slate-500">
+              User growth, job creation, and application volume over time.
+            </p>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm text-slate-600">
-            <p>
-              Active jobs: <span className="font-semibold text-slate-900">{stats.jobs.active}</span>
-            </p>
-            <p>
-              Rejected jobs:{" "}
-              <span className="font-semibold text-slate-900">{stats.jobs.rejected}</span>
-            </p>
-            <p>
-              Successful hires:{" "}
-              <span className="font-semibold text-slate-900">{stats.applications.hired}</span>
-            </p>
-            <p>
-              Admin seats in use:{" "}
-              <span className="font-semibold text-slate-900">{stats.roleBreakdown.admins}</span>
-            </p>
+          <CardContent className="space-y-4">
+            {data.trends.map((item) => (
+              <div key={item.label} className="space-y-3 rounded-3xl border border-slate-200/80 bg-slate-50/80 p-4">
+                <div className="flex items-center justify-between">
+                  <p className="font-semibold text-slate-900">{item.label}</p>
+                  <p className="text-sm text-slate-500">
+                    {item.users + item.jobs + item.applications} total signals
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs text-slate-500">
+                      <span>Users</span>
+                      <span>{item.users}</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-slate-200">
+                      <div
+                        className="h-2 rounded-full bg-sky-500"
+                        style={{ width: `${(item.users / maxTrendValue) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs text-slate-500">
+                      <span>Jobs</span>
+                      <span>{item.jobs}</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-slate-200">
+                      <div
+                        className="h-2 rounded-full bg-emerald-500"
+                        style={{ width: `${(item.jobs / maxTrendValue) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs text-slate-500">
+                      <span>Applications</span>
+                      <span>{item.applications}</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-slate-200">
+                      <div
+                        className="h-2 rounded-full bg-violet-500"
+                        style={{ width: `${(item.applications / maxTrendValue) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </CardContent>
         </Card>
 
-        <Card className="rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
-          <CardHeader>
-            <CardTitle className="text-xl text-slate-950">What To Watch</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="rounded-3xl bg-slate-950 p-4 text-white">
-              <div className="flex items-center gap-3">
-                <AlertTriangle className="h-5 w-5 text-amber-300" />
-                <p className="font-medium">Moderation queue pressure</p>
-              </div>
-              <p className="mt-2 text-sm text-slate-300">
-                Pending plus rejected jobs indicate how much manual review capacity is
-                currently under strain.
-              </p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-emerald-600" />
-                  <p className="text-sm font-medium text-slate-700">Demand trend</p>
+        <div className="space-y-6">
+          <Card className="rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
+            <CardHeader>
+              <CardTitle className="text-xl text-slate-950">Hiring Funnel</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="rounded-3xl bg-slate-950 p-4 text-white">
+                <div className="flex items-center gap-3">
+                  <Target className="h-5 w-5 text-sky-300" />
+                  <p className="font-medium">Applications to hires</p>
                 </div>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">{stats.jobs.total}</p>
-                <p className="mt-1 text-sm text-slate-500">Total jobs created on platform.</p>
+                <p className="mt-3 text-3xl font-semibold">{hireRate}%</p>
+                <p className="mt-2 text-sm text-slate-300">
+                  Based on {data.overview.totalApplications} submitted applications.
+                </p>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Shortlisted</p>
+                  <p className="mt-2 text-2xl font-semibold text-slate-950">
+                    {data.funnel.shortlistedApplications}
+                  </p>
+                </div>
+                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Interview</p>
+                  <p className="mt-2 text-2xl font-semibold text-slate-950">
+                    {data.funnel.interviewApplications}
+                  </p>
+                </div>
+                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Hired</p>
+                  <p className="mt-2 text-2xl font-semibold text-slate-950">
+                    {data.funnel.hiredApplications}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
+            <CardHeader>
+              <CardTitle className="text-xl text-slate-950">Top Hiring Categories</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {data.categories.map((category) => (
+                <div key={category.name} className="space-y-2">
+                  <div className="flex items-center justify-between text-sm text-slate-600">
+                    <span>{category.name}</span>
+                    <span>{category.jobs} jobs</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-slate-200">
+                    <div
+                      className="h-2 rounded-full bg-slate-950"
+                      style={{ width: `${(category.jobs / maxCategoryJobs) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
+            <CardHeader>
+              <CardTitle className="text-xl text-slate-950">Payment Health</CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4 sm:grid-cols-3">
+              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                <div className="flex items-center gap-2">
+                  <CreditCard className="h-4 w-4 text-emerald-600" />
+                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Paid</p>
+                </div>
+                <p className="mt-2 text-2xl font-semibold text-slate-950">{data.payments.paidJobs}</p>
               </div>
               <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
                 <div className="flex items-center gap-2">
-                  <Target className="h-4 w-4 text-sky-600" />
-                  <p className="text-sm font-medium text-slate-700">Talent response</p>
+                  <AlertTriangle className="h-4 w-4 text-amber-600" />
+                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Failed</p>
                 </div>
                 <p className="mt-2 text-2xl font-semibold text-slate-950">
-                  {stats.applications.total}
+                  {data.payments.failedPayments}
                 </p>
-                <p className="mt-1 text-sm text-slate-500">Applications submitted overall.</p>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-sky-600" />
+                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Unpaid</p>
+                </div>
+                <p className="mt-2 text-2xl font-semibold text-slate-950">
+                  {data.payments.unpaidJobs}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
