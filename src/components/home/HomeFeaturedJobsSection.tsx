@@ -8,12 +8,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 type HomeFeaturedJobsSectionProps = {
   featuredJobs: FeaturedJob[];
   loading: boolean;
+  totalJobs: number;
 };
 
 export function HomeFeaturedJobsSection({
   featuredJobs,
   loading,
+  totalJobs,
 }: HomeFeaturedJobsSectionProps) {
+  const featuredCount = featuredJobs.length;
+
   return (
     <section className="py-16 sm:py-18 lg:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -32,14 +36,14 @@ export function HomeFeaturedJobsSection({
               </p>
             </div>
 
-            <div className="grid grid-cols-3 gap-3 sm:max-w-md">
+            <div className="grid grid-cols-1 gap-3 sm:max-w-md sm:grid-cols-3">
               <div className="rounded-2xl bg-white/5 px-4 py-4 text-center">
-                <p className="text-lg font-bold">6</p>
+                <p className="text-lg font-bold">{loading ? "..." : featuredCount}</p>
                 <p className="mt-1 text-xs text-slate-400">selected roles</p>
               </div>
               <div className="rounded-2xl bg-white/5 px-4 py-4 text-center">
-                <p className="text-lg font-bold">Daily</p>
-                <p className="mt-1 text-xs text-slate-400">updated feed</p>
+                <p className="text-lg font-bold">{loading ? "..." : `${totalJobs || featuredCount}+`}</p>
+                <p className="mt-1 text-xs text-slate-400">roles in search</p>
               </div>
               <div className="rounded-2xl bg-white/5 px-4 py-4 text-center">
                 <p className="text-lg font-bold">Fast</p>

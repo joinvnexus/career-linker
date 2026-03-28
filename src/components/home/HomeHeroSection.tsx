@@ -15,6 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 type HomeHeroSectionProps = {
+  totalJobs: number;
+  categoriesCount: number;
   search: string;
   location: string;
   onSearchChange: (value: string) => void;
@@ -23,12 +25,6 @@ type HomeHeroSectionProps = {
 };
 
 const quickSearches = ["Remote Product Designer", "Frontend Developer", "Marketing Lead", "Dhaka"];
-
-const heroStats = [
-  { label: "Live roles", value: "12k+" },
-  { label: "Hiring teams", value: "850+" },
-  { label: "Application flow", value: "Fast" },
-] as const;
 
 const featureCards = [
   {
@@ -49,12 +45,23 @@ const featureCards = [
 ] as const;
 
 export function HomeHeroSection({
+  totalJobs,
+  categoriesCount,
   search,
   location,
   onSearchChange,
   onLocationChange,
   onSubmit,
 }: HomeHeroSectionProps) {
+  const heroStats = [
+    { label: "Live roles", value: totalJobs > 0 ? `${totalJobs}+` : "Fresh" },
+    {
+      label: "Role categories",
+      value: categoriesCount > 0 ? `${categoriesCount}` : "Growing",
+    },
+    { label: "Application flow", value: "Fast" },
+  ] as const;
+
   return (
     <section className="relative overflow-hidden pb-14 pt-10 sm:pb-16 sm:pt-14 lg:pb-22 lg:pt-18">
       <div className="absolute inset-x-0 top-0 -z-10 h-[34rem] bg-[radial-gradient(circle_at_top_left,_rgba(14,165,233,0.18),_transparent_36%),radial-gradient(circle_at_top_right,_rgba(16,185,129,0.16),_transparent_32%),linear-gradient(180deg,_rgba(255,255,255,0.68)_0%,_rgba(248,250,252,0.22)_100%)]" />
@@ -149,11 +156,11 @@ export function HomeHeroSection({
             </Link>
           </div>
 
-          <div className="mt-7 flex flex-wrap gap-3">
+          <div className="mt-7 grid gap-3 sm:grid-cols-3">
             {heroStats.map((item) => (
               <div
                 key={item.label}
-                className="min-w-[140px] rounded-2xl border border-white/70 bg-white/75 px-4 py-4 shadow-sm backdrop-blur"
+                className="min-w-0 rounded-2xl border border-white/70 bg-white/75 px-4 py-4 shadow-sm backdrop-blur"
               >
                 <p className="text-xl font-bold text-slate-950">{item.value}</p>
                 <p className="mt-1 text-sm text-slate-500">{item.label}</p>

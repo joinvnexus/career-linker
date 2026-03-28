@@ -16,6 +16,7 @@ export default function Home() {
   const [location, setLocation] = useState("");
   const [featuredJobs, setFeaturedJobs] = useState<FeaturedJob[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [totalJobs, setTotalJobs] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,13 +27,17 @@ export default function Home() {
           fetch("/api/categories"),
         ]);
 
-        const jobsData = (await jobsResponse.json()) as { jobs?: FeaturedJob[] };
+        const jobsData = (await jobsResponse.json()) as {
+          jobs?: FeaturedJob[];
+          total?: number;
+        };
         const categoriesData = (await categoriesResponse.json()) as {
           categories?: Category[];
         };
 
         setFeaturedJobs(jobsData.jobs ?? []);
         setCategories(categoriesData.categories ?? []);
+        setTotalJobs(jobsData.total ?? 0);
       } catch {
         console.error("Failed to load home page data");
       } finally {
@@ -59,16 +64,22 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-gradient-to-b from-slate-50 via-blue-50 to-emerald-50">
+    <div className="bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.10),_transparent_24%),linear-gradient(180deg,_#f8fbff_0%,_#f8fafc_38%,_#ecfdf5_100%)]">
       <HomeHeroSection
+        categoriesCount={categories.length}
         location={location}
         onLocationChange={setLocation}
         onSearchChange={setSearch}
         onSubmit={handleSearch}
         search={search}
+        totalJobs={totalJobs}
       />
       <HomeCategoriesSection categories={categories} loading={loading} />
-      <HomeFeaturedJobsSection featuredJobs={featuredJobs} loading={loading} />
+      <HomeFeaturedJobsSection
+        featuredJobs={featuredJobs}
+        loading={loading}
+        totalJobs={totalJobs}
+      />
       <HomeCompaniesSection />
       <HomeCareerTipsSection />
       <HomeEmployerCtaSection />
