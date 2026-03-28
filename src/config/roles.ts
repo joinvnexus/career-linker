@@ -1,6 +1,6 @@
-import type { Role } from "@prisma/client";
+import type { AppRole } from "@/lib/client-enums";
 
-export const getDashboardPathForRole = (role?: Role | null): string => {
+export const getDashboardPathForRole = (role?: AppRole | null): string => {
   switch (role) {
     case "EMPLOYER":
       return "/dashboard/employer";

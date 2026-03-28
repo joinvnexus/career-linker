@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { Role } from "@prisma/client";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { signOut, useSession } from "next-auth/react";
@@ -19,6 +18,7 @@ import {
 import { getDashboardPathForRole } from "@/config/roles";
 import { Button } from "@/components/ui/button";
 import { Dropdown, DropdownItem, DropdownSeparator } from "@/components/ui/dropdown";
+import { type AppRole } from "@/lib/client-enums";
 import { cn } from "@/lib/utils";
 
 type NavbarProps = {
@@ -33,7 +33,7 @@ const navLinks = [
 ] as const;
 
 const roleCopy: Record<
-  Role,
+  AppRole,
   {
     label: string;
     description: string;

@@ -1,6 +1,5 @@
 "use client";
 
-import { Role } from "@prisma/client";
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRightLeft, Search, ShieldCheck, UserCog, Users } from "lucide-react";
 import { toast } from "sonner";
@@ -16,16 +15,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { APP_ROLES, type AppRole } from "@/lib/client-enums";
 
 type AdminUser = {
   id: string;
   name?: string | null;
   email: string;
-  role: Role;
+  role: AppRole;
   createdAt: string;
 };
 
-const roleOptions = [Role.JOB_SEEKER, Role.EMPLOYER, Role.ADMIN];
+const roleOptions = [...APP_ROLES];
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
@@ -50,7 +50,7 @@ export default function AdminUsersPage() {
     void loadUsers();
   }, []);
 
-  const updateRole = async (userId: string, role: Role): Promise<void> => {
+  const updateRole = async (userId: string, role: AppRole): Promise<void> => {
     try {
       const response = await fetch(`/api/admin/users/${userId}`, {
         method: "PATCH",
@@ -73,8 +73,8 @@ export default function AdminUsersPage() {
     }
   };
 
-  const employerCount = users.filter((user) => user.role === Role.EMPLOYER).length;
-  const adminCount = users.filter((user) => user.role === Role.ADMIN).length;
+  const employerCount = users.filter((user) => user.role === "EMPLOYER").length;
+  const adminCount = users.filter((user) => user.role === "ADMIN").length;
   const recentCount = users.filter((user) => {
     const joinedAt = new Date(user.createdAt).getTime();
     return Date.now() - joinedAt <= 1000 * 60 * 60 * 24 * 30;
@@ -240,7 +240,7 @@ export default function AdminUsersPage() {
                 </Badge>
                 <Select
                   value={user.role}
-                  onValueChange={(value) => void updateRole(user.id, value as Role)}
+                  onValueChange={(value) => void updateRole(user.id, value as AppRole)}
                 >
                   <SelectTrigger className="w-44 rounded-full border-slate-300 bg-white">
                     <SelectValue />

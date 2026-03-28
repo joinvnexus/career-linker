@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SaveJobButton } from "@/components/save-job-button";
-import { JobType, JobStatus } from "@prisma/client";
+import { type AppJobStatus, type AppJobType } from "@/lib/client-enums";
 import { cn, formatCurrency, formatDate } from "@/lib/utils";
 
 interface JobCardProps {
@@ -20,8 +20,8 @@ interface JobCardProps {
     salaryMin?: number;
     salaryMax?: number;
     salaryType?: string;
-    jobType: JobType;
-    status: JobStatus;
+    jobType: AppJobType;
+    status: AppJobStatus;
     createdAt: string;
     applicationDeadline?: string;
   };
@@ -30,7 +30,7 @@ interface JobCardProps {
   userId?: string;
 }
 
-const jobTypeStyles: Record<JobType, string> = {
+const jobTypeStyles: Record<AppJobType, string> = {
   FULL_TIME: "bg-emerald-50 text-emerald-700 border-emerald-200",
   PART_TIME: "bg-amber-50 text-amber-700 border-amber-200",
   REMOTE: "bg-sky-50 text-sky-700 border-sky-200",
@@ -38,7 +38,7 @@ const jobTypeStyles: Record<JobType, string> = {
   INTERNSHIP: "bg-orange-50 text-orange-700 border-orange-200",
 };
 
-const statusStyles: Record<JobStatus, string> = {
+const statusStyles: Record<AppJobStatus, string> = {
   ACTIVE: "bg-emerald-50 text-emerald-700 ring-emerald-200",
   PENDING: "bg-amber-50 text-amber-700 ring-amber-200",
   EXPIRED: "bg-slate-100 text-slate-600 ring-slate-200",
@@ -46,7 +46,7 @@ const statusStyles: Record<JobStatus, string> = {
   REJECTED: "bg-rose-50 text-rose-700 ring-rose-200",
 };
 
-const statusLabels: Record<JobStatus, string> = {
+const statusLabels: Record<AppJobStatus, string> = {
   ACTIVE: "Active",
   PENDING: "Pending",
   EXPIRED: "Expired",
