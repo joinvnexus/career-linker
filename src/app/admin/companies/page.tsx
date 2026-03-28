@@ -5,6 +5,7 @@ import {
   BadgeCheck,
   Building2,
   BriefcaseBusiness,
+  Download,
   MapPin,
   Search,
   ShieldCheck,
@@ -49,6 +50,7 @@ export default function CompaniesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [verificationFilter, setVerificationFilter] = useState("ALL");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [bulkUpdating, setBulkUpdating] = useState(false);
 
   useEffect(() => {
     const loadCompanies = async (): Promise<void> => {
@@ -93,6 +95,23 @@ export default function CompaniesPage() {
   const totalLiveJobs = companies.reduce((sum, company) => sum + company.activeJobs, 0);
   const totalPendingJobs = companies.reduce((sum, company) => sum + company.pendingJobs, 0);
 
+  const downloadCsv = (rows: string[][], fileName: string): void => {
+    const csvContent = rows
+      .map((row) =>
+        row.map((value) => `"${String(value ?? "").replaceAll('"', '""')}"`).join(",")
+      )
+      .join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
+
   const toggleVerification = async (companyId: string, isVerified: boolean): Promise<void> => {
     try {
       setUpdatingId(companyId);
@@ -119,6 +138,85 @@ export default function CompaniesPage() {
       toast.error("Something went wrong");
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const handleExport = (): void => {
+    downloadCsv(
+      [
+        [
+          "Company",
+          "Owner",
+          "Email",
+          "Verified",
+          "Industry",
+          "Location",
+          "Company Size",
+          "Active Jobs",
+          "Pending Jobs",
+          "Applications",
+          "Website",
+          "Joined",
+        ],
+        ...filteredCompanies.map((company) => [
+          company.companyName,
+          company.ownerName || "Employer owner",
+          company.ownerEmail,
+          company.isVerified ? "Yes" : "No",
+          company.industry || "",
+          company.location || "",
+          company.companySize || "",
+          String(company.activeJobs),
+          String(company.pendingJobs),
+          String(company.totalApplications),
+          company.companyWebsite || "",
+          new Date(company.createdAt).toLocaleDateString(),
+        ]),
+      ],
+      "admin-companies-export.csv"
+    );
+    toast.success("Company export downloaded");
+  };
+
+  const handleBulkVerify = async (): Promise<void> => {
+    const targets = filteredCompanies.filter((company) => !company.isVerified);
+
+    if (targets.length === 0) {
+      toast.message("No unverified companies in the current view");
+      return;
+    }
+
+    try {
+      setBulkUpdating(true);
+
+      const results = await Promise.all(
+        targets.map((company) =>
+          fetch(`/api/admin/companies/${company.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ isVerified: true }),
+          })
+        )
+      );
+
+      const failed = results.filter((response) => !response.ok).length;
+
+      if (failed > 0) {
+        toast.error(`${failed} company updates failed`);
+      }
+
+      setCompanies((current) =>
+        current.map((company) =>
+          targets.some((target) => target.id === company.id)
+            ? { ...company, isVerified: true }
+            : company
+        )
+      );
+      toast.success(`${targets.length - failed} companies verified`);
+    } catch {
+      toast.error("Bulk verification failed");
+    } finally {
+      setBulkUpdating(false);
     }
   };
 
@@ -198,7 +296,26 @@ export default function CompaniesPage() {
               Search and filter by company profile, verification state, or operational signal.
             </p>
           </div>
-          <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
+          <div className="flex w-full flex-col gap-3 lg:w-auto">
+            <div className="flex flex-wrap gap-3">
+              <Button
+                variant="outline"
+                className="rounded-full"
+                onClick={handleExport}
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Export CSV
+              </Button>
+              <Button
+                className="rounded-full"
+                onClick={() => void handleBulkVerify()}
+                disabled={bulkUpdating}
+              >
+                <ShieldCheck className="mr-2 h-4 w-4" />
+                {bulkUpdating ? "Verifying..." : "Verify Filtered"}
+              </Button>
+            </div>
+            <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
             <div className="relative min-w-[16rem]">
               <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <Input
@@ -218,6 +335,7 @@ export default function CompaniesPage() {
                 <SelectItem value="UNVERIFIED">Needs review</SelectItem>
               </SelectContent>
             </Select>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">

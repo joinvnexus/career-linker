@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   CreditCard,
+  Download,
   DollarSign,
   Receipt,
   Search,
@@ -64,6 +65,23 @@ export default function PaymentsPage() {
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [searchQuery, setSearchQuery] = useState("");
 
+  const downloadCsv = (rows: string[][], fileName: string): void => {
+    const csvContent = rows
+      .map((row) =>
+        row.map((value) => `"${String(value ?? "").replaceAll('"', '""')}"`).join(",")
+      )
+      .join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
+
   useEffect(() => {
     const loadPayments = async (): Promise<void> => {
       try {
@@ -115,6 +133,37 @@ export default function PaymentsPage() {
   }
 
   const { summary } = data;
+
+  const handleExport = (): void => {
+    downloadCsv(
+      [
+        [
+          "Job",
+          "Company",
+          "Owner Email",
+          "Status",
+          "Amount",
+          "Created",
+          "Paid At",
+          "Session ID",
+          "Payment Intent",
+        ],
+        ...filteredPayments.map((payment) => [
+          payment.jobTitle,
+          payment.companyName,
+          payment.ownerEmail,
+          payment.status,
+          formatMoney(payment.amountCents, payment.currency),
+          new Date(payment.createdAt).toLocaleDateString(),
+          payment.paidAt ? new Date(payment.paidAt).toLocaleDateString() : "",
+          payment.stripeSessionId || "",
+          payment.paymentIntentId || "",
+        ]),
+      ],
+      "admin-payments-export.csv"
+    );
+    toast.success("Payment export downloaded");
+  };
 
   return (
     <div className="space-y-8">
@@ -185,7 +234,18 @@ export default function PaymentsPage() {
               Real payment signals derived from the current Stripe job-post flow.
             </p>
           </div>
-          <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
+          <div className="flex w-full flex-col gap-3 lg:w-auto">
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={handleExport}
+                className="inline-flex h-11 items-center justify-center rounded-full border border-slate-300 bg-white px-4 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Export CSV
+              </button>
+            </div>
+            <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
             <div className="relative min-w-[16rem]">
               <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <Input
@@ -206,6 +266,7 @@ export default function PaymentsPage() {
                 <SelectItem value="FAILED">Failed</SelectItem>
               </SelectContent>
             </Select>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
