@@ -244,3 +244,79 @@ If someone wants to review the app quickly:
 3. Run database generate, migrate, and seed
 4. Start the app with `npm run dev`
 5. Review public, employer, and admin surfaces
+
+## Production Deployment
+
+This repository now includes GitHub Actions workflows for CI and production deployment.
+
+### Workflows Added
+
+- `.github/workflows/ci.yml`
+- `.github/workflows/deploy-production.yml`
+
+### CI Pipeline
+
+The CI workflow runs:
+
+1. `npm ci`
+2. `npm run db:generate`
+3. `npm run lint`
+4. `npm run typecheck`
+5. `npm run build`
+
+### Production CD Target
+
+The deployment workflow is configured for Vercel production deployment.
+
+It deploys automatically after the `CI` workflow succeeds on the `main` branch.
+
+### Required GitHub Secrets
+
+Add these repository secrets before enabling production deployment:
+
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
+
+### Required Production Environment Variables
+
+Make sure your Vercel project also has the correct production environment variables configured, especially:
+
+- `DATABASE_URL`
+- `NEXT_PUBLIC_APP_URL`
+- `NEXTAUTH_URL`
+- `NEXTAUTH_SECRET`
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+- `STRIPE_JOB_POST_PRICE_CENTS`
+- `STRIPE_CURRENCY`
+- `UPLOADTHING_SECRET`
+- `UPLOADTHING_APP_ID`
+- `EMAIL_SERVER_HOST`
+- `EMAIL_SERVER_PORT`
+- `EMAIL_SERVER_USER`
+- `EMAIL_SERVER_PASSWORD`
+- `EMAIL_FROM`
+
+OAuth variables if used:
+
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `GITHUB_ID`
+- `GITHUB_SECRET`
+
+### Recommended Production Rollout Order
+
+1. Push the current code to GitHub
+2. Create a Vercel project connected to the repository
+3. Add all production environment variables in Vercel
+4. Add the three Vercel GitHub secrets in the repository
+5. Push to `main` or manually trigger the deployment workflow
+6. Configure Stripe webhook to point to `/api/billing/webhook`
+7. Run production database migration before or during release
+
+### Production Notes
+
+- CI uses placeholder values only to validate the codebase during build checks
+- Real deployment configuration must live in Vercel project environment variables
+- If your production database requires SSL-specific settings, ensure `DATABASE_URL` includes them

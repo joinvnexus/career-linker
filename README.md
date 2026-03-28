@@ -129,3 +129,18 @@ If you are reviewing the project quickly, start here:
 ## Setup
 
 Detailed local setup, environment configuration, database steps, and run commands live in `SETUP.md`.
+
+## CI/CD
+
+The repository includes GitHub Actions workflows for:
+
+- CI on push and pull requests
+- Production deployment to Vercel after CI passes on `main`
+
+Production deployment expects GitHub repository secrets for:
+
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
+
+Detailed production notes are included in `SETUP.md`.
