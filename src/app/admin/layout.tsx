@@ -63,7 +63,7 @@ export default function AdminLayout({
               <ShieldCheck className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-[11px] uppercase tracking-[0.24em] text-slate-500">HireHub</p>
+              <p className="text-[11px] uppercase tracking-[0.24em] text-slate-500">Career-Linker</p>
               <p className="font-semibold text-slate-950">Admin Command Center</p>
             </div>
           </div>

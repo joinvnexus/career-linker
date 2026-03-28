@@ -3,7 +3,7 @@ import "../globals.css"
 import { cn } from '@/lib/utils' // Create utils.ts next
 
 export const metadata: Metadata = {
-  title: 'HireHub - Login & Register',
+  title: 'Career-Linker - Login & Register',
   description: 'Job marketplace authentication',
 }
 

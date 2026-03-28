@@ -79,7 +79,7 @@ export default function JobSeekerLayout({
                 <User className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-lg font-bold tracking-tight text-slate-950">HireHub</p>
+                <p className="text-lg font-bold tracking-tight text-slate-950">Career-Linker</p>
                 <p className="text-xs uppercase tracking-[0.24em] text-slate-500">
                   Job Seeker Studio
                 </p>

@@ -105,7 +105,7 @@ export const Navbar = ({ className }: NavbarProps) => {
               <Briefcase className="h-5 w-5" />
             </span>
             <div className="hidden sm:block">
-              <span className="block leading-none">HireHub</span>
+              <span className="block leading-none">Career-Linker</span>
               <span className="mt-1 block text-xs font-medium text-slate-500">
                 Careers for modern teams
               </span>
@@ -160,7 +160,7 @@ export const Navbar = ({ className }: NavbarProps) => {
               >
                 <div className="rounded-2xl bg-slate-50 px-3 py-3">
                   <p className="text-sm font-semibold text-slate-900">
-                    {session.user.name ?? "HireHub Account"}
+                    {session.user.name ?? "Career-Linker Account"}
                   </p>
                   <p className="mt-1 text-xs text-slate-500">
                     {session.user.email}
@@ -207,7 +207,7 @@ export const Navbar = ({ className }: NavbarProps) => {
               </Link>
               <Link href="/register">
                 <Button className="rounded-full px-5">
-                  Join HireHub
+                  Join Career-Linker
                 </Button>
               </Link>
             </>
@@ -241,7 +241,7 @@ export const Navbar = ({ className }: NavbarProps) => {
                     {roleMeta?.label ?? "Member"}
                   </p>
                   <p className="mt-2 text-sm text-slate-600">
-                    {roleMeta?.description ?? "Manage your HireHub account."}
+                    {roleMeta?.description ?? "Manage your Career-Linker account."}
                   </p>
                 </div>
               </div>
@@ -311,7 +311,7 @@ export const Navbar = ({ className }: NavbarProps) => {
                   </Button>
                 </Link>
                 <Link href="/register" onClick={closeMobileMenu}>
-                  <Button className="w-full rounded-full">Join HireHub</Button>
+                  <Button className="w-full rounded-full">Join Career-Linker</Button>
                 </Link>
               </>
             )}

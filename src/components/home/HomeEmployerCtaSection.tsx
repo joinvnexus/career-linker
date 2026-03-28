@@ -19,7 +19,7 @@ export function HomeEmployerCtaSection() {
                 Post jobs, manage applicants, and hire faster with one workflow.
               </h2>
               <p className="max-w-2xl text-base leading-8 text-slate-300">
-                HireHub gives employers a cleaner hiring cockpit for job posting,
+                Career-Linker gives employers a cleaner hiring cockpit for job posting,
                 candidate review, and application tracking without scattered tools or tabs.
               </p>
 

@@ -1,6 +1,6 @@
-# HireHub Setup Guide
+# Career-Linker Setup Guide
 
-This guide explains how to run HireHub locally, configure required services, and understand the most important environment variables.
+This guide explains how to run Career-Linker locally, configure required services, and understand the most important environment variables.
 
 ## Prerequisites
 

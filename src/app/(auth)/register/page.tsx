@@ -93,7 +93,7 @@ export default function RegisterPage() {
             <User className="h-8 w-8 text-white" />
           </div>
           <CardTitle className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-            Join HireHub
+            Join Career-Linker
           </CardTitle>
           <CardDescription className="text-lg">
             Create your account to get started

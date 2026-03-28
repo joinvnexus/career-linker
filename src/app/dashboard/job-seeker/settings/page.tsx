@@ -27,7 +27,7 @@ const settingGroups = [
   },
   {
     title: "Notifications",
-    description: "Control how often HireHub reaches out about jobs and updates.",
+    description: "Control how often Career-Linker reaches out about jobs and updates.",
     icon: Bell,
     items: [
       "Application status alerts",

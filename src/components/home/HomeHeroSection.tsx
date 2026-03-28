@@ -83,7 +83,7 @@ export function HomeHeroSection({
           </h1>
 
           <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
-            HireHub helps job seekers discover strong opportunities and gives
+            Career-Linker helps job seekers discover strong opportunities and gives
             employers a cleaner way to publish roles, review applicants, and
             hire faster.
           </p>

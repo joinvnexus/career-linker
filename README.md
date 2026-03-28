@@ -1,6 +1,6 @@
-# HireHub
+# Career-Linker
 
-HireHub is a full-stack job marketplace built with Next.js, TypeScript, Prisma, and PostgreSQL. It supports three core product surfaces in one codebase:
+Career-Linker is a full-stack job marketplace built with Next.js, TypeScript, Prisma, and PostgreSQL. It supports three core product surfaces in one codebase:
 
 - Public job discovery for candidates
 - Employer tools for posting jobs, reviewing applicants, and tracking hiring activity
@@ -8,7 +8,7 @@ HireHub is a full-stack job marketplace built with Next.js, TypeScript, Prisma, 
 
 ## Product Overview
 
-HireHub is designed as a multi-role hiring platform where:
+Career-Linker is designed as a multi-role hiring platform where:
 
 - Job seekers can browse jobs, save listings, apply, and manage their profile from a polished dashboard
 - Employers can create paid job posts, manage listings, review applicants, and maintain company profile data
@@ -119,7 +119,7 @@ HireHub is designed as a multi-role hiring platform where:
 If you are reviewing the project quickly, start here:
 
 1. Read this file for product and architecture context
-2. Open [`SETUP.md`](/e:/webdevlopment-learn/New%20folder%20(2)/hirehub/SETUP.md) for local run instructions
+2. Open [`SETUP.md`](./SETUP.md) for local run instructions
 3. Review the main surfaces:
    - `src/app/(public)`
    - `src/app/dashboard/job-seeker`

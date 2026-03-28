@@ -21,7 +21,7 @@ const footerSections = [
   {
     title: "Company",
     links: [
-      { href: "/about", label: "About HireHub" },
+      { href: "/about", label: "About Career-Linker" },
       { href: "/contact", label: "Contact" },
       { href: "/blog", label: "Career Tips" },
     ],
@@ -38,18 +38,18 @@ export const Footer = () => (
               <Briefcase className="h-6 w-6" />
             </span>
             <div>
-              <p className="text-xl font-bold text-white">HireHub</p>
+              <p className="text-xl font-bold text-white">Career-Linker</p>
               <p className="text-sm text-slate-400">Job search and hiring platform</p>
             </div>
           </div>
           <p className="max-w-sm text-sm leading-6 text-slate-400">
-            HireHub connects job seekers, employers, and administrators with a
+            Career-Linker connects job seekers, employers, and administrators with a
             fast hiring workflow built for modern teams.
           </p>
           <div className="space-y-3 text-sm text-slate-400">
             <div className="flex items-center gap-3">
               <Mail className="h-4 w-4" />
-              <span>support@hirehub.app</span>
+              <span>support@career-linker.app</span>
             </div>
             <div className="flex items-center gap-3">
               <Phone className="h-4 w-4" />
@@ -83,7 +83,7 @@ export const Footer = () => (
       </div>
 
       <div className="mt-12 border-t border-slate-800 pt-6 text-sm text-slate-500">
-        © 2026 HireHub. All rights reserved.
+        © 2026 Career-Linker. All rights reserved.
       </div>
     </div>
   </footer>

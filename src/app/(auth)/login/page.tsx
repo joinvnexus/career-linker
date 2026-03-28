@@ -61,7 +61,7 @@ function LoginPageContent() {
           </div>
         </div>
         <CardTitle className="text-2xl font-bold text-gray-900">Welcome back</CardTitle>
-        <CardDescription>Sign in to your account to continue to HireHub</CardDescription>
+        <CardDescription>Sign in to your account to continue to Career-Linker</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {error ? (
