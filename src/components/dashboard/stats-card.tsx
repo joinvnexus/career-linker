@@ -1,5 +1,6 @@
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 type StatsCardProps = {
   title: string;
@@ -9,6 +10,12 @@ type StatsCardProps = {
   icon: React.ReactNode;
 };
 
+const trendStyles = {
+  up: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+  down: "bg-rose-50 text-rose-700 ring-rose-200",
+  neutral: "bg-slate-100 text-slate-600 ring-slate-200",
+} as const;
+
 export function StatsCard({
   title,
   value,
@@ -17,31 +24,32 @@ export function StatsCard({
   icon,
 }: StatsCardProps) {
   return (
-    <Card className="border-0 shadow-xl">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-slate-600">{title}</CardTitle>
-        <div className="text-slate-500">{icon}</div>
+    <Card className="border-white/80 bg-white/92 shadow-[0_20px_50px_-34px_rgba(15,23,42,0.75)]">
+      <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+        <div>
+          <CardTitle className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">
+            {title}
+          </CardTitle>
+        </div>
+        <div className="rounded-2xl bg-slate-50 p-3 text-slate-700 shadow-sm ring-1 ring-slate-200/80">
+          {icon}
+        </div>
       </CardHeader>
       <CardContent>
-        <div className="text-3xl font-bold text-slate-900">{value}</div>
+        <div className="text-3xl font-bold tracking-tight text-slate-950">{value}</div>
         {change ? (
-          <div className="mt-2 flex items-center gap-2 text-sm">
+          <div
+            className={cn(
+              "mt-4 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium ring-1",
+              trendStyles[trend]
+            )}
+          >
             {trend === "up" ? (
-              <TrendingUp className="h-4 w-4 text-emerald-600" />
+              <TrendingUp className="h-4 w-4" />
             ) : trend === "down" ? (
-              <TrendingDown className="h-4 w-4 text-rose-600" />
+              <TrendingDown className="h-4 w-4" />
             ) : null}
-            <span
-              className={
-                trend === "up"
-                  ? "text-emerald-600"
-                  : trend === "down"
-                    ? "text-rose-600"
-                    : "text-slate-500"
-              }
-            >
-              {change}
-            </span>
+            <span>{change}</span>
           </div>
         ) : null}
       </CardContent>

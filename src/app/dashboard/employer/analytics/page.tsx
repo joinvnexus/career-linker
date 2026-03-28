@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { LineChart, BarChart3 } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LineChart, BarChart3, Sparkles, Eye, Users, Briefcase } from "lucide-react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,8 +12,8 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js'
-import { Line, Bar } from 'react-chartjs-2'
+} from "chart.js";
+import { Line, Bar } from "react-chartjs-2";
 
 ChartJS.register(
   CategoryScale,
@@ -24,75 +24,121 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend
-)
+);
 
 export default function AnalyticsPage() {
   const lineData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
     datasets: [
       {
-        label: 'Applications',
-        data: [12, 19, 3, 5, 2, 3],
-        borderColor: 'rgb(59, 130, 246)',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        label: "Applications",
+        data: [12, 19, 8, 15, 11, 17],
+        borderColor: "rgb(14, 165, 233)",
+        backgroundColor: "rgba(14, 165, 233, 0.12)",
+        tension: 0.35,
+        fill: true,
       },
       {
-        label: 'Views',
+        label: "Views",
         data: [30, 45, 32, 28, 35, 40],
-        borderColor: 'rgb(34, 197, 94)',
-        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+        borderColor: "rgb(16, 185, 129)",
+        backgroundColor: "rgba(16, 185, 129, 0.10)",
+        tension: 0.35,
+        fill: true,
       },
     ],
-  }
+  };
 
   const barData = {
-    labels: ['Software', 'Design', 'Marketing', 'Sales'],
+    labels: ["Software", "Design", "Marketing", "Sales"],
     datasets: [
       {
-        label: 'Jobs Posted',
-        data: [12, 19, 3, 5],
-        backgroundColor: 'rgb(59, 130, 246)',
+        label: "Jobs Posted",
+        data: [12, 19, 7, 5],
+        backgroundColor: ["#0ea5e9", "#10b981", "#8b5cf6", "#f59e0b"],
+        borderRadius: 12,
       },
     ],
-  }
+  };
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'top' as const,
+        position: "top" as const,
       },
     },
-  }
+  };
+
+  const summaryCards = [
+    { label: "Profile views", value: "40", icon: Eye },
+    { label: "Applications", value: "17", icon: Users },
+    { label: "Open roles", value: "5", icon: Briefcase },
+  ];
 
   return (
-    <div className="space-y-8">
-      <h1 className="text-3xl font-bold">Analytics</h1>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Card>
+    <div className="space-y-6 lg:space-y-8">
+      <section className="relative overflow-hidden rounded-[2rem] border border-white/80 bg-[linear-gradient(140deg,_rgba(15,23,42,0.96),_rgba(30,41,59,0.92)_45%,_rgba(8,145,178,0.84))] p-5 text-white shadow-[0_28px_80px_-45px_rgba(15,23,42,0.9)] lg:p-8">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.18),_transparent_25%),radial-gradient(circle_at_bottom_left,_rgba(56,189,248,0.18),_transparent_24%)]" />
+        <div className="relative grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)]">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-sky-50">
+              <Sparkles className="h-3.5 w-3.5" />
+              Hiring analytics
+            </div>
+            <h1 className="mt-4 text-3xl font-bold tracking-tight lg:text-5xl">
+              Read the signal behind your hiring pipeline.
+            </h1>
+            <p className="mt-3 text-sm leading-7 text-slate-200 lg:text-base">
+              Track application momentum, view trends, and spot which job categories
+              are pulling the strongest interest.
+            </p>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
+            {summaryCards.map((item) => (
+              <div
+                key={item.label}
+                className="rounded-[1.5rem] border border-white/15 bg-white/10 p-5 backdrop-blur"
+              >
+                <item.icon className="h-5 w-5 text-sky-100" />
+                <p className="mt-3 text-3xl font-bold tracking-tight">{item.value}</p>
+                <p className="mt-1 text-sm text-slate-200">{item.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="grid grid-cols-1 gap-8 xl:grid-cols-2">
+        <Card className="border-white/80 bg-white/92 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.75)]">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-xl text-slate-950">
               <LineChart className="h-5 w-5" />
-              Application Trend
+              Application trend
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Line data={lineData} options={options} />
+            <div className="h-[320px]">
+              <Line data={lineData} options={options} />
+            </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-white/80 bg-white/92 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.75)]">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-xl text-slate-950">
               <BarChart3 className="h-5 w-5" />
-              Jobs by Category
+              Jobs by category
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Bar data={barData} options={options} />
+            <div className="h-[320px]">
+              <Bar data={barData} options={options} />
+            </div>
           </CardContent>
         </Card>
       </div>
     </div>
-  )
+  );
 }
-
