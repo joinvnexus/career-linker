@@ -11,13 +11,44 @@ interface StatusChipProps {
   onClick?: () => void;
 }
 
-const statusConfig: Record<StatusType, { label: string; color: string; bgColor: string }> = {
-  ALL: { label: "All", color: "text-slate-700", bgColor: "bg-slate-100" },
-  PENDING: { label: "Pending", color: "text-amber-700", bgColor: "bg-amber-100" },
-  VIEWED: { label: "Viewed", color: "text-blue-700", bgColor: "bg-blue-100" },
-  INTERVIEW: { label: "Interview", color: "text-purple-700", bgColor: "bg-purple-100" },
-  OFFER: { label: "Offer", color: "text-green-700", bgColor: "bg-green-100" },
-  REJECTED: { label: "Rejected", color: "text-red-700", bgColor: "bg-red-100" },
+const statusConfig: Record<
+  StatusType,
+  {
+    label: string;
+    selectedClass: string;
+    idleClass: string;
+  }
+> = {
+  ALL: {
+    label: "All",
+    selectedClass: "bg-slate-950 text-white ring-slate-900/20",
+    idleClass: "bg-slate-100 text-slate-600 hover:bg-slate-200",
+  },
+  PENDING: {
+    label: "Pending",
+    selectedClass: "bg-amber-50 text-amber-700 ring-amber-200",
+    idleClass: "bg-slate-100 text-slate-600 hover:bg-slate-200",
+  },
+  VIEWED: {
+    label: "Viewed",
+    selectedClass: "bg-sky-50 text-sky-700 ring-sky-200",
+    idleClass: "bg-slate-100 text-slate-600 hover:bg-slate-200",
+  },
+  INTERVIEW: {
+    label: "Interview",
+    selectedClass: "bg-violet-50 text-violet-700 ring-violet-200",
+    idleClass: "bg-slate-100 text-slate-600 hover:bg-slate-200",
+  },
+  OFFER: {
+    label: "Offer",
+    selectedClass: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+    idleClass: "bg-slate-100 text-slate-600 hover:bg-slate-200",
+  },
+  REJECTED: {
+    label: "Rejected",
+    selectedClass: "bg-rose-50 text-rose-700 ring-rose-200",
+    idleClass: "bg-slate-100 text-slate-600 hover:bg-slate-200",
+  },
 };
 
 export function StatusChip({ status, count, selected, onClick }: StatusChipProps) {
@@ -27,18 +58,17 @@ export function StatusChip({ status, count, selected, onClick }: StatusChipProps
     <button
       onClick={onClick}
       className={cn(
-        "flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-all",
-        selected
-          ? config.bgColor + " " + config.color + " ring-2 ring-offset-1 ring-" + config.color.split("-")[1] + "-400"
-          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+        "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ring-1 ring-transparent",
+        selected ? config.selectedClass : config.idleClass
       )}
+      type="button"
     >
       <span>{config.label}</span>
-      {count !== undefined && count > 0 && (
+      {count !== undefined && (
         <span
           className={cn(
-            "flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 text-xs",
-            selected ? "bg-white/50" : "bg-slate-200"
+            "flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 text-[11px] font-bold",
+            selected ? "bg-white/70 text-current" : "bg-white/70 text-slate-500"
           )}
         >
           {count}

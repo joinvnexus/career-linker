@@ -3,7 +3,14 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Briefcase, FileText, Building2, Lightbulb } from "lucide-react";
+import {
+  Briefcase,
+  FileText,
+  Building2,
+  Lightbulb,
+  Sparkles,
+  CheckCircle2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -61,7 +68,7 @@ type JobDetails = {
 export default function JobDetailsPage() {
   const params = useParams<{ slug: string }>();
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [job, setJob] = useState<JobDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [applyLoading, setApplyLoading] = useState(false);
@@ -74,9 +81,7 @@ export default function JobDetailsPage() {
     const fetchJob = async (): Promise<void> => {
       try {
         setLoading(true);
-        const response = await fetch(
-          `/api/jobs?slug=${params.slug}&includeApplications=1`
-        );
+        const response = await fetch(`/api/jobs?slug=${params.slug}&includeApplications=1`);
         const data = (await response.json()) as { jobs?: JobDetails[] };
         setJob(data.jobs?.[0] ?? null);
       } catch {
@@ -91,7 +96,6 @@ export default function JobDetailsPage() {
     }
   }, [params.slug]);
 
-  // Show/hide mobile sticky bar on scroll
   useEffect(() => {
     const handleScroll = () => {
       const scrolled = window.scrollY > 400;
@@ -140,15 +144,15 @@ export default function JobDetailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white pb-24">
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.10),_transparent_22%),linear-gradient(180deg,_#f8fbff_0%,_#f8fafc_45%,_#ecfdf5_100%)] pb-24">
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-          <Skeleton className="mb-8 h-48 w-full rounded-2xl" />
+          <Skeleton className="mb-8 h-56 w-full rounded-[2rem]" />
           <div className="grid gap-8 lg:grid-cols-3">
             <div className="space-y-6 lg:col-span-2">
-              <Skeleton className="h-96 w-full rounded-2xl" />
-              <Skeleton className="h-64 w-full rounded-2xl" />
+              <Skeleton className="h-96 w-full rounded-[2rem]" />
+              <Skeleton className="h-64 w-full rounded-[2rem]" />
             </div>
-            <Skeleton className="h-96 w-full rounded-2xl" />
+            <Skeleton className="h-[36rem] w-full rounded-[2rem]" />
           </div>
         </div>
       </div>
@@ -157,7 +161,7 @@ export default function JobDetailsPage() {
 
   if (!job) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-slate-50 to-white py-12">
+      <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.10),_transparent_22%),linear-gradient(180deg,_#f8fbff_0%,_#f8fafc_45%,_#ecfdf5_100%)] py-12">
         <div className="text-center">
           <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-slate-100">
             <Briefcase className="h-10 w-10 text-slate-400" />
@@ -166,9 +170,7 @@ export default function JobDetailsPage() {
           <p className="mb-6 text-slate-500">
             The job you&apos;re looking for doesn&apos;t exist or has been removed.
           </p>
-          <Button onClick={() => router.push("/jobs")}>
-            Browse All Jobs
-          </Button>
+          <Button onClick={() => router.push("/jobs")}>Browse All Jobs</Button>
         </div>
       </div>
     );
@@ -180,15 +182,24 @@ export default function JobDetailsPage() {
     session?.user?.id &&
       job.applications?.some((application) => application.seekerId === session.user.id)
   );
-  const isOwner =
-    session?.user?.role === "EMPLOYER" && session.user.id === job.employerId;
+  const isOwner = session?.user?.role === "EMPLOYER" && session.user.id === job.employerId;
   const isJobSeeker = session?.user?.role === "JOB_SEEKER";
+  const detailHighlights = [
+    {
+      label: "Why this role stands out",
+      copy: "The page combines the employer story, role scope, and action path in one focused flow.",
+    },
+    {
+      label: "What to do next",
+      copy: isApplied
+        ? "You have already applied. Use the summary and tips tabs to prepare for next steps."
+        : "Review the responsibilities, then apply once your resume link and cover letter are ready.",
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white pb-24">
-      {/* Main Content */}
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.10),_transparent_22%),linear-gradient(180deg,_#f8fbff_0%,_#f8fafc_45%,_#ecfdf5_100%)] pb-24">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Header */}
         <JobDetailHeader
           job={job}
           isApplied={isApplied}
@@ -197,48 +208,66 @@ export default function JobDetailsPage() {
           onApplyClick={() => setShowApplyModal(true)}
         />
 
-        {/* Main Content Area */}
         <div className="mt-8 grid gap-8 lg:grid-cols-3">
-          {/* Left Column - Tabbed Content */}
-          <div className="lg:col-span-2">
+          <div className="space-y-8 lg:col-span-2">
+            <div className="grid gap-4 md:grid-cols-2">
+              {detailHighlights.map((item) => (
+                <Card
+                  key={item.label}
+                  className="border-white/80 bg-white/92 shadow-[0_18px_40px_-32px_rgba(15,23,42,0.7)]"
+                >
+                  <CardContent className="p-5">
+                    <div className="inline-flex items-center gap-2 rounded-full bg-sky-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-sky-700">
+                      <Sparkles className="h-3.5 w-3.5" />
+                      Insight
+                    </div>
+                    <p className="mt-4 text-base font-semibold text-slate-950">{item.label}</p>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">{item.copy}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
             <Tabs defaultValue="overview" className="w-full">
-              {/* Tab Navigation */}
-              <TabsList className="mb-6 w-full justify-start overflow-x-auto sm:grid sm:w-auto sm:grid-cols-3">
-                <TabsTrigger value="overview" className="gap-2">
+              <TabsList className="mb-6 w-full justify-start overflow-x-auto rounded-[1.5rem] border border-white/80 bg-white/85 p-2 shadow-[0_18px_40px_-32px_rgba(15,23,42,0.65)] sm:grid sm:w-auto sm:grid-cols-3">
+                <TabsTrigger value="overview" className="gap-2 rounded-xl">
                   <FileText className="h-4 w-4" />
                   Overview
                 </TabsTrigger>
-                <TabsTrigger value="company" className="gap-2">
+                <TabsTrigger value="company" className="gap-2 rounded-xl">
                   <Building2 className="h-4 w-4" />
                   Company
                 </TabsTrigger>
-                <TabsTrigger value="tips" className="gap-2">
+                <TabsTrigger value="tips" className="gap-2 rounded-xl">
                   <Lightbulb className="h-4 w-4" />
                   Tips
                 </TabsTrigger>
               </TabsList>
 
-              {/* Overview Tab */}
               <TabsContent value="overview">
-                <Card className="border-0 shadow-xl">
+                <Card className="border-white/80 bg-white/92 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.75)]">
                   <CardHeader>
-                    <CardTitle className="text-2xl">Job Details</CardTitle>
+                    <CardTitle className="text-2xl tracking-tight text-slate-950">
+                      Job details
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-8 pt-0">
-                    {/* Responsibilities */}
                     {(job.responsibilities || job.description) && (
                       <div>
                         <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900">
-                          <FileText className="h-5 w-5 text-blue-500" />
-                          {job.responsibilities ? "Responsibilities" : "About this Role"}
+                          <FileText className="h-5 w-5 text-sky-600" />
+                          {job.responsibilities ? "Responsibilities" : "About this role"}
                         </h3>
                         <div className="space-y-3 text-slate-700">
                           {(job.responsibilities || job.description)
                             .split("\n")
                             .filter(Boolean)
                             .map((line, index) => (
-                              <div key={index} className="flex items-start gap-3">
-                                <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-emerald-500" />
+                              <div
+                                key={index}
+                                className="flex items-start gap-3 rounded-2xl bg-slate-50/80 p-4"
+                              >
+                                <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-600" />
                                 <span>{line.trim()}</span>
                               </div>
                             ))}
@@ -246,25 +275,21 @@ export default function JobDetailsPage() {
                       </div>
                     )}
 
-                    {/* Requirements */}
                     {job.requirements && (
                       <div>
-                        <h3 className="mb-4 text-xl font-bold text-slate-900">
-                          Requirements
-                        </h3>
-                        <div className="whitespace-pre-wrap rounded-2xl bg-blue-50 p-6 text-slate-700">
+                        <h3 className="mb-4 text-xl font-bold text-slate-900">Requirements</h3>
+                        <div className="whitespace-pre-wrap rounded-[1.75rem] bg-sky-50/80 p-6 leading-7 text-slate-700">
                           {job.requirements}
                         </div>
                       </div>
                     )}
 
-                    {/* Full Description */}
                     {job.description && !job.responsibilities && (
                       <div>
                         <h3 className="mb-4 text-xl font-bold text-slate-900">
-                          Job Description
+                          Job description
                         </h3>
-                        <div className="whitespace-pre-wrap text-slate-700">
+                        <div className="whitespace-pre-wrap rounded-[1.75rem] bg-slate-50/80 p-6 leading-7 text-slate-700">
                           {job.description}
                         </div>
                       </div>
@@ -273,11 +298,12 @@ export default function JobDetailsPage() {
                 </Card>
               </TabsContent>
 
-              {/* Company Tab */}
               <TabsContent value="company">
-                <Card className="border-0 shadow-xl">
+                <Card className="border-white/80 bg-white/92 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.75)]">
                   <CardHeader>
-                    <CardTitle className="text-2xl">About {companyName}</CardTitle>
+                    <CardTitle className="text-2xl tracking-tight text-slate-950">
+                      About {companyName}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6 pt-0">
                     <div className="flex items-center gap-4">
@@ -292,11 +318,11 @@ export default function JobDetailsPage() {
                       </div>
                     </div>
 
-                    <div className="rounded-2xl bg-slate-50 p-6">
-                      <p className="text-slate-700">
-                        {companyName} is a great place to work. We value innovation,
-                        collaboration, and personal growth. Join our team to make an
-                        impact and advance your career.
+                    <div className="rounded-[1.75rem] bg-slate-50/80 p-6">
+                      <p className="leading-7 text-slate-700">
+                        {companyName} values thoughtful work, collaboration, and people
+                        who can turn clarity into momentum. This section gives candidates
+                        a quick read on the team behind the role.
                       </p>
                     </div>
 
@@ -305,16 +331,15 @@ export default function JobDetailsPage() {
                         href={job.employer.employerProfile.companyWebsite}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700"
+                        className="inline-flex items-center gap-2 text-sm font-semibold text-sky-700 hover:text-sky-800"
                       >
-                        Visit company website →
+                        Visit company website
                       </a>
                     )}
                   </CardContent>
                 </Card>
               </TabsContent>
 
-              {/* Tips Tab */}
               <TabsContent value="tips">
                 {isJobSeeker ? (
                   <ApplicationTips
@@ -324,21 +349,18 @@ export default function JobDetailsPage() {
                     experience={job.experience}
                   />
                 ) : (
-                  <Card className="border-0 shadow-xl">
+                  <Card className="border-white/80 bg-white/92 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.75)]">
                     <CardContent className="py-12 text-center">
                       <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
                         <Lightbulb className="h-8 w-8 text-slate-400" />
                       </div>
                       <h3 className="text-lg font-semibold text-slate-900">
-                        Tips for Job Seekers
+                        Tips for job seekers
                       </h3>
                       <p className="mt-2 text-slate-500">
                         Sign in as a job seeker to access application tips and advice.
                       </p>
-                      <Button
-                        className="mt-4"
-                        onClick={() => router.push("/login")}
-                      >
+                      <Button className="mt-4" onClick={() => router.push("/login")}>
                         Sign In
                       </Button>
                     </CardContent>
@@ -347,17 +369,13 @@ export default function JobDetailsPage() {
               </TabsContent>
             </Tabs>
 
-            {/* Similar Jobs */}
-            <div className="mt-8">
-              <SimilarJobs
-                currentJobId={job.id}
-                jobType={job.jobType}
-                location={job.location}
-              />
-            </div>
+            <SimilarJobs
+              currentJobId={job.id}
+              jobType={job.jobType}
+              location={job.location}
+            />
           </div>
 
-          {/* Right Column - Sidebar */}
           <div className="space-y-6">
             <JobSummaryCard
               job={job}
@@ -370,9 +388,8 @@ export default function JobDetailsPage() {
         </div>
       </div>
 
-      {/* Mobile Sticky Apply Bar */}
       <div
-        className={`fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white/95 backdrop-blur-sm transition-transform duration-300 lg:hidden ${
+        className={`fixed bottom-0 left-0 right-0 z-50 border-t border-white/70 bg-white/92 shadow-[0_-16px_40px_-28px_rgba(15,23,42,0.65)] backdrop-blur-xl transition-transform duration-300 lg:hidden ${
           showMobileBar ? "translate-y-0" : "translate-y-full"
         }`}
       >
@@ -382,7 +399,7 @@ export default function JobDetailsPage() {
             <p className="truncate text-xs text-slate-500">{companyName}</p>
           </div>
           <Button
-            className="flex-shrink-0 bg-gradient-to-r from-blue-500 to-emerald-500 font-bold"
+            className="flex-shrink-0 bg-slate-950 font-bold text-white hover:bg-slate-800"
             disabled={isApplied || !isJobSeeker}
             onClick={() => setShowApplyModal(true)}
           >
@@ -391,7 +408,6 @@ export default function JobDetailsPage() {
         </div>
       </div>
 
-      {/* Application Modal */}
       <Modal
         description="Submit your application details for this role."
         footer={

@@ -13,19 +13,19 @@ interface MobileStatsCardProps {
 }
 
 const colorStyles = {
-  blue: "from-blue-500 to-blue-600 bg-blue-50 text-blue-600",
-  emerald: "from-emerald-500 to-emerald-600 bg-emerald-50 text-emerald-600",
-  purple: "from-purple-500 to-purple-600 bg-purple-50 text-purple-600",
-  orange: "from-orange-500 to-orange-600 bg-orange-50 text-orange-600",
-  red: "from-red-500 to-red-600 bg-red-50 text-red-600",
+  blue: "from-sky-500/15 via-white to-sky-500/5",
+  emerald: "from-emerald-500/15 via-white to-emerald-500/5",
+  purple: "from-violet-500/15 via-white to-violet-500/5",
+  orange: "from-amber-500/15 via-white to-amber-500/5",
+  red: "from-rose-500/15 via-white to-rose-500/5",
 };
 
 const iconBgStyles = {
-  blue: "bg-blue-100",
-  emerald: "bg-emerald-100",
-  purple: "bg-purple-100",
-  orange: "bg-orange-100",
-  red: "bg-red-100",
+  blue: "bg-sky-100 text-sky-700 ring-sky-200/80",
+  emerald: "bg-emerald-100 text-emerald-700 ring-emerald-200/80",
+  purple: "bg-violet-100 text-violet-700 ring-violet-200/80",
+  orange: "bg-amber-100 text-amber-700 ring-amber-200/80",
+  red: "bg-rose-100 text-rose-700 ring-rose-200/80",
 };
 
 export function MobileStatsCard({
@@ -40,38 +40,36 @@ export function MobileStatsCard({
     <button
       onClick={onClick}
       className={cn(
-        "group relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-4 text-left transition-all hover:shadow-lg",
+        "group relative overflow-hidden rounded-[1.75rem] border border-white/80 bg-white/90 p-4 text-left shadow-[0_14px_35px_-24px_rgba(15,23,42,0.55)] ring-1 ring-slate-200/60 backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_22px_45px_-24px_rgba(14,116,144,0.35)]",
         onClick && "cursor-pointer"
       )}
     >
-      <div className="flex items-start justify-between">
+      <div
+        className={cn(
+          "absolute inset-0 bg-gradient-to-br opacity-100 transition-opacity duration-300",
+          colorStyles[color]
+        )}
+      />
+      <div className="absolute right-0 top-0 h-24 w-24 -translate-y-8 translate-x-8 rounded-full bg-white/60 blur-2xl transition-transform duration-300 group-hover:scale-125" />
+      <div className="relative z-10 flex items-start justify-between">
         <div
           className={cn(
-            "flex h-12 w-12 items-center justify-center rounded-xl",
+            "flex h-12 w-12 items-center justify-center rounded-2xl ring-1",
             iconBgStyles[color]
           )}
         >
-          <Icon className={cn("h-6 w-6", `text-${color}-600`)} />
+          <Icon className="h-6 w-6" />
         </div>
         {change && (
-          <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+          <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700">
             {change}
           </span>
         )}
       </div>
-      <div className="mt-3">
-        <p className="text-2xl font-bold text-slate-900">{value}</p>
-        <p className="mt-0.5 text-sm text-slate-500">{label}</p>
+      <div className="relative z-10 mt-6">
+        <p className="text-[1.9rem] font-bold tracking-tight text-slate-950">{value}</p>
+        <p className="mt-1 text-sm font-medium text-slate-600">{label}</p>
       </div>
-      
-      {/* Gradient overlay on hover */}
-      <div
-        className={cn(
-          "absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100",
-          colorStyles[color]
-        )}
-        style={{ opacity: 0.05 }}
-      />
     </button>
   );
 }

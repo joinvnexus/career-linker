@@ -1,6 +1,6 @@
 "use client";
 
-import { Filter, RotateCcw, SlidersHorizontal } from "lucide-react";
+import { RotateCcw, SlidersHorizontal } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -98,7 +98,7 @@ export function JobsFiltersPanel({
               <SelectItem value="ALL" className="font-medium">
                 📂 All categories
               </SelectItem>
-              {categories.map((category, index) => (
+              {categories.map((category) => (
                 <SelectItem 
                   key={category.id} 
                   value={category.id}

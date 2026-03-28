@@ -69,14 +69,19 @@ export default function JobsPage() {
   const deferredSearch = useDeferredValue(filters.search);
   const deferredLocation = useDeferredValue(filters.location);
   const totalPages = useMemo(() => Math.max(Math.ceil(total / pageSize), 1), [total]);
+
   const sortedJobs = useMemo(() => {
     const nextJobs = [...jobs];
 
     switch (sort) {
       case "deadline":
         nextJobs.sort((a, b) => {
-          const aValue = a.applicationDeadline ? new Date(a.applicationDeadline).getTime() : Number.MAX_SAFE_INTEGER;
-          const bValue = b.applicationDeadline ? new Date(b.applicationDeadline).getTime() : Number.MAX_SAFE_INTEGER;
+          const aValue = a.applicationDeadline
+            ? new Date(a.applicationDeadline).getTime()
+            : Number.MAX_SAFE_INTEGER;
+          const bValue = b.applicationDeadline
+            ? new Date(b.applicationDeadline).getTime()
+            : Number.MAX_SAFE_INTEGER;
           return aValue - bValue;
         });
         break;
@@ -185,7 +190,7 @@ export default function JobsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white py-8 sm:py-10 lg:py-12">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.10),_transparent_22%),linear-gradient(180deg,_#f8fbff_0%,_#f8fafc_45%,_#ecfdf5_100%)] py-8 sm:py-10 lg:py-12">
       <div className="mx-auto max-w-7xl space-y-8 px-4 sm:space-y-10 sm:px-6 lg:px-8">
         <JobsSearchHeader
           filters={filters}
@@ -230,20 +235,19 @@ export default function JobsPage() {
             ) : jobs.length === 0 ? (
               <div className="mt-6 rounded-[2rem] border-2 border-dashed border-slate-200 bg-gradient-to-br from-white to-slate-50 py-20 text-center shadow-sm transition-all duration-300 hover:shadow-md">
                 <div className="relative inline-flex">
-                  <div className="absolute inset-0 bg-amber-100 rounded-full blur-xl opacity-50 animate-pulse" />
+                  <div className="absolute inset-0 rounded-full bg-amber-100 opacity-50 blur-xl" />
                   <Briefcase className="relative mx-auto mb-4 h-16 w-16 text-amber-400" />
                 </div>
-                <h3 className="mb-2 text-2xl font-bold text-slate-900">
-                  No jobs found
-                </h3>
-                <p className="mb-6 text-slate-500 max-w-md mx-auto">
-                  We couldn&apos;t find any jobs matching your criteria. Try adjusting your filters or search terms.
+                <h3 className="mb-2 text-2xl font-bold text-slate-900">No jobs found</h3>
+                <p className="mx-auto mb-6 max-w-md text-slate-500">
+                  We couldn&apos;t find any jobs matching your criteria. Try adjusting
+                  your filters or search terms.
                 </p>
-                <Button 
+                <Button
                   onClick={resetFilters}
-                  className="bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-600 hover:to-emerald-600 transition-all duration-200 hover:scale-105"
+                  className="bg-gradient-to-r from-sky-500 to-emerald-500 transition-all duration-200 hover:scale-105 hover:from-sky-600 hover:to-emerald-600"
                 >
-                  🔍 Browse all jobs
+                  Browse all jobs
                 </Button>
               </div>
             ) : (
@@ -261,29 +265,33 @@ export default function JobsPage() {
                 </div>
 
                 {totalPages > 1 && (
-                <div className="flex flex-col items-center justify-between gap-4 rounded-2xl border border-border bg-card p-4 shadow-sm transition-all duration-300 hover:shadow-md sm:flex-row">
-                  <p className="text-sm text-muted-foreground">
-                    📄 Page <span className="font-semibold text-card-foreground">{page}</span> of <span className="font-semibold text-card-foreground">{totalPages}</span>
-                  </p>
-                  <div className="flex items-center gap-3">
-                    <Button
-                      disabled={page <= 1}
-                      onClick={() => setPage((current) => Math.max(current - 1, 1))}
-                      variant="outline"
-                      className="transition-all duration-200 hover:scale-105"
-                    >
-                      ← Previous
-                    </Button>
-                    <Button
-                      disabled={page >= totalPages}
-                      onClick={() => setPage((current) => Math.min(current + 1, totalPages))}
-                      variant="outline"
-                      className="transition-all duration-200 hover:scale-105"
-                    >
-                      Next →
-                    </Button>
+                  <div className="flex flex-col items-center justify-between gap-4 rounded-[1.75rem] border border-white/80 bg-white/90 p-4 shadow-[0_18px_40px_-32px_rgba(15,23,42,0.7)] transition-all duration-300 hover:shadow-[0_22px_50px_-32px_rgba(15,23,42,0.75)] sm:flex-row">
+                    <p className="text-sm text-muted-foreground">
+                      Page <span className="font-semibold text-card-foreground">{page}</span>{" "}
+                      of{" "}
+                      <span className="font-semibold text-card-foreground">
+                        {totalPages}
+                      </span>
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <Button
+                        disabled={page <= 1}
+                        onClick={() => setPage((current) => Math.max(current - 1, 1))}
+                        variant="outline"
+                        className="transition-all duration-200 hover:scale-105"
+                      >
+                        Previous
+                      </Button>
+                      <Button
+                        disabled={page >= totalPages}
+                        onClick={() => setPage((current) => Math.min(current + 1, totalPages))}
+                        variant="outline"
+                        className="transition-all duration-200 hover:scale-105"
+                      >
+                        Next
+                      </Button>
+                    </div>
                   </div>
-                </div>
                 )}
               </div>
             )}

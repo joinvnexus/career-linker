@@ -72,8 +72,6 @@ function TipCard({ tip }: { tip: Tip }) {
 }
 
 export function ApplicationTips({
-  jobTitle,
-  requirements,
   jobType,
   experience,
 }: ApplicationTipsProps) {

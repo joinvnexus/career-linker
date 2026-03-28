@@ -2,12 +2,21 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Bookmark, Search, SortAsc } from "lucide-react";
+import {
+  Bookmark,
+  Search,
+  Sparkles,
+  LayoutGrid,
+  Rows3,
+  Briefcase,
+  MapPin,
+} from "lucide-react";
 import { toast } from "sonner";
 import { JobCard } from "@/components/job-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 type SavedJob = {
   id: string;
@@ -65,40 +74,46 @@ export default function SavedJobsPage() {
     void fetchSavedJobs();
   }, []);
 
-  // Filter jobs by search
-  const filteredJobs = jobs.filter((job) =>
-    searchQuery === "" ||
-    job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    job.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    job.location.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredJobs = jobs.filter(
+    (job) =>
+      searchQuery === "" ||
+      job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.location.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (loading) {
     return (
-      <div className={viewMode === "grid" 
-        ? "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" 
-        : "space-y-3"
-      }>
-        {Array.from({ length: 3 }).map((_, index) => (
-          <Skeleton key={index} className="h-40 w-full rounded-2xl" />
-        ))}
+      <div className="space-y-6">
+        <Skeleton className="h-64 rounded-[2rem]" />
+        <div
+          className={
+            viewMode === "grid"
+              ? "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+              : "space-y-3"
+          }
+        >
+          {Array.from({ length: 3 }).map((_, index) => (
+            <Skeleton key={index} className="h-40 w-full rounded-[1.75rem]" />
+          ))}
+        </div>
       </div>
     );
   }
 
   if (jobs.length === 0) {
     return (
-      <Card className="border-0 shadow-xl">
-        <CardContent className="py-12 text-center">
+      <Card className="border-white/80 bg-white/90 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.75)]">
+        <CardContent className="py-14 text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
             <Bookmark className="h-8 w-8 text-slate-400" />
           </div>
-          <h3 className="text-lg font-semibold text-slate-900">No saved jobs yet</h3>
-          <p className="mt-1 text-sm text-slate-500">
-            Save jobs youre interested in to view them here
+          <h3 className="text-lg font-semibold text-slate-950">No saved jobs yet</h3>
+          <p className="mt-2 text-sm text-slate-500">
+            Save roles you want to revisit, compare, and apply for later.
           </p>
           <Link href="/jobs">
-            <Button className="mt-4 bg-gradient-to-r from-blue-500 to-emerald-500">
+            <Button className="mt-5 bg-slate-950 text-white hover:bg-slate-800">
               Browse Jobs
             </Button>
           </Link>
@@ -108,86 +123,117 @@ export default function SavedJobsPage() {
   }
 
   return (
-    <div className="space-y-4">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Saved Jobs</h1>
-          <p className="text-slate-500">{jobs.length} job{jobs.length !== 1 ? "s" : ""} saved</p>
+    <div className="space-y-6 lg:space-y-8">
+      <section className="relative overflow-hidden rounded-[2rem] border border-white/80 bg-[linear-gradient(135deg,_rgba(6,95,70,0.95),_rgba(5,150,105,0.88)_45%,_rgba(15,23,42,0.95))] p-5 text-white shadow-[0_28px_80px_-45px_rgba(15,23,42,0.85)] lg:p-8">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.18),_transparent_26%),radial-gradient(circle_at_bottom_left,_rgba(167,243,208,0.20),_transparent_22%)]" />
+        <div className="relative grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(260px,0.85fr)]">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-50">
+              <Sparkles className="h-3.5 w-3.5" />
+              Saved roles
+            </div>
+            <h1 className="mt-4 text-3xl font-bold tracking-tight lg:text-5xl">
+              Your shortlist, ready when you are.
+            </h1>
+            <p className="mt-3 text-sm leading-7 text-emerald-50/85 lg:text-base">
+              Keep a clean stack of interesting roles, scan them quickly, and jump
+              back in when it is time to apply.
+            </p>
+          </div>
+          <div className="rounded-[1.75rem] border border-white/15 bg-white/10 p-5 backdrop-blur">
+            <p className="text-sm font-semibold text-white">Saved momentum</p>
+            <p className="mt-3 text-4xl font-bold tracking-tight">{jobs.length}</p>
+            <p className="mt-1 text-sm text-emerald-50/80">
+              role{jobs.length !== 1 ? "s" : ""} ready to review
+            </p>
+            <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-50">
+              <MapPin className="h-3.5 w-3.5" />
+              Stay organized
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Search and Controls */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        {/* Search */}
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Search saved jobs..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </div>
+      <Card className="border-white/80 bg-white/85 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.8)]">
+        <CardContent className="p-4 lg:p-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="relative max-w-xl flex-1">
+              <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search saved jobs..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-11 pr-4 text-sm text-slate-900 outline-none transition focus:border-emerald-300 focus:bg-white focus:ring-2 focus:ring-emerald-100"
+              />
+            </div>
 
-        {/* View Toggle - Desktop only */}
-        <div className="hidden sm:flex items-center gap-2">
-          <button
-            onClick={() => setViewMode("grid")}
-            className={`p-2 rounded-lg transition-colors ${
-              viewMode === "grid" 
-                ? "bg-blue-100 text-blue-600" 
-                : "text-slate-500 hover:bg-slate-100"
-            }`}
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-            </svg>
-          </button>
-          <button
-            onClick={() => setViewMode("list")}
-            className={`p-2 rounded-lg transition-colors ${
-              viewMode === "list" 
-                ? "bg-blue-100 text-blue-600" 
-                : "text-slate-500 hover:bg-slate-100"
-            }`}
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-        </div>
-      </div>
+            <div className="flex items-center gap-3">
+              <div className="hidden rounded-2xl bg-slate-100 p-1 sm:flex">
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={cn(
+                    "rounded-xl px-3 py-2 transition-colors",
+                    viewMode === "grid"
+                      ? "bg-white text-emerald-700 shadow-sm"
+                      : "text-slate-500 hover:text-slate-700"
+                  )}
+                >
+                  <LayoutGrid className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={() => setViewMode("list")}
+                  className={cn(
+                    "rounded-xl px-3 py-2 transition-colors",
+                    viewMode === "list"
+                      ? "bg-white text-emerald-700 shadow-sm"
+                      : "text-slate-500 hover:text-slate-700"
+                  )}
+                >
+                  <Rows3 className="h-5 w-5" />
+                </button>
+              </div>
 
-      {/* Results */}
+              <Link href="/jobs">
+                <Button variant="outline" className="border-slate-200 bg-white/80">
+                  <Briefcase className="mr-2 h-4 w-4" />
+                  Discover Jobs
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {filteredJobs.length === 0 ? (
-        <Card className="border-0 shadow-xl">
-          <CardContent className="py-12 text-center">
-            <Search className="h-8 w-8 text-slate-400 mx-auto mb-3" />
-            <h3 className="font-semibold text-slate-900">No jobs found</h3>
-            <p className="text-sm text-slate-500">Try a different search term</p>
+        <Card className="border-white/80 bg-white/90 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.75)]">
+          <CardContent className="py-14 text-center">
+            <Search className="mx-auto mb-3 h-8 w-8 text-slate-400" />
+            <h3 className="font-semibold text-slate-950">No jobs found</h3>
+            <p className="mt-2 text-sm text-slate-500">
+              Try a different title, company, or location.
+            </p>
           </CardContent>
         </Card>
       ) : viewMode === "grid" ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {filteredJobs.map((job) => (
-            <JobCard 
-              key={job.id} 
-              employerId={job.employerId} 
-              job={job} 
-              userRole="JOB_SEEKER" 
+            <JobCard
+              key={job.id}
+              employerId={job.employerId}
+              job={job}
+              userRole="JOB_SEEKER"
             />
           ))}
         </div>
       ) : (
         <div className="space-y-3">
           {filteredJobs.map((job) => (
-            <JobCard 
-              key={job.id} 
-              employerId={job.employerId} 
-              job={job} 
-              userRole="JOB_SEEKER" 
+            <JobCard
+              key={job.id}
+              employerId={job.employerId}
+              job={job}
+              userRole="JOB_SEEKER"
             />
           ))}
         </div>
