@@ -2,7 +2,9 @@
 
 import { Role } from "@prisma/client";
 import { useEffect, useState } from "react";
+import { ArrowRightLeft, ShieldCheck, UserCog, Users } from "lucide-react";
 import { toast } from "sonner";
+import { StatsCard } from "@/components/dashboard/stats-card";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -70,32 +72,96 @@ export default function AdminUsersPage() {
   if (loading) {
     return (
       <div className="space-y-4">
-        <Skeleton className="h-12 w-64" />
+        <Skeleton className="h-44 w-full rounded-[28px]" />
         {Array.from({ length: 4 }).map((_, index) => (
-          <Skeleton key={index} className="h-24 w-full" />
+          <Skeleton key={index} className="h-28 w-full rounded-[24px]" />
         ))}
       </div>
     );
   }
 
+  const employerCount = users.filter((user) => user.role === Role.EMPLOYER).length;
+  const adminCount = users.filter((user) => user.role === Role.ADMIN).length;
+  const recentCount = users.filter((user) => {
+    const joinedAt = new Date(user.createdAt).getTime();
+    return Date.now() - joinedAt <= 1000 * 60 * 60 * 24 * 30;
+  }).length;
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-slate-900">User Management</h1>
-        <p className="mt-1 text-slate-600">
-          Review account roles and update access levels when needed.
-        </p>
+    <div className="space-y-8">
+      <section className="rounded-[32px] border border-white/70 bg-[linear-gradient(135deg,#0f172a_0%,#1e293b_58%,#1d4ed8_100%)] p-6 text-white shadow-[0_28px_90px_-54px_rgba(15,23,42,0.85)] sm:p-8">
+        <Badge className="rounded-full border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.22em] text-slate-100 hover:bg-white/10">
+          User Operations
+        </Badge>
+        <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+              Manage access with context, not guesswork.
+            </h1>
+            <p className="mt-3 text-sm text-slate-200 sm:text-base">
+              Review the newest accounts, track role distribution, and adjust
+              permissions without losing sight of marketplace balance.
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3 lg:w-[28rem]">
+            <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur">
+              <p className="text-xs uppercase tracking-[0.18em] text-slate-300">Total people</p>
+              <p className="mt-2 text-2xl font-semibold">{users.length}</p>
+            </div>
+            <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur">
+              <p className="text-xs uppercase tracking-[0.18em] text-slate-300">Joined 30 days</p>
+              <p className="mt-2 text-2xl font-semibold">{recentCount}</p>
+            </div>
+            <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur">
+              <p className="text-xs uppercase tracking-[0.18em] text-slate-300">Admin seats</p>
+              <p className="mt-2 text-2xl font-semibold">{adminCount}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <StatsCard
+          title="User Accounts"
+          value={users.length}
+          change={`${recentCount} new this month`}
+          trend="up"
+          icon={<Users className="h-7 w-7" />}
+        />
+        <StatsCard
+          title="Employers"
+          value={employerCount}
+          change={`${users.length - employerCount - adminCount} job seekers`}
+          trend="neutral"
+          icon={<UserCog className="h-7 w-7" />}
+        />
+        <StatsCard
+          title="Admins"
+          value={adminCount}
+          change="Governance access seats"
+          trend="neutral"
+          icon={<ShieldCheck className="h-7 w-7" />}
+        />
       </div>
 
-      <Card className="border-0 shadow-xl">
-        <CardHeader>
-          <CardTitle>Workspace Users</CardTitle>
+      <Card className="overflow-hidden rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
+        <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <CardTitle className="text-xl text-slate-950">Workspace Users</CardTitle>
+            <p className="text-sm text-slate-500">
+              Role changes apply instantly, so this table is optimized for fast review.
+            </p>
+          </div>
+          <Badge variant="outline" className="w-fit rounded-full px-3 py-1 text-slate-600">
+            <ArrowRightLeft className="mr-2 h-3.5 w-3.5" />
+            Live role switching
+          </Badge>
         </CardHeader>
         <CardContent className="space-y-4">
           {users.map((user) => (
             <div
               key={user.id}
-              className="flex flex-col gap-4 rounded-2xl border border-slate-200 p-4 lg:flex-row lg:items-center lg:justify-between"
+              className="flex flex-col gap-4 rounded-3xl border border-slate-200/80 bg-slate-50/80 p-4 lg:flex-row lg:items-center lg:justify-between"
             >
               <div>
                 <p className="font-semibold text-slate-900">{user.name || "Unnamed user"}</p>
@@ -105,12 +171,14 @@ export default function AdminUsersPage() {
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <Badge variant="secondary">{user.role.replaceAll("_", " ")}</Badge>
+                <Badge variant="secondary" className="rounded-full px-3 py-1">
+                  {user.role.replaceAll("_", " ")}
+                </Badge>
                 <Select
                   value={user.role}
                   onValueChange={(value) => void updateRole(user.id, value as Role)}
                 >
-                  <SelectTrigger className="w-44">
+                  <SelectTrigger className="w-44 rounded-full border-slate-300 bg-white">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

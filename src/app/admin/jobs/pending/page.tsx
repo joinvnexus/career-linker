@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { AlertTriangle, ArrowUpRight, Clock3 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -73,30 +74,62 @@ export default function PendingJobsPage() {
   if (loading) {
     return (
       <div className="space-y-4">
-        <Skeleton className="h-12 w-72" />
+        <Skeleton className="h-44 w-full rounded-[28px]" />
         {Array.from({ length: 3 }).map((_, index) => (
-          <Skeleton key={index} className="h-40 w-full" />
+          <Skeleton key={index} className="h-44 w-full rounded-[24px]" />
         ))}
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900">Pending Job Approvals</h1>
-          <p className="mt-1 text-slate-600">
-            Review jobs awaiting moderation before they appear publicly.
-          </p>
+    <div className="space-y-8">
+      <section className="rounded-[32px] border border-white/70 bg-[linear-gradient(135deg,#450a0a_0%,#7f1d1d_38%,#0f172a_100%)] p-6 text-white shadow-[0_28px_90px_-54px_rgba(15,23,42,0.85)] sm:p-8">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <Badge className="rounded-full border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.22em] text-slate-100 hover:bg-white/10">
+              Pending Queue
+            </Badge>
+            <h1 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
+              Clear the moderation queue before weak listings hit the market.
+            </h1>
+            <p className="mt-3 text-sm text-slate-200 sm:text-base">
+              Every card here represents a submission still waiting for review.
+              The queue is designed for fast triage on both desktop and mobile.
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:w-[24rem]">
+            <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur">
+              <div className="flex items-center gap-2">
+                <Clock3 className="h-4 w-4 text-amber-300" />
+                <p className="text-xs uppercase tracking-[0.18em] text-slate-300">Waiting now</p>
+              </div>
+              <p className="mt-2 text-3xl font-semibold">{jobs.length}</p>
+            </div>
+            <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-rose-300" />
+                <p className="text-xs uppercase tracking-[0.18em] text-slate-300">Focus</p>
+              </div>
+              <p className="mt-2 text-sm text-slate-100">
+                Prioritize unverified companies and unclear listings first.
+              </p>
+            </div>
+          </div>
         </div>
         <Link href="/admin/jobs">
-          <Button variant="outline">Open All Jobs</Button>
+          <Button
+            variant="outline"
+            className="mt-6 rounded-full border-white/20 bg-white/10 text-white hover:bg-white/15 hover:text-white"
+          >
+            Open All Jobs
+            <ArrowUpRight className="ml-2 h-4 w-4" />
+          </Button>
         </Link>
-      </div>
+      </section>
 
       {jobs.length === 0 ? (
-        <Card className="border-0 shadow-xl">
+        <Card className="rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
           <CardHeader>
             <CardTitle>No jobs waiting for approval</CardTitle>
           </CardHeader>
@@ -107,13 +140,20 @@ export default function PendingJobsPage() {
       ) : (
         <div className="space-y-4">
           {jobs.map((job) => (
-            <Card key={job.id} className="border-0 shadow-md">
-              <CardContent className="flex flex-col gap-4 py-5 lg:flex-row lg:items-center lg:justify-between">
+            <Card
+              key={job.id}
+              className="rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-56px_rgba(15,23,42,0.45)]"
+            >
+              <CardContent className="flex flex-col gap-5 py-5 lg:flex-row lg:items-center lg:justify-between">
                 <div className="space-y-2">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="text-lg font-semibold text-slate-900">{job.title}</p>
-                    <Badge variant="secondary">{job.jobType.replaceAll("_", " ")}</Badge>
-                    <Badge variant="outline">{job.location}</Badge>
+                    <Badge variant="secondary" className="rounded-full px-3 py-1">
+                      {job.jobType.replaceAll("_", " ")}
+                    </Badge>
+                    <Badge variant="outline" className="rounded-full px-3 py-1">
+                      {job.location}
+                    </Badge>
                   </div>
                   <p className="text-sm text-slate-600">
                     {job.employer.employerProfile?.companyName || job.employer.name || "Employer"}
@@ -130,10 +170,12 @@ export default function PendingJobsPage() {
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-3">
-                  <Button onClick={() => void reviewJob(job.id, true)}>Approve</Button>
+                  <Button className="rounded-full" onClick={() => void reviewJob(job.id, true)}>
+                    Approve
+                  </Button>
                   <Button
                     variant="outline"
-                    className="text-rose-600 hover:bg-rose-50 hover:text-rose-700"
+                    className="rounded-full text-rose-600 hover:bg-rose-50 hover:text-rose-700"
                     onClick={() => void reviewJob(job.id, false)}
                   >
                     Reject
