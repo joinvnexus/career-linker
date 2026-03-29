@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  ArrowRight,
-  Briefcase,
-  MapPin,
-  Search,
-  Sparkles,
-  Loader2,
-} from "lucide-react";
+import { ArrowRight, Briefcase, Loader2, MapPin, Search, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -23,17 +16,14 @@ type JobsSearchHeaderProps = {
 };
 
 const quickFilters = [
-  { label: "Remote", key: "jobType", value: "REMOTE", icon: "Globe" },
-  { label: "Full-time", key: "jobType", value: "FULL_TIME", icon: "Focus" },
-  { label: "Worldwide", key: "location", value: "", icon: "Open" },
-  { label: "Entry level", key: "experience", value: "ENTRY", icon: "Launch" },
+  { label: "Remote", key: "jobType", value: "REMOTE" },
+  { label: "Full-time", key: "jobType", value: "FULL_TIME" },
+  { label: "Worldwide", key: "location", value: "" },
+  { label: "Entry level", key: "experience", value: "ENTRY" },
 ] as const;
 
-const quickFilterIsActive = (
-  filters: JobsFilterState,
-  key: keyof JobsFilterState,
-  value: string
-) => filters[key] === value;
+const quickFilterIsActive = (filters: JobsFilterState, key: keyof JobsFilterState, value: string) =>
+  filters[key] === value;
 
 export function JobsSearchHeader({
   filters,
@@ -44,15 +34,8 @@ export function JobsSearchHeader({
   onSearchSubmit,
 }: JobsSearchHeaderProps) {
   return (
-    <section className="relative overflow-hidden rounded-[2.25rem] bg-slate-950 px-5 py-8 text-white shadow-[0_35px_90px_-40px_rgba(15,23,42,0.75)] sm:px-8 sm:py-10 lg:px-10">
+    <section className="surface-inverse relative overflow-hidden rounded-[2.25rem] border border-white/10 px-5 py-8 sm:px-8 sm:py-10 lg:px-10">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.18),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(16,185,129,0.18),_transparent_28%)]" />
-      <div
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage:
-            'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
-        }}
-      />
 
       <div className="relative">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
@@ -61,25 +44,18 @@ export function JobsSearchHeader({
               <Sparkles className="h-4 w-4" />
               Job search workspace
             </div>
-            <h1 className="mt-5 text-3xl font-bold tracking-[-0.03em] sm:text-4xl lg:text-5xl">
-              <span className="bg-gradient-to-r from-white via-sky-100 to-emerald-100 bg-clip-text text-transparent">
-                Find roles with less friction
-              </span>
-              <br />
-              <span className="text-slate-300">and better signal.</span>
+            <h1 className="mt-5 text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">
+              Find roles with less friction and better signal.
             </h1>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
-              Search by role, company, or location, then tighten the list with
-              filters built for fast scanning.
+              Search by role, company, or location, then tighten the list with filters designed for faster scanning.
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl bg-white/5 px-4 py-4 transition-all duration-300 hover:bg-white/10">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-                Results
-              </p>
-              <p className="mt-2 text-2xl font-bold tabular-nums">
+            <div className="rounded-[1.4rem] bg-white/5 px-4 py-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Results</p>
+              <p className="mt-2 text-2xl font-semibold tabular-nums">
                 {loading ? (
                   <span className="inline-flex items-center gap-1">
                     <Loader2 className="h-5 w-5 animate-spin" />
@@ -89,29 +65,21 @@ export function JobsSearchHeader({
                 )}
               </p>
             </div>
-            <div className="rounded-2xl bg-white/5 px-4 py-4 transition-all duration-300 hover:bg-white/10">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-                Search mode
-              </p>
-              <p className="mt-2 text-lg font-bold">
-                <span className="bg-gradient-to-r from-sky-300 to-emerald-300 bg-clip-text text-transparent">
-                  Focused
-                </span>
-              </p>
+            <div className="rounded-[1.4rem] bg-white/5 px-4 py-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Search mode</p>
+              <p className="mt-2 text-lg font-semibold text-sky-100">Focused</p>
             </div>
-            <div className="col-span-2 rounded-2xl bg-white/5 px-4 py-4 transition-all duration-300 hover:bg-white/10 sm:col-span-1">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-                Workflow
-              </p>
-              <p className="mt-2 text-lg font-bold">Filter, scan, apply</p>
+            <div className="col-span-2 rounded-[1.4rem] bg-white/5 px-4 py-4 sm:col-span-1">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Workflow</p>
+              <p className="mt-2 text-lg font-semibold">Filter, scan, apply</p>
             </div>
           </div>
         </div>
 
         <form
-          className="mt-8 rounded-[1.75rem] border border-white/10 bg-white/5 p-3 backdrop-blur-xl transition-all duration-300 hover:border-white/20 focus-within:border-white/30 focus-within:bg-white/10"
-          onSubmit={(e) => {
-            e.preventDefault();
+          className="mt-8 rounded-[1.75rem] border border-white/10 bg-white/5 p-3 backdrop-blur-xl"
+          onSubmit={(event) => {
+            event.preventDefault();
             onSearchSubmit();
           }}
         >
@@ -119,7 +87,7 @@ export function JobsSearchHeader({
             <label className="relative block">
               <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
               <Input
-                className="h-14 rounded-2xl border-white/10 bg-white pl-12 text-slate-950 placeholder:text-slate-400 focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20"
+                className="h-14 rounded-[1.3rem] border-white/10 bg-white pl-12 text-slate-950"
                 onChange={(event) => onSearchChange("search", event.target.value)}
                 placeholder="Job title, skill, or company"
                 value={filters.search}
@@ -129,18 +97,14 @@ export function JobsSearchHeader({
             <label className="relative block">
               <MapPin className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
               <Input
-                className="h-14 rounded-2xl border-white/10 bg-white pl-12 text-slate-950 placeholder:text-slate-400 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
+                className="h-14 rounded-[1.3rem] border-white/10 bg-white pl-12 text-slate-950"
                 onChange={(event) => onSearchChange("location", event.target.value)}
                 placeholder="City, country, or remote"
                 value={filters.location}
               />
             </label>
 
-            <Button
-              className="h-14 rounded-2xl px-8 text-base font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-              onClick={onSearchSubmit}
-              disabled={loading}
-            >
+            <Button className="h-14 rounded-[1.3rem] px-8 text-base font-semibold" onClick={onSearchSubmit} disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -157,12 +121,8 @@ export function JobsSearchHeader({
 
           <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-slate-300">
             <span className="font-medium text-slate-400">Current focus:</span>
-            <span className="rounded-full bg-white/10 px-3 py-1.5">
-              {filters.search || "Any role"}
-            </span>
-            <span className="rounded-full bg-white/10 px-3 py-1.5">
-              {filters.location || "Any location"}
-            </span>
+            <span className="rounded-full bg-white/10 px-3 py-1.5">{filters.search || "Any role"}</span>
+            <span className="rounded-full bg-white/10 px-3 py-1.5">{filters.location || "Any location"}</span>
           </div>
 
           <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -171,17 +131,14 @@ export function JobsSearchHeader({
               <button
                 key={`${item.key}-${item.value}`}
                 className={cn(
-                  "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition-all duration-200",
+                  "rounded-full border px-3 py-1.5 text-sm transition-all duration-200",
                   quickFilterIsActive(filters, item.key, item.value)
-                    ? "border-emerald-300/40 bg-emerald-400/15 text-emerald-100 shadow-lg shadow-emerald-500/20"
+                    ? "border-emerald-300/40 bg-emerald-400/15 text-emerald-100"
                     : "border-white/10 bg-white/10 text-white/90 hover:border-white/20 hover:bg-white/15"
                 )}
                 onClick={() => onQuickApply(item.key, item.value)}
                 type="button"
               >
-                <span className="text-[11px] font-semibold uppercase tracking-[0.16em]">
-                  {item.icon}
-                </span>
                 {item.label}
               </button>
             ))}

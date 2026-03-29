@@ -1,34 +1,51 @@
-"use client"
+"use client";
 
-import { signIn, useSession } from "next-auth/react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm, useWatch } from "react-hook-form"
-import * as z from "zod"
-import Link from "next/link"
-import { useState, useTransition, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { getDashboardPathForRole } from "@/config/roles"
-import { Loader2, User, Briefcase, Mail, Lock, CheckCircle } from "lucide-react"
+import { signIn, useSession } from "next-auth/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, useWatch } from "react-hook-form";
+import * as z from "zod";
+import Link from "next/link";
+import { useState, useTransition, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Briefcase, CheckCircle, Loader2, LockKeyhole, Mail, User, UserRound } from "lucide-react";
+import { FadeIn } from "@/components/layout/reveal";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getDashboardPathForRole } from "@/config/roles";
+import { cn } from "@/lib/utils";
 
 const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(50),
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   role: z.enum(["JOB_SEEKER", "EMPLOYER"]),
-})
+});
 
-type RegisterForm = z.infer<typeof registerSchema>
+type RegisterForm = z.infer<typeof registerSchema>;
+
+const roleCards = {
+  JOB_SEEKER: {
+    title: "Job Seeker",
+    copy: "Discover roles, save opportunities, and track applications.",
+    icon: UserRound,
+    accent: "from-sky-500 to-cyan-500",
+  },
+  EMPLOYER: {
+    title: "Employer",
+    copy: "Publish jobs, review candidates, and manage hiring momentum.",
+    icon: Briefcase,
+    accent: "from-emerald-500 to-teal-500",
+  },
+} as const;
 
 export default function RegisterPage() {
-  const router = useRouter()
-  const { data: session } = useSession()
-  const [isPending, startTransition] = useTransition()
-  const [error, setError] = useState("")
-  const [step, setStep] = useState<"role" | "details">("role")
-  
+  const router = useRouter();
+  const { data: session } = useSession();
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState("");
+  const [step, setStep] = useState<"role" | "details">("role");
+
   const form = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -37,211 +54,216 @@ export default function RegisterPage() {
       password: "",
       role: "JOB_SEEKER",
     },
-  })
+  });
   const selectedRole = useWatch({
     control: form.control,
     name: "role",
-  })
+  });
 
   useEffect(() => {
     if (session) {
-      router.push(getDashboardPathForRole(session.user.role))
+      router.push(getDashboardPathForRole(session.user.role));
     }
-  }, [session, router])
+  }, [session, router]);
 
   const onSubmit = async (values: RegisterForm) => {
-    setError("")
+    setError("");
     startTransition(async () => {
       try {
-        // Register user via API or server action
         const response = await fetch("/api/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(values),
-        })
+        });
 
         if (!response.ok) {
-          const errorData = await response.json()
-          setError(errorData.message || errorData.error || "Registration failed")
-          return
+          const errorData = await response.json();
+          setError(errorData.message || errorData.error || "Registration failed");
+          return;
         }
 
-        // Auto sign in
         const result = await signIn("credentials", {
           email: values.email,
           password: values.password,
           redirect: false,
-        })
+        });
 
         if (!result?.error) {
           const target =
-            values.role === "EMPLOYER" ? "/dashboard/employer" : "/dashboard/job-seeker"
-          router.push(target)
-          router.refresh()
+            values.role === "EMPLOYER" ? "/dashboard/employer" : "/dashboard/job-seeker";
+          router.push(target);
+          router.refresh();
         }
       } catch {
-        setError("Registration failed. Please try again.")
+        setError("Registration failed. Please try again.");
       }
-    })
-  }
+    });
+  };
 
   return (
-    <div className="max-w-md w-full mx-auto">
-      <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
-        <CardHeader className="space-y-1 text-center">
-          <div className="mx-auto h-16 w-16 bg-gradient-to-r from-blue-500 to-green-500 rounded-3xl flex items-center justify-center shadow-lg">
-            <User className="h-8 w-8 text-white" />
+    <FadeIn>
+      <Card className="overflow-hidden border-white/80 bg-white/86">
+        <CardHeader className="space-y-4">
+          <div className="flex items-center justify-between gap-3">
+            <div className="eyebrow">
+              <CheckCircle className="h-3.5 w-3.5" />
+              Create account
+            </div>
+            <span className="rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+              Step {step === "role" ? "1" : "2"}
+            </span>
           </div>
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-            Join Career-Linker
-          </CardTitle>
-          <CardDescription className="text-lg">
-            Create your account to get started
-          </CardDescription>
+          <div>
+            <CardTitle className="text-3xl">Start with the workflow that fits you.</CardTitle>
+            <CardDescription className="mt-2 max-w-md">
+              Choose your role first, then we&apos;ll set up the basics and route you into the right workspace.
+            </CardDescription>
+          </div>
         </CardHeader>
         <CardContent className="space-y-6">
-          {error && (
-            <div className="p-4 bg-red-50 border-2 border-red-200 rounded-xl">
-              <div className="flex items-start space-x-2">
-                <div className="flex-shrink-0 pt-0.5">
-                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <p className="text-sm text-red-800">{error}</p>
-              </div>
+          {error ? (
+            <div className="rounded-[1.2rem] border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+              {error}
             </div>
-          )}
+          ) : null}
 
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {step === "role" && (
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            {step === "role" ? (
+              <div className="grid gap-4 sm:grid-cols-2">
+                {Object.entries(roleCards).map(([key, config]) => {
+                  const Icon = config.icon;
+                  const active = selectedRole === key;
+
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => form.setValue("role", key as RegisterForm["role"])}
+                      className={cn(
+                        "rounded-[1.5rem] border p-5 text-left transition-all duration-200",
+                        active
+                          ? "border-slate-950 bg-slate-950 text-white shadow-[0_24px_60px_-30px_rgba(15,23,42,0.45)]"
+                          : "border-slate-200 bg-white hover:-translate-y-0.5 hover:border-slate-300"
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-sm",
+                          config.accent
+                        )}
+                      >
+                        <Icon className="h-5 w-5" />
+                      </span>
+                      <p className="mt-5 text-lg font-semibold">{config.title}</p>
+                      <p className={cn("mt-2 text-sm leading-7", active ? "text-slate-200" : "text-slate-600")}>
+                        {config.copy}
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
+            ) : (
               <div className="space-y-4">
-                <p className="text-sm font-semibold text-gray-700">Select your role</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <button
-                    type="button"
-                    onClick={() => form.setValue("role", "JOB_SEEKER")}
-                    className={`border-2 rounded-xl p-4 text-left transition-all ${
-                      selectedRole === "JOB_SEEKER"
-                        ? "border-blue-600 bg-blue-50"
-                        : "border-gray-200 hover:border-blue-300"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <User className="h-5 w-5 text-blue-600" />
-                      <div>
-                        <p className="font-semibold text-gray-900">Job Seeker</p>
-                        <p className="text-sm text-gray-600">Find and apply to jobs</p>
-                      </div>
-                    </div>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => form.setValue("role", "EMPLOYER")}
-                    className={`border-2 rounded-xl p-4 text-left transition-all ${
-                      selectedRole === "EMPLOYER"
-                        ? "border-emerald-600 bg-emerald-50"
-                        : "border-gray-200 hover:border-emerald-300"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <Briefcase className="h-5 w-5 text-emerald-600" />
-                      <div>
-                        <p className="font-semibold text-gray-900">Employer</p>
-                        <p className="text-sm text-gray-600">Post jobs and hire</p>
-                      </div>
-                    </div>
-                  </button>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Full Name</label>
+                  <div className="relative">
+                    <User className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <Input
+                      {...form.register("name")}
+                      className="h-14 pl-11"
+                      disabled={isPending}
+                      placeholder="Your full name"
+                    />
+                  </div>
+                  {form.formState.errors.name ? (
+                    <p className="text-sm text-rose-600">{form.formState.errors.name.message}</p>
+                  ) : null}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Email</label>
+                  <div className="relative">
+                    <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <Input
+                      {...form.register("email")}
+                      type="email"
+                      placeholder="you@company.com"
+                      className="h-14 pl-11"
+                      disabled={isPending}
+                    />
+                  </div>
+                  {form.formState.errors.email ? (
+                    <p className="text-sm text-rose-600">{form.formState.errors.email.message}</p>
+                  ) : null}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Password</label>
+                  <div className="relative">
+                    <LockKeyhole className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <Input
+                      {...form.register("password")}
+                      type="password"
+                      placeholder="At least 8 characters"
+                      className="h-14 pl-11"
+                      disabled={isPending}
+                    />
+                  </div>
+                  {form.formState.errors.password ? (
+                    <p className="text-sm text-rose-600">{form.formState.errors.password.message}</p>
+                  ) : null}
                 </div>
               </div>
             )}
 
-            {step === "details" && (
-              <>
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                    <User className="h-4 w-4" />
-                    Full Name
-                  </label>
-                  <Input
-                    {...form.register("name")}
-                    className="h-14 rounded-xl border-2 focus:border-blue-500"
-                    disabled={isPending}
-                  />
-                  {form.formState.errors.name && (
-                    <p className="text-sm text-red-500">{form.formState.errors.name.message}</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                    <Mail className="h-4 w-4" />
-                    Email
-                  </label>
-                  <Input
-                    {...form.register("email")}
-                    type="email"
-                    placeholder="your@email.com"
-                    className="h-14 rounded-xl border-2 focus:border-blue-500"
-                    disabled={isPending}
-                  />
-                  {form.formState.errors.email && (
-                    <p className="text-sm text-red-500">{form.formState.errors.email.message}</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                    <Lock className="h-4 w-4" />
-                    Password
-                  </label>
-                  <Input
-                    {...form.register("password")}
-                    type="password"
-                    placeholder="At least 8 characters"
-                    className="h-14 rounded-xl border-2 focus:border-blue-500"
-                    disabled={isPending}
-                  />
-                  {form.formState.errors.password && (
-                    <p className="text-sm text-red-500">{form.formState.errors.password.message}</p>
-                  )}
-                </div>
-              </>
-            )}
+            <div className="flex flex-col gap-3 sm:flex-row">
+              {step === "details" ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="sm:flex-1"
+                  onClick={() => setStep("role")}
+                >
+                  Back
+                </Button>
+              ) : null}
 
-            <Button 
-              type={step === "role" ? "button" : "submit"}
-              className="w-full h-14 bg-gradient-to-r from-blue-600 via-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white font-bold text-lg shadow-xl rounded-xl transform hover:-translate-y-0.5 transition-all duration-200"
-              disabled={isPending}
-              onClick={() => {
-                if (step === "role") setStep("details")
-              }}
-            >
-              {isPending ? (
-                <>
-                  <Loader2 className="mr-3 h-5 w-5 animate-spin" />
-                  Creating account...
-                </>
-              ) : step === "role" ? (
-                <>
-                  <CheckCircle className="mr-2 h-5 w-5" />
-                  Continue
-                </>
-              ) : (
-                "Create Account"
-              )}
-            </Button>
+              <Button
+                type={step === "role" ? "button" : "submit"}
+                className="sm:flex-1"
+                disabled={isPending}
+                onClick={() => {
+                  if (step === "role") {
+                    setStep("details");
+                  }
+                }}
+              >
+                {isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating account...
+                  </>
+                ) : step === "role" ? (
+                  "Continue"
+                ) : (
+                  "Create Account"
+                )}
+              </Button>
+            </div>
           </form>
 
-          <div className="text-center pt-6 border-t border-gray-200">
-            <p className="text-sm text-gray-600">
-              Already have an account?{" "}
-              <Link href="/login" className="font-semibold text-blue-600 hover:text-blue-700 transition-colors">
-                Sign in
-              </Link>
-            </p>
+          <div className="rounded-[1.3rem] border border-slate-200/80 bg-slate-50/80 px-4 py-4 text-sm leading-7 text-slate-600">
+            Selected role: <span className="font-semibold text-slate-900">{roleCards[selectedRole].title}</span>
+          </div>
+
+          <div className="border-t border-slate-200 pt-5 text-center text-sm text-slate-600">
+            Already have an account?{" "}
+            <Link href="/login" className="font-semibold text-sky-700 hover:text-sky-800">
+              Sign in
+            </Link>
           </div>
         </CardContent>
       </Card>
-    </div>
-  )
+    </FadeIn>
+  );
 }
-

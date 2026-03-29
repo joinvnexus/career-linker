@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { FadeIn } from "@/components/layout/reveal";
 import { HomeCareerTipsSection } from "@/components/home/HomeCareerTipsSection";
 import { HomeCategoriesSection } from "@/components/home/HomeCategoriesSection";
 import { HomeCompaniesSection } from "@/components/home/HomeCompaniesSection";
@@ -64,25 +65,31 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.10),_transparent_24%),linear-gradient(180deg,_#f8fbff_0%,_#f8fafc_38%,_#ecfdf5_100%)]">
-      <HomeHeroSection
-        categoriesCount={categories.length}
-        location={location}
-        onLocationChange={setLocation}
-        onSearchChange={setSearch}
-        onSubmit={handleSearch}
-        search={search}
-        totalJobs={totalJobs}
-      />
-      <HomeCategoriesSection categories={categories} loading={loading} />
-      <HomeFeaturedJobsSection
-        featuredJobs={featuredJobs}
-        loading={loading}
-        totalJobs={totalJobs}
-      />
-      <HomeCompaniesSection />
-      <HomeCareerTipsSection />
-      <HomeEmployerCtaSection />
-    </div>
+    <FadeIn>
+      <div className="relative overflow-hidden">
+        <div className="ambient-orb left-[-8rem] top-32 h-80 w-80 bg-sky-300/30" />
+        <div className="ambient-orb right-[-10rem] top-[32rem] h-96 w-96 bg-emerald-300/25" />
+        <div className="hairline-grid absolute inset-x-0 top-0 h-[34rem] opacity-50" />
+
+        <HomeHeroSection
+          categoriesCount={categories.length}
+          location={location}
+          onLocationChange={setLocation}
+          onSearchChange={setSearch}
+          onSubmit={handleSearch}
+          search={search}
+          totalJobs={totalJobs}
+        />
+        <HomeCategoriesSection categories={categories} loading={loading} />
+        <HomeFeaturedJobsSection
+          featuredJobs={featuredJobs}
+          loading={loading}
+          totalJobs={totalJobs}
+        />
+        <HomeCompaniesSection />
+        <HomeCareerTipsSection />
+        <HomeEmployerCtaSection />
+      </div>
+    </FadeIn>
   );
 }

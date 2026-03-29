@@ -91,7 +91,7 @@ export function JobDetailHeader({
   const companyId = job.employer?.id;
 
   return (
-    <Card className="overflow-hidden border-white/70 bg-[linear-gradient(135deg,_rgba(15,23,42,0.97),_rgba(8,47,73,0.94)_38%,_rgba(6,95,70,0.88)_100%)] text-white shadow-[0_32px_90px_-45px_rgba(15,23,42,0.9)]">
+    <Card className="overflow-hidden border-white/10 bg-[var(--surface-dark)] text-white shadow-[0_32px_90px_-45px_rgba(15,23,42,0.9)]">
       <CardContent className="relative p-6 sm:p-8">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.18),_transparent_24%),radial-gradient(circle_at_bottom_left,_rgba(56,189,248,0.18),_transparent_24%)]" />
         <div className="relative">
@@ -112,7 +112,7 @@ export function JobDetailHeader({
                 <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-sky-100">
                   Live opportunity
                 </div>
-                <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
+                <h1 className="mt-4 font-display text-4xl tracking-[-0.04em] sm:text-5xl">
                   {job.title}
                 </h1>
                 {companyId ? (

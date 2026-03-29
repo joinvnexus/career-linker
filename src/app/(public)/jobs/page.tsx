@@ -190,8 +190,8 @@ export default function JobsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.10),_transparent_22%),linear-gradient(180deg,_#f8fbff_0%,_#f8fafc_45%,_#ecfdf5_100%)] py-8 sm:py-10 lg:py-12">
-      <div className="mx-auto max-w-7xl space-y-8 px-4 sm:space-y-10 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-8 sm:py-10 lg:py-12">
+      <div className="page-shell space-y-8 sm:space-y-10">
         <JobsSearchHeader
           filters={filters}
           loading={loading}
@@ -233,7 +233,7 @@ export default function JobsPage() {
                 ))}
               </div>
             ) : jobs.length === 0 ? (
-              <div className="mt-6 rounded-[2rem] border-2 border-dashed border-slate-200 bg-gradient-to-br from-white to-slate-50 py-20 text-center shadow-sm transition-all duration-300 hover:shadow-md">
+              <div className="surface-panel mt-6 rounded-[2rem] border-2 border-dashed border-slate-200 py-20 text-center">
                 <div className="relative inline-flex">
                   <div className="absolute inset-0 rounded-full bg-amber-100 opacity-50 blur-xl" />
                   <Briefcase className="relative mx-auto mb-4 h-16 w-16 text-amber-400" />
@@ -245,7 +245,7 @@ export default function JobsPage() {
                 </p>
                 <Button
                   onClick={resetFilters}
-                  className="bg-gradient-to-r from-sky-500 to-emerald-500 transition-all duration-200 hover:scale-105 hover:from-sky-600 hover:to-emerald-600"
+                  className="transition-all duration-200 hover:scale-105"
                 >
                   Browse all jobs
                 </Button>
@@ -265,7 +265,7 @@ export default function JobsPage() {
                 </div>
 
                 {totalPages > 1 && (
-                  <div className="flex flex-col items-center justify-between gap-4 rounded-[1.75rem] border border-white/80 bg-white/90 p-4 shadow-[0_18px_40px_-32px_rgba(15,23,42,0.7)] transition-all duration-300 hover:shadow-[0_22px_50px_-32px_rgba(15,23,42,0.75)] sm:flex-row">
+                  <div className="surface-panel flex flex-col items-center justify-between gap-4 rounded-[1.75rem] border border-white/80 p-4 sm:flex-row">
                     <p className="text-sm text-muted-foreground">
                       Page <span className="font-semibold text-card-foreground">{page}</span>{" "}
                       of{" "}

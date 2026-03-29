@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 type TabsContextValue = {
@@ -10,7 +11,7 @@ type TabsContextValue = {
 
 const TabsContext = React.createContext<TabsContextValue | null>(null);
 
-const useTabsContext = (): TabsContextValue => {
+const useTabsContext = () => {
   const context = React.useContext(TabsContext);
 
   if (!context) {
@@ -26,11 +27,7 @@ type TabsProps = {
   children: React.ReactNode;
 };
 
-export const Tabs = ({
-  defaultValue,
-  className,
-  children,
-}: TabsProps) => {
+export const Tabs = ({ defaultValue, className, children }: TabsProps) => {
   const [value, setValue] = React.useState(defaultValue);
 
   return (
@@ -40,12 +37,12 @@ export const Tabs = ({
   );
 };
 
-export const TabsList = ({
-  className,
-  children,
-}: React.HTMLAttributes<HTMLDivElement>) => (
+export const TabsList = ({ className, children }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
-    className={cn("inline-flex rounded-2xl bg-slate-100 p-1", className)}
+    className={cn(
+      "inline-flex rounded-[1.4rem] border border-white/75 bg-white/82 p-1.5 shadow-[var(--shadow-soft)] backdrop-blur",
+      className
+    )}
     role="tablist"
   >
     {children}
@@ -56,23 +53,17 @@ type TabsTriggerProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   value: string;
 };
 
-export const TabsTrigger = ({
-  className,
-  value,
-  children,
-  ...props
-}: TabsTriggerProps) => {
+export const TabsTrigger = ({ className, value, children, ...props }: TabsTriggerProps) => {
   const context = useTabsContext();
   const active = context.value === value;
+  const reduceMotion = useReducedMotion();
 
   return (
     <button
       aria-selected={active}
       className={cn(
-        "rounded-xl px-4 py-2 text-sm font-medium transition-colors",
-        active
-          ? "bg-white text-slate-900 shadow-sm"
-          : "text-slate-600 hover:text-slate-900",
+        "relative overflow-hidden rounded-[1rem] px-4 py-2.5 text-sm font-medium transition-colors",
+        active ? "text-slate-950" : "text-slate-600 hover:text-slate-900",
         className
       )}
       onClick={() => context.setValue(value)}
@@ -80,6 +71,13 @@ export const TabsTrigger = ({
       type="button"
       {...props}
     >
+      {active ? (
+        <motion.span
+          className="absolute inset-0 -z-10 rounded-[1rem] bg-white shadow-[0_12px_30px_-20px_rgba(15,23,42,0.35)]"
+          layoutId={reduceMotion ? undefined : "tab-highlight"}
+          transition={{ type: "spring", stiffness: 320, damping: 28 }}
+        />
+      ) : null}
       {children}
     </button>
   );
@@ -89,12 +87,7 @@ type TabsContentProps = React.HTMLAttributes<HTMLDivElement> & {
   value: string;
 };
 
-export const TabsContent = ({
-  className,
-  value,
-  children,
-  ...props
-}: TabsContentProps) => {
+export const TabsContent = ({ className, value, children, ...props }: TabsContentProps) => {
   const context = useTabsContext();
 
   if (context.value !== value) {
@@ -102,7 +95,7 @@ export const TabsContent = ({
   }
 
   return (
-    <div className={cn("rounded-3xl", className)} role="tabpanel" {...props}>
+    <div className={cn("rounded-[1.8rem]", className)} role="tabpanel" {...props}>
       {children}
     </div>
   );

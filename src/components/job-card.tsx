@@ -61,7 +61,7 @@ export function JobCard({ job, employerId, userRole, userId }: JobCardProps) {
   const hasSalary = job.salaryMin || job.salaryMax;
 
   return (
-    <Card className="group overflow-hidden border-white/80 bg-white/92 shadow-[0_18px_45px_-34px_rgba(15,23,42,0.75)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_55px_-34px_rgba(14,165,233,0.32)]">
+    <Card className="group overflow-hidden border-white/80 bg-white/94 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_28px_70px_-38px_rgba(14,165,233,0.28)]">
       <CardContent className="p-5">
         <div className="mb-4 flex items-start justify-between gap-3">
           <Badge
@@ -123,7 +123,7 @@ export function JobCard({ job, employerId, userRole, userId }: JobCardProps) {
           )}
         </div>
 
-        <div className="mt-5 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
+        <div className="mt-5 flex items-center justify-between gap-3 border-t border-slate-100/90 pt-4">
           {isOwnJob ? (
             <Button variant="outline" size="sm" className="rounded-xl" asChild>
               <Link href={`/dashboard/employer/jobs/${job.id}/edit`}>Edit job</Link>
@@ -131,7 +131,7 @@ export function JobCard({ job, employerId, userRole, userId }: JobCardProps) {
           ) : (
             <Button
               size="sm"
-              className="rounded-xl bg-slate-950 px-4 text-sm font-semibold text-white hover:bg-slate-800"
+              className="rounded-xl px-4 text-sm font-semibold"
               asChild
               disabled={isExpired}
             >

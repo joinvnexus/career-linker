@@ -144,8 +144,8 @@ export default function JobDetailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.10),_transparent_22%),linear-gradient(180deg,_#f8fbff_0%,_#f8fafc_45%,_#ecfdf5_100%)] pb-24">
-        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="min-h-screen pb-24">
+        <div className="page-shell max-w-6xl py-8">
           <Skeleton className="mb-8 h-56 w-full rounded-[2rem]" />
           <div className="grid gap-8 lg:grid-cols-3">
             <div className="space-y-6 lg:col-span-2">
@@ -161,7 +161,7 @@ export default function JobDetailsPage() {
 
   if (!job) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.10),_transparent_22%),linear-gradient(180deg,_#f8fbff_0%,_#f8fafc_45%,_#ecfdf5_100%)] py-12">
+      <div className="flex min-h-screen items-center justify-center py-12">
         <div className="text-center">
           <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-slate-100">
             <Briefcase className="h-10 w-10 text-slate-400" />
@@ -198,8 +198,8 @@ export default function JobDetailsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.10),_transparent_22%),linear-gradient(180deg,_#f8fbff_0%,_#f8fafc_45%,_#ecfdf5_100%)] pb-24">
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="min-h-screen pb-24">
+      <div className="page-shell max-w-6xl py-8">
         <JobDetailHeader
           job={job}
           isApplied={isApplied}
