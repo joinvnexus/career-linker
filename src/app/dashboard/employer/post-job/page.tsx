@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2, Sparkles, Briefcase, MapPin, DollarSign, FileText } from "lucide-react";
+import { Loader2, Sparkles, Briefcase, MapPin, DollarSign, FileText, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -138,65 +138,58 @@ export default function PostJobPage() {
 
   return (
     <div className="space-y-6 lg:space-y-8">
-      <section className="relative overflow-hidden rounded-[2rem] border border-white/80 bg-[linear-gradient(140deg,_rgba(15,23,42,0.96),_rgba(8,47,73,0.92)_45%,_rgba(6,95,70,0.82))] p-5 text-white shadow-[0_28px_80px_-45px_rgba(15,23,42,0.9)] lg:p-8">
+      <section className="surface-inverse relative overflow-hidden rounded-[2rem] border border-white/10 p-5 lg:p-8">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.18),_transparent_25%),radial-gradient(circle_at_bottom_left,_rgba(52,211,153,0.18),_transparent_24%)]" />
-        <div className="relative grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)]">
+        <div className="relative grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(240px,0.9fr)]">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-sky-50">
+            <div className="eyebrow border-white/10 bg-white/10 text-sky-50">
               <Sparkles className="h-3.5 w-3.5" />
               Publish a role
             </div>
-            <h1 className="mt-4 text-3xl font-bold tracking-tight lg:text-5xl">
+            <h1 className="mt-4 font-display text-4xl tracking-[-0.04em] text-white lg:text-5xl">
               Create a job post that candidates can scan fast.
             </h1>
             <p className="mt-3 text-sm leading-7 text-slate-200 lg:text-base">
-              Keep the title clear, make the requirements specific, and structure
-              the post so stronger candidates can self-qualify quickly.
+              Keep the title clear, make the requirements specific, and structure the post so stronger candidates can self-qualify quickly.
             </p>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
-            <div className="rounded-[1.5rem] border border-white/15 bg-white/10 p-5 backdrop-blur">
+          <div className="grid grid-cols-3 gap-3 lg:grid-cols-1">
+            <div className="rounded-[1.5rem] border border-white/15 bg-white/10 p-4 backdrop-blur sm:p-5">
               <Briefcase className="h-5 w-5 text-sky-100" />
-              <p className="mt-3 text-lg font-bold">Clear title</p>
+              <p className="mt-3 text-lg font-semibold">Clear title</p>
               <p className="mt-1 text-sm text-slate-200">Use the actual role name candidates search for.</p>
             </div>
-            <div className="rounded-[1.5rem] border border-white/15 bg-white/10 p-5 backdrop-blur">
+            <div className="rounded-[1.5rem] border border-white/15 bg-white/10 p-4 backdrop-blur sm:p-5">
               <MapPin className="h-5 w-5 text-emerald-100" />
-              <p className="mt-3 text-lg font-bold">Strong location signal</p>
+              <p className="mt-3 text-lg font-semibold">Strong location signal</p>
               <p className="mt-1 text-sm text-slate-200">Remote, hybrid, or city-specific should be obvious.</p>
             </div>
-            <div className="rounded-[1.5rem] border border-white/15 bg-white/10 p-5 backdrop-blur">
+            <div className="rounded-[1.5rem] border border-white/15 bg-white/10 p-4 backdrop-blur sm:p-5">
               <DollarSign className="h-5 w-5 text-amber-100" />
-              <p className="mt-3 text-lg font-bold">Salary clarity</p>
+              <p className="mt-3 text-lg font-semibold">Salary clarity</p>
               <p className="mt-1 text-sm text-slate-200">A clean range usually improves applicant quality.</p>
             </div>
           </div>
         </div>
       </section>
 
-      <Card className="border-white/80 bg-white/92 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.75)]">
-        <CardHeader>
-          <CardTitle className="text-2xl tracking-tight text-slate-950">Post a new job</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="grid gap-6 md:grid-cols-2">
-              <div>
+      <form className="grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_320px]" onSubmit={form.handleSubmit(onSubmit)}>
+        <Card className="border-white/80 bg-white/94">
+          <CardContent className="space-y-6 p-5 sm:p-6">
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="title">Job Title *</Label>
-                <Input className="mt-2 h-14" id="title" {...form.register("title")} />
+                <Input className="h-14" id="title" {...form.register("title")} />
               </div>
-              <div>
+              <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="location">Location *</Label>
-                <Input className="mt-2 h-14" id="location" {...form.register("location")} />
+                <Input className="h-14" id="location" {...form.register("location")} />
               </div>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-3">
-              <div>
+              <div className="space-y-2">
                 <Label htmlFor="salaryMin">Minimum Salary</Label>
                 <Input
-                  className="mt-2 h-14"
+                  className="h-14"
                   id="salaryMin"
                   onChange={(event) =>
                     form.setValue("salaryMin", event.target.value ? Number(event.target.value) : undefined)
@@ -206,10 +199,10 @@ export default function PostJobPage() {
                   value={salaryMin ?? ""}
                 />
               </div>
-              <div>
+              <div className="space-y-2">
                 <Label htmlFor="salaryMax">Maximum Salary</Label>
                 <Input
-                  className="mt-2 h-14"
+                  className="h-14"
                   id="salaryMax"
                   onChange={(event) =>
                     form.setValue("salaryMax", event.target.value ? Number(event.target.value) : undefined)
@@ -219,12 +212,10 @@ export default function PostJobPage() {
                   value={salaryMax ?? ""}
                 />
                 {form.formState.errors.salaryMax ? (
-                  <p className="mt-1 text-sm text-rose-500">
-                    {form.formState.errors.salaryMax.message}
-                  </p>
+                  <p className="mt-1 text-sm text-rose-500">{form.formState.errors.salaryMax.message}</p>
                 ) : null}
               </div>
-              <div>
+              <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="salaryType">Salary Type</Label>
                 <Select
                   onValueChange={(value) =>
@@ -232,7 +223,7 @@ export default function PostJobPage() {
                   }
                   value={salaryType}
                 >
-                  <SelectTrigger className="mt-2 h-14 rounded-2xl">
+                  <SelectTrigger className="h-14 rounded-[1rem]">
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -242,10 +233,7 @@ export default function PostJobPage() {
                   </SelectContent>
                 </Select>
               </div>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-3">
-              <div>
+              <div className="space-y-2">
                 <Label htmlFor="jobType">Job Type *</Label>
                 <Select
                   onValueChange={(value) =>
@@ -253,7 +241,7 @@ export default function PostJobPage() {
                   }
                   value={jobType}
                 >
-                  <SelectTrigger className="mt-2 h-14 rounded-2xl">
+                  <SelectTrigger className="h-14 rounded-[1rem]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -265,7 +253,7 @@ export default function PostJobPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div>
+              <div className="space-y-2">
                 <Label htmlFor="experience">Experience *</Label>
                 <Select
                   onValueChange={(value) =>
@@ -273,7 +261,7 @@ export default function PostJobPage() {
                   }
                   value={experience}
                 >
-                  <SelectTrigger className="mt-2 h-14 rounded-2xl">
+                  <SelectTrigger className="h-14 rounded-[1rem]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -283,10 +271,10 @@ export default function PostJobPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div>
+              <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="categoryId">Category *</Label>
                 <Select onValueChange={(value) => form.setValue("categoryId", value)} value={categoryId}>
-                  <SelectTrigger className="mt-2 h-14 rounded-2xl">
+                  <SelectTrigger className="h-14 rounded-[1rem]">
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
@@ -298,44 +286,46 @@ export default function PostJobPage() {
                   </SelectContent>
                 </Select>
               </div>
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="description">Job Description *</Label>
+                <Textarea className="resize-y" id="description" rows={7} {...form.register("description")} />
+              </div>
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="requirements">Requirements *</Label>
+                <Textarea className="resize-y" id="requirements" rows={5} {...form.register("requirements")} />
+              </div>
             </div>
+          </CardContent>
+        </Card>
 
-            <div>
-              <Label htmlFor="description">Job Description *</Label>
-              <Textarea
-                className="mt-2 resize-y"
-                id="description"
-                rows={7}
-                {...form.register("description")}
-              />
-            </div>
+        <div className="space-y-6">
+          <Card className="border-white/80 bg-white/94">
+            <CardContent className="p-5">
+              <p className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">Posting checklist</p>
+              <div className="mt-4 space-y-3 text-sm text-slate-600">
+                <div className="rounded-[1rem] bg-slate-50/80 p-3">Use the real title candidates search for, not internal naming.</div>
+                <div className="rounded-[1rem] bg-slate-50/80 p-3">Keep location and salary transparent for better applicant quality.</div>
+                <div className="rounded-[1rem] bg-slate-50/80 p-3">Make responsibilities clear enough that candidates can self-qualify.</div>
+              </div>
+            </CardContent>
+          </Card>
 
-            <div>
-              <Label htmlFor="requirements">Requirements *</Label>
-              <Textarea
-                className="mt-2 resize-y"
-                id="requirements"
-                rows={5}
-                {...form.register("requirements")}
-              />
-            </div>
-
-            <Button className="h-16 w-full text-lg font-bold" disabled={isPending} type="submit">
-              {isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Posting job...
-                </>
-              ) : (
-                <>
-                  <FileText className="mr-2 h-5 w-5" />
-                  Post Job Now
-                </>
-              )}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+          <Button className="h-14 w-full text-base font-semibold" disabled={isPending} type="submit">
+            {isPending ? (
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Posting job...
+              </>
+            ) : (
+              <>
+                <FileText className="mr-2 h-5 w-5" />
+                Post Job Now
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </>
+            )}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

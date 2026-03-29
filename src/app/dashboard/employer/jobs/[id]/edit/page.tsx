@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2 } from "lucide-react";
+import { Loader2, FileText, Sparkles, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -147,43 +147,52 @@ export default function EditJobPage({
 
   if (loading) {
     return (
-      <Card className="border-0 shadow-2xl">
-        <CardHeader>
-          <CardTitle className="text-3xl font-bold text-gray-400">Loading...</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="h-12 animate-pulse rounded-xl bg-gray-100" />
-          <div className="h-12 animate-pulse rounded-xl bg-gray-100" />
-          <div className="h-40 animate-pulse rounded-xl bg-gray-100" />
-        </CardContent>
-      </Card>
+      <div className="space-y-6">
+        <Card className="border-white/80 bg-white/94">
+          <CardContent className="space-y-6 p-6">
+            <div className="h-12 animate-pulse rounded-xl bg-gray-100" />
+            <div className="h-12 animate-pulse rounded-xl bg-gray-100" />
+            <div className="h-40 animate-pulse rounded-xl bg-gray-100" />
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-4xl">
-      <Card className="border-0 shadow-2xl">
-        <CardHeader>
-          <CardTitle className="text-3xl font-bold text-gray-900">Edit Job</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="grid gap-6 md:grid-cols-2">
-              <div>
-                <Label htmlFor="title">Job Title *</Label>
-                <Input className="mt-1 h-14" id="title" {...form.register("title")} />
-              </div>
-              <div>
-                <Label htmlFor="location">Location *</Label>
-                <Input className="mt-1 h-14" id="location" {...form.register("location")} />
-              </div>
-            </div>
+    <div className="space-y-6 lg:space-y-8">
+      <section className="surface-inverse relative overflow-hidden rounded-[2rem] border border-white/10 p-5 lg:p-8">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.18),_transparent_25%),radial-gradient(circle_at_bottom_left,_rgba(52,211,153,0.18),_transparent_24%)]" />
+        <div className="relative max-w-2xl">
+          <div className="eyebrow border-white/10 bg-white/10 text-sky-50">
+            <Sparkles className="h-3.5 w-3.5" />
+            Edit role
+          </div>
+          <h1 className="mt-4 font-display text-4xl tracking-[-0.04em] text-white lg:text-5xl">
+            Update the listing without losing clarity.
+          </h1>
+          <p className="mt-3 text-sm leading-7 text-slate-200 lg:text-base">
+            Refresh the title, requirements, or salary details to keep the role accurate and easier to trust on mobile and desktop.
+          </p>
+        </div>
+      </section>
 
-            <div className="grid gap-6 md:grid-cols-3">
-              <div>
+      <form className="grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_320px]" onSubmit={form.handleSubmit(onSubmit)}>
+        <Card className="border-white/80 bg-white/94">
+          <CardContent className="space-y-6 p-5 sm:p-6">
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="title">Job Title *</Label>
+                <Input className="h-14" id="title" {...form.register("title")} />
+              </div>
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="location">Location *</Label>
+                <Input className="h-14" id="location" {...form.register("location")} />
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="salaryMin">Minimum Salary</Label>
                 <Input
-                  className="mt-1 h-14"
+                  className="h-14"
                   id="salaryMin"
                   onChange={(event) =>
                     form.setValue(
@@ -195,10 +204,10 @@ export default function EditJobPage({
                   value={salaryMin ?? ""}
                 />
               </div>
-              <div>
+              <div className="space-y-2">
                 <Label htmlFor="salaryMax">Maximum Salary</Label>
                 <Input
-                  className="mt-1 h-14"
+                  className="h-14"
                   id="salaryMax"
                   onChange={(event) =>
                     form.setValue(
@@ -210,7 +219,7 @@ export default function EditJobPage({
                   value={salaryMax ?? ""}
                 />
               </div>
-              <div>
+              <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="salaryType">Salary Type</Label>
                 <Select
                   onValueChange={(value) =>
@@ -218,7 +227,7 @@ export default function EditJobPage({
                   }
                   value={salaryType}
                 >
-                  <SelectTrigger className="mt-1 h-14">
+                  <SelectTrigger className="h-14 rounded-[1rem]">
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -228,10 +237,7 @@ export default function EditJobPage({
                   </SelectContent>
                 </Select>
               </div>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-3">
-              <div>
+              <div className="space-y-2">
                 <Label htmlFor="jobType">Job Type *</Label>
                 <Select
                   onValueChange={(value) =>
@@ -239,7 +245,7 @@ export default function EditJobPage({
                   }
                   value={jobType}
                 >
-                  <SelectTrigger className="mt-1 h-14">
+                  <SelectTrigger className="h-14 rounded-[1rem]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -251,7 +257,7 @@ export default function EditJobPage({
                   </SelectContent>
                 </Select>
               </div>
-              <div>
+              <div className="space-y-2">
                 <Label htmlFor="experience">Experience *</Label>
                 <Select
                   onValueChange={(value) =>
@@ -259,7 +265,7 @@ export default function EditJobPage({
                   }
                   value={experience}
                 >
-                  <SelectTrigger className="mt-1 h-14">
+                  <SelectTrigger className="h-14 rounded-[1rem]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -269,13 +275,13 @@ export default function EditJobPage({
                   </SelectContent>
                 </Select>
               </div>
-              <div>
+              <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="categoryId">Category *</Label>
                 <Select
                   onValueChange={(value) => form.setValue("categoryId", value)}
                   value={categoryId}
                 >
-                  <SelectTrigger className="mt-1 h-14">
+                  <SelectTrigger className="h-14 rounded-[1rem]">
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
@@ -287,41 +293,46 @@ export default function EditJobPage({
                   </SelectContent>
                 </Select>
               </div>
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="description">Job Description *</Label>
+                <Textarea className="resize-y" id="description" rows={6} {...form.register("description")} />
+              </div>
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="requirements">Requirements *</Label>
+                <Textarea className="resize-y" id="requirements" rows={4} {...form.register("requirements")} />
+              </div>
             </div>
+          </CardContent>
+        </Card>
 
-            <div>
-              <Label htmlFor="description">Job Description *</Label>
-              <Textarea
-                className="mt-1 resize-y"
-                id="description"
-                rows={6}
-                {...form.register("description")}
-              />
-            </div>
+        <div className="space-y-6">
+          <Card className="border-white/80 bg-white/94">
+            <CardContent className="p-5">
+              <p className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">Editing focus</p>
+              <div className="mt-4 space-y-3 text-sm text-slate-600">
+                <div className="rounded-[1rem] bg-slate-50/80 p-3">Keep the title and location aligned with what candidates actually see in search.</div>
+                <div className="rounded-[1rem] bg-slate-50/80 p-3">Use requirements to remove ambiguity instead of adding generic filler.</div>
+                <div className="rounded-[1rem] bg-slate-50/80 p-3">A clear salary structure often improves click quality and applicant trust.</div>
+              </div>
+            </CardContent>
+          </Card>
 
-            <div>
-              <Label htmlFor="requirements">Requirements *</Label>
-              <Textarea
-                className="mt-1 resize-y"
-                id="requirements"
-                rows={4}
-                {...form.register("requirements")}
-              />
-            </div>
-
-            <Button className="h-16 w-full text-xl font-bold" disabled={isPending} type="submit">
-              {isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Saving changes...
-                </>
-              ) : (
-                "Save Changes"
-              )}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+          <Button className="h-14 w-full text-base font-semibold" disabled={isPending} type="submit">
+            {isPending ? (
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Saving changes...
+              </>
+            ) : (
+              <>
+                <FileText className="mr-2 h-5 w-5" />
+                Save Changes
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </>
+            )}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }
