@@ -11,6 +11,7 @@ import {
   Wallet,
 } from "lucide-react";
 import { toast } from "sonner";
+import { AdminPageHero } from "@/components/admin/admin-page-hero";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -167,40 +168,23 @@ export default function PaymentsPage() {
 
   return (
     <div className="space-y-8">
-      <section className="rounded-[32px] border border-white/70 bg-[linear-gradient(135deg,#1e1b4b_0%,#312e81_44%,#0f172a_100%)] p-6 text-white shadow-[0_28px_90px_-54px_rgba(15,23,42,0.85)] sm:p-8">
-        <Badge className="rounded-full border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.22em] text-slate-100 hover:bg-white/10">
-          Payments Ops
-        </Badge>
-        <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Track live job-post payments from the existing billing flow.
-            </h1>
-            <p className="mt-3 text-sm text-slate-200 sm:text-base">
-              This surface now reads real payment state from job listings, Stripe session
-              references, and paid timestamps so admin teams can audit billing health.
-            </p>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-3 lg:w-[28rem]">
-            <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.18em] text-slate-300">Paid revenue</p>
-              <p className="mt-2 text-2xl font-semibold">
-                {formatMoney(summary.paidRevenueCents, summary.currency)}
-              </p>
-            </div>
-            <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.18em] text-slate-300">Pending value</p>
-              <p className="mt-2 text-2xl font-semibold">
-                {formatMoney(summary.pendingRevenueCents, summary.currency)}
-              </p>
-            </div>
-            <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.18em] text-slate-300">Transactions</p>
-              <p className="mt-2 text-2xl font-semibold">{summary.totalCount}</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <AdminPageHero
+        badge="Payments Ops"
+        title="Track live job-post payments from the existing billing flow."
+        description="This surface reads real payment state from job listings, Stripe session references, and paid timestamps so admin teams can audit billing health."
+        gradientClassName="bg-[linear-gradient(135deg,#1e1b4b_0%,#312e81_44%,#0f172a_100%)]"
+        stats={[
+          {
+            label: "Paid revenue",
+            value: formatMoney(summary.paidRevenueCents, summary.currency),
+          },
+          {
+            label: "Pending value",
+            value: formatMoney(summary.pendingRevenueCents, summary.currency),
+          },
+          { label: "Transactions", value: summary.totalCount },
+        ]}
+      />
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <StatsCard
@@ -226,7 +210,7 @@ export default function PaymentsPage() {
         />
       </div>
 
-      <Card className="rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
+      <Card className="rounded-[28px] border border-white/70 bg-white/90 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
         <CardHeader className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <CardTitle className="text-xl text-slate-950">Billing Activity</CardTitle>

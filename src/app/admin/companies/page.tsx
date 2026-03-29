@@ -11,6 +11,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
+import { AdminPageHero } from "@/components/admin/admin-page-hero";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -233,36 +234,17 @@ export default function CompaniesPage() {
 
   return (
     <div className="space-y-8">
-      <section className="rounded-[32px] border border-white/70 bg-[linear-gradient(135deg,#172554_0%,#1d4ed8_50%,#0f172a_100%)] p-6 text-white shadow-[0_28px_90px_-54px_rgba(15,23,42,0.85)] sm:p-8">
-        <Badge className="rounded-full border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.22em] text-slate-100 hover:bg-white/10">
-          Company Accounts
-        </Badge>
-        <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Moderate real company profiles, not just employer user accounts.
-            </h1>
-            <p className="mt-3 text-sm text-slate-200 sm:text-base">
-              Review verification state, watch job volume, and spot marketplace risk
-              from one responsive company oversight surface.
-            </p>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-3 lg:w-[28rem]">
-            <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.18em] text-slate-300">Companies</p>
-              <p className="mt-2 text-2xl font-semibold">{companies.length}</p>
-            </div>
-            <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.18em] text-slate-300">Verified</p>
-              <p className="mt-2 text-2xl font-semibold">{verifiedCount}</p>
-            </div>
-            <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.18em] text-slate-300">Pending review</p>
-              <p className="mt-2 text-2xl font-semibold">{companies.length - verifiedCount}</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <AdminPageHero
+        badge="Company Accounts"
+        title="Moderate real company profiles, not just employer user accounts."
+        description="Review verification state, watch job volume, and spot marketplace risk from one responsive company oversight surface."
+        gradientClassName="bg-[linear-gradient(135deg,#172554_0%,#1d4ed8_50%,#0f172a_100%)]"
+        stats={[
+          { label: "Companies", value: companies.length },
+          { label: "Verified", value: verifiedCount },
+          { label: "Pending review", value: companies.length - verifiedCount },
+        ]}
+      />
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <StatsCard
@@ -288,7 +270,7 @@ export default function CompaniesPage() {
         />
       </div>
 
-      <Card className="rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
+      <Card className="rounded-[28px] border border-white/70 bg-white/90 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
         <CardHeader className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <CardTitle className="text-xl text-slate-950">Company Directory</CardTitle>

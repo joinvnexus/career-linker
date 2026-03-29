@@ -10,8 +10,8 @@ import {
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
+import { AdminPageHero } from "@/components/admin/admin-page-hero";
 import { StatsCard } from "@/components/dashboard/stats-card";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -102,36 +102,16 @@ export default function ReportsPage() {
 
   return (
     <div className="space-y-8">
-      <section className="rounded-[32px] border border-white/70 bg-[linear-gradient(135deg,#111827_0%,#0f172a_52%,#0369a1_100%)] p-6 text-white shadow-[0_28px_90px_-54px_rgba(15,23,42,0.85)] sm:p-8">
-        <Badge className="rounded-full border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.22em] text-slate-100 hover:bg-white/10">
-          Marketplace Reports
-        </Badge>
-        <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              See marketplace health through trendlines, funnel data, and billing signals.
-            </h1>
-            <p className="mt-3 text-sm text-slate-200 sm:text-base">
-              This report now pulls a dedicated analytics dataset so admins can read growth,
-              moderation pressure, and hiring quality from one responsive screen.
-            </p>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:w-[24rem]">
-            <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.18em] text-slate-300">
-                Hire conversion
-              </p>
-              <p className="mt-2 text-3xl font-semibold">{hireRate}%</p>
-            </div>
-            <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.18em] text-slate-300">
-                Risk surface
-              </p>
-              <p className="mt-2 text-3xl font-semibold">{moderationRisk}</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <AdminPageHero
+        badge="Marketplace Reports"
+        title="See marketplace health through trendlines, funnel data, and billing signals."
+        description="This report pulls a dedicated analytics dataset so admins can read growth, moderation pressure, and hiring quality from one responsive screen."
+        gradientClassName="bg-[linear-gradient(135deg,#111827_0%,#0f172a_52%,#0369a1_100%)]"
+        stats={[
+          { label: "Hire conversion", value: `${hireRate}%` },
+          { label: "Risk surface", value: moderationRisk },
+        ]}
+      />
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <StatsCard
@@ -168,7 +148,7 @@ export default function ReportsPage() {
           <CardContent className="space-y-4">
             {data.trends.map((item) => (
               <div key={item.label} className="space-y-3 rounded-3xl border border-slate-200/80 bg-slate-50/80 p-4">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="font-semibold text-slate-900">{item.label}</p>
                   <p className="text-sm text-slate-500">
                     {item.users + item.jobs + item.applications} total signals

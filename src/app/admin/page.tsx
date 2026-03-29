@@ -11,6 +11,7 @@ import {
   UserCheck,
   Users,
 } from "lucide-react";
+import { AdminPageHero } from "@/components/admin/admin-page-hero";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -92,63 +93,47 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-8">
-      <section className="surface-inverse overflow-hidden rounded-[32px] border border-white/10 p-6 text-white sm:p-8">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <Badge className="rounded-full border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.22em] text-slate-100 hover:bg-white/10">
-              Admin Dashboard
-            </Badge>
-            <h1 className="mt-4 font-display text-4xl tracking-[-0.04em] sm:text-5xl">
-              Keep marketplace trust, growth, and moderation aligned.
-            </h1>
-            <p className="mt-3 max-w-xl text-sm text-slate-200 sm:text-base">
-              Live visibility into user growth, job quality, and hiring momentum so
-              the operations team can move quickly without losing control.
-            </p>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-3 lg:w-[28rem]">
-            <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.18em] text-slate-300">
-                Moderation load
-              </p>
-              <p className="mt-2 text-2xl font-semibold">{moderationPressure}</p>
-              <p className="mt-1 text-sm text-slate-200">
-                Pending or rejected listings need attention.
-              </p>
-            </div>
-            <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.18em] text-slate-300">
-                Hiring rate
-              </p>
-              <p className="mt-2 text-2xl font-semibold">{hiringEfficiency}%</p>
-              <p className="mt-1 text-sm text-slate-200">Applications converting to hires.</p>
-            </div>
-            <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.18em] text-slate-300">
-                Admin seats
-              </p>
-              <p className="mt-2 text-2xl font-semibold">{stats.roleBreakdown.admins}</p>
-              <p className="mt-1 text-sm text-slate-200">People currently operating the system.</p>
-            </div>
-          </div>
-        </div>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link href="/admin/jobs/pending">
-            <Button className="rounded-full bg-white text-slate-950 hover:bg-slate-100">
-              Review Pending Jobs
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
-          <Link href="/admin/reports">
-            <Button
-              variant="outline"
-              className="rounded-full border-white/20 bg-white/10 text-white hover:bg-white/15 hover:text-white"
-            >
-              Open Reports
-            </Button>
-          </Link>
-        </div>
-      </section>
+      <AdminPageHero
+        badge="Admin Dashboard"
+        title="Keep marketplace trust, growth, and moderation aligned."
+        description="Live visibility into user growth, job quality, and hiring momentum so the operations team can move quickly without losing control."
+        gradientClassName="surface-inverse"
+        stats={[
+          {
+            label: "Moderation load",
+            value: moderationPressure,
+            description: "Pending or rejected listings need attention.",
+          },
+          {
+            label: "Hiring rate",
+            value: `${hiringEfficiency}%`,
+            description: "Applications converting to hires.",
+          },
+          {
+            label: "Admin seats",
+            value: stats.roleBreakdown.admins,
+            description: "People currently operating the system.",
+          },
+        ]}
+        actions={
+          <>
+            <Link href="/admin/jobs/pending">
+              <Button className="w-full rounded-full bg-white text-slate-950 hover:bg-slate-100 sm:w-auto">
+                Review Pending Jobs
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+            <Link href="/admin/reports">
+              <Button
+                variant="outline"
+                className="w-full rounded-full border-white/20 bg-white/10 text-white hover:bg-white/15 hover:text-white sm:w-auto"
+              >
+                Open Reports
+              </Button>
+            </Link>
+          </>
+        }
+      />
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
         <StatsCard

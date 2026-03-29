@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRightLeft, Search, ShieldCheck, UserCog, Users } from "lucide-react";
 import { toast } from "sonner";
+import { AdminPageHero } from "@/components/admin/admin-page-hero";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -113,36 +114,17 @@ export default function AdminUsersPage() {
 
   return (
     <div className="space-y-8">
-      <section className="rounded-[32px] border border-white/70 bg-[linear-gradient(135deg,#0f172a_0%,#1e293b_58%,#1d4ed8_100%)] p-6 text-white shadow-[0_28px_90px_-54px_rgba(15,23,42,0.85)] sm:p-8">
-        <Badge className="rounded-full border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.22em] text-slate-100 hover:bg-white/10">
-          User Operations
-        </Badge>
-        <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Manage access with context, not guesswork.
-            </h1>
-            <p className="mt-3 text-sm text-slate-200 sm:text-base">
-              Review the newest accounts, track role distribution, and adjust
-              permissions without losing sight of marketplace balance.
-            </p>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-3 lg:w-[28rem]">
-            <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.18em] text-slate-300">Total people</p>
-              <p className="mt-2 text-2xl font-semibold">{users.length}</p>
-            </div>
-            <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.18em] text-slate-300">Joined 30 days</p>
-              <p className="mt-2 text-2xl font-semibold">{recentCount}</p>
-            </div>
-            <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.18em] text-slate-300">Admin seats</p>
-              <p className="mt-2 text-2xl font-semibold">{adminCount}</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <AdminPageHero
+        badge="User Operations"
+        title="Manage access with context, not guesswork."
+        description="Review the newest accounts, track role distribution, and adjust permissions without losing sight of marketplace balance."
+        gradientClassName="bg-[linear-gradient(135deg,#0f172a_0%,#1e293b_58%,#1d4ed8_100%)]"
+        stats={[
+          { label: "Total people", value: users.length },
+          { label: "Joined 30 days", value: recentCount },
+          { label: "Admin seats", value: adminCount },
+        ]}
+      />
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <StatsCard
@@ -168,7 +150,7 @@ export default function AdminUsersPage() {
         />
       </div>
 
-      <Card className="overflow-hidden rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
+      <Card className="overflow-hidden rounded-[28px] border border-white/70 bg-white/90 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
         <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <CardTitle className="text-xl text-slate-950">Workspace Users</CardTitle>
@@ -182,7 +164,7 @@ export default function AdminUsersPage() {
           </Badge>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex flex-col gap-3 lg:flex-row">
+          <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_180px_180px]">
             <div className="relative flex-1">
               <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <Input
@@ -193,7 +175,7 @@ export default function AdminUsersPage() {
               />
             </div>
             <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="h-11 w-full rounded-full border-slate-300 bg-white lg:w-48">
+              <SelectTrigger className="h-11 w-full rounded-full border-slate-300 bg-white">
                 <SelectValue placeholder="Filter role" />
               </SelectTrigger>
               <SelectContent>
@@ -206,7 +188,7 @@ export default function AdminUsersPage() {
               </SelectContent>
             </Select>
             <Select value={sortOrder} onValueChange={setSortOrder}>
-              <SelectTrigger className="h-11 w-full rounded-full border-slate-300 bg-white lg:w-48">
+              <SelectTrigger className="h-11 w-full rounded-full border-slate-300 bg-white">
                 <SelectValue placeholder="Sort users" />
               </SelectTrigger>
               <SelectContent>
@@ -223,28 +205,28 @@ export default function AdminUsersPage() {
             </div>
           ) : (
             filteredUsers.map((user) => (
-            <div
-              key={user.id}
-              className="flex flex-col gap-4 rounded-3xl border border-slate-200/80 bg-slate-50/80 p-4 lg:flex-row lg:items-center lg:justify-between"
-            >
-              <div>
-                <p className="font-semibold text-slate-900">{user.name || "Unnamed user"}</p>
-                <p className="text-sm text-slate-500">{user.email}</p>
+              <div
+                key={user.id}
+                className="flex flex-col gap-4 rounded-3xl border border-slate-200/80 bg-slate-50/80 p-4 xl:flex-row xl:items-center xl:justify-between"
+              >
+                <div>
+                  <p className="font-semibold text-slate-900">{user.name || "Unnamed user"}</p>
+                  <p className="text-sm text-slate-500">{user.email}</p>
                 <p className="mt-1 text-xs text-slate-500">
                   Joined {new Date(user.createdAt).toLocaleDateString()}
                 </p>
               </div>
-              <div className="flex items-center gap-3">
-                <Badge variant="secondary" className="rounded-full px-3 py-1">
-                  {user.role.replaceAll("_", " ")}
-                </Badge>
-                <Select
-                  value={user.role}
-                  onValueChange={(value) => void updateRole(user.id, value as AppRole)}
-                >
-                  <SelectTrigger className="w-44 rounded-full border-slate-300 bg-white">
-                    <SelectValue />
-                  </SelectTrigger>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <Badge variant="secondary" className="rounded-full px-3 py-1">
+                    {user.role.replaceAll("_", " ")}
+                  </Badge>
+                  <Select
+                    value={user.role}
+                    onValueChange={(value) => void updateRole(user.id, value as AppRole)}
+                  >
+                    <SelectTrigger className="w-full rounded-full border-slate-300 bg-white sm:w-44">
+                      <SelectValue />
+                    </SelectTrigger>
                   <SelectContent>
                     {roleOptions.map((role) => (
                       <SelectItem key={role} value={role}>

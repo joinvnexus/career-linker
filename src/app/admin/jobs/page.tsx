@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { BriefcaseBusiness, Clock3, Search, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
+import { AdminPageHero } from "@/components/admin/admin-page-hero";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -117,21 +118,18 @@ export default function AdminJobsPage() {
 
   return (
     <div className="space-y-8">
-      <section className="rounded-[32px] border border-white/70 bg-[linear-gradient(135deg,#082f49_0%,#0f172a_52%,#1d4ed8_100%)] p-6 text-white shadow-[0_28px_90px_-54px_rgba(15,23,42,0.85)] sm:p-8">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <Badge className="rounded-full border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.22em] text-slate-100 hover:bg-white/10">
-              Job Moderation
-            </Badge>
-            <h1 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
-              Approve faster without letting weak listings slip through.
-            </h1>
-            <p className="mt-3 text-sm text-slate-200 sm:text-base">
-              Filter the full jobs inventory, audit employer submissions, and update
-              visibility in a single responsive moderation workspace.
-            </p>
-          </div>
-          <div className="w-full max-w-sm">
+      <AdminPageHero
+        badge="Job Moderation"
+        title="Approve faster without letting weak listings slip through."
+        description="Filter the full jobs inventory, audit employer submissions, and update visibility in a single responsive moderation workspace."
+        gradientClassName="bg-[linear-gradient(135deg,#082f49_0%,#0f172a_52%,#1d4ed8_100%)]"
+        stats={[
+          { label: "Jobs in view", value: filteredJobs.length },
+          { label: "Pending", value: pendingCount },
+          { label: "Approved live", value: activeCount },
+        ]}
+        actions={
+          <div className="w-full sm:max-w-sm">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="h-12 rounded-full border-white/15 bg-white/10 px-5 text-white backdrop-blur [&>svg]:text-white">
                 <SelectValue placeholder="Filter status" />
@@ -146,8 +144,8 @@ export default function AdminJobsPage() {
               </SelectContent>
             </Select>
           </div>
-        </div>
-      </section>
+        }
+      />
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <StatsCard
@@ -173,8 +171,8 @@ export default function AdminJobsPage() {
         />
       </div>
 
-      <Card className="rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
-        <CardContent className="flex flex-col gap-3 p-5 lg:flex-row">
+      <Card className="rounded-[28px] border border-white/70 bg-white/90 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
+        <CardContent className="grid gap-3 p-5 lg:grid-cols-[minmax(0,1fr)_180px]">
           <div className="relative flex-1">
             <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
@@ -185,7 +183,7 @@ export default function AdminJobsPage() {
             />
           </div>
           <Select value={visibilityFilter} onValueChange={setVisibilityFilter}>
-            <SelectTrigger className="h-11 w-full rounded-full border-slate-300 bg-white lg:w-48">
+            <SelectTrigger className="h-11 w-full rounded-full border-slate-300 bg-white">
               <SelectValue placeholder="Visibility" />
             </SelectTrigger>
             <SelectContent>
@@ -217,7 +215,7 @@ export default function AdminJobsPage() {
                 key={job.id}
                 className="rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-56px_rgba(15,23,42,0.45)]"
               >
-                <CardContent className="flex flex-col gap-5 py-5 lg:flex-row lg:items-center lg:justify-between">
+                <CardContent className="flex flex-col gap-5 py-5 xl:flex-row xl:items-center xl:justify-between">
                   <div className="space-y-3">
                     <div className="flex flex-wrap items-center gap-2">
                       <div className="text-lg font-semibold text-gray-900">{job.title}</div>
@@ -238,7 +236,7 @@ export default function AdminJobsPage() {
                       <span>{job.employer?.email || "No employer email"}</span>
                     </div>
                   </div>
-                  <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                     <Button
                       variant="outline"
                       className="rounded-full"
@@ -257,7 +255,7 @@ export default function AdminJobsPage() {
                       value={job.status}
                       onValueChange={(value) => void updateStatus(job.id, value)}
                     >
-                      <SelectTrigger className="h-10 w-44 rounded-full border-slate-300 bg-white">
+                      <SelectTrigger className="h-10 w-full rounded-full border-slate-300 bg-white sm:w-44">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>

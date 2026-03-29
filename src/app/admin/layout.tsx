@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   Users,
 } from "lucide-react";
+import { AdminMobileNav } from "@/components/admin/admin-mobile-nav";
 import { WorkspaceShell } from "@/components/layout/workspace-shell";
 import { Button } from "@/components/ui/button";
 
@@ -80,6 +81,7 @@ export default function AdminLayout({
       }
       sidebarCalloutTitle="Marketplace control"
       sidebarCalloutCopy="Moderate listings, protect trust, and keep platform operations moving with less friction."
+      mobileBottomNav={<AdminMobileNav />}
     >
       {children}
     </WorkspaceShell>

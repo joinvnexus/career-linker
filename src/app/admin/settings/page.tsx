@@ -10,6 +10,7 @@ import {
   Upload,
 } from "lucide-react";
 import { toast } from "sonner";
+import { AdminPageHero } from "@/components/admin/admin-page-hero";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -101,18 +102,20 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-8">
-      <section className="rounded-[32px] border border-white/70 bg-[linear-gradient(135deg,#0f172a_0%,#1e293b_48%,#0f766e_100%)] p-6 text-white shadow-[0_28px_90px_-54px_rgba(15,23,42,0.85)] sm:p-8">
-        <Badge className="rounded-full border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.22em] text-slate-100 hover:bg-white/10">
-          System Settings
-        </Badge>
-        <h1 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
-          Runtime configuration and operational safeguards in one place.
-        </h1>
-        <p className="mt-3 max-w-2xl text-sm text-slate-200 sm:text-base">
-          This admin surface now reads real platform readiness signals from environment
-          configuration and live marketplace activity, so the team can audit setup quickly.
-        </p>
-      </section>
+      <AdminPageHero
+        badge="System Settings"
+        title="Runtime configuration and operational safeguards in one place."
+        description="This admin surface reads real platform readiness signals from environment configuration and live marketplace activity, so the team can audit setup quickly."
+        gradientClassName="bg-[linear-gradient(135deg,#0f172a_0%,#1e293b_48%,#0f766e_100%)]"
+        stats={[
+          { label: "Pending jobs", value: data.moderation.pendingJobs },
+          { label: "Admin seats", value: data.access.adminSeats },
+          {
+            label: "Job post price",
+            value: formatMoney(data.platform.jobPostPriceCents, data.platform.currency),
+          },
+        ]}
+      />
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <Card className="rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
