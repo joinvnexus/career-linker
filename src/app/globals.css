@@ -230,7 +230,7 @@ select {
 }
 
 .hairline-grid {
-  position: relative;
+  /* position: relative; */
 }
 
 .hairline-grid::before {
