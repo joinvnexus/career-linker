@@ -92,13 +92,13 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-8">
-      <section className="overflow-hidden rounded-[32px] border border-white/70 bg-[linear-gradient(135deg,#020617_0%,#0f172a_56%,#1d4ed8_100%)] p-6 text-white shadow-[0_28px_90px_-52px_rgba(15,23,42,0.85)] sm:p-8">
+      <section className="surface-inverse overflow-hidden rounded-[32px] border border-white/10 p-6 text-white sm:p-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
             <Badge className="rounded-full border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.22em] text-slate-100 hover:bg-white/10">
               Admin Dashboard
             </Badge>
-            <h1 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
+            <h1 className="mt-4 font-display text-4xl tracking-[-0.04em] sm:text-5xl">
               Keep marketplace trust, growth, and moderation aligned.
             </h1>
             <p className="mt-3 max-w-xl text-sm text-slate-200 sm:text-base">
@@ -182,7 +182,7 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,0.95fr)]">
-        <Card className="overflow-hidden rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
+        <Card className="overflow-hidden rounded-[28px] border border-white/70 bg-white/94">
           <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <CardTitle className="text-xl text-slate-950">Recent Users</CardTitle>
@@ -220,7 +220,7 @@ export default function AdminDashboardPage() {
         </Card>
 
         <div className="space-y-6">
-          <Card className="overflow-hidden rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
+          <Card className="overflow-hidden rounded-[28px] border border-white/70 bg-white/94">
             <CardHeader>
               <CardTitle className="text-xl text-slate-950">Operations Snapshot</CardTitle>
             </CardHeader>
@@ -246,7 +246,7 @@ export default function AdminDashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="overflow-hidden rounded-[28px] border border-white/70 bg-white/85 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.45)]">
+          <Card className="overflow-hidden rounded-[28px] border border-white/70 bg-white/94">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-xl text-slate-950">Recent Jobs</CardTitle>
               <Link href="/admin/jobs">

@@ -207,15 +207,15 @@ export default function JobSeekerOverview() {
 
   return (
     <div className="space-y-6 lg:space-y-8">
-      <section className="relative overflow-hidden rounded-[2rem] border border-white/80 bg-[linear-gradient(135deg,_rgba(2,132,199,0.92),_rgba(15,118,110,0.86)_55%,_rgba(15,23,42,0.95))] p-5 text-white shadow-[0_28px_80px_-45px_rgba(15,23,42,0.8)] lg:p-8">
+      <section className="surface-inverse relative overflow-hidden rounded-[2rem] border border-white/10 p-5 text-white lg:p-8">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.28),_transparent_28%),radial-gradient(circle_at_bottom_left,_rgba(255,255,255,0.18),_transparent_24%)]" />
         <div className="relative grid gap-8 lg:grid-cols-[minmax(0,1.3fr)_minmax(280px,0.9fr)]">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-sky-50">
+            <div className="eyebrow border-white/10 bg-white/10 text-sky-50">
               <Sparkles className="h-3.5 w-3.5" />
               Career dashboard
             </div>
-            <h1 className="mt-4 max-w-2xl text-3xl font-bold tracking-tight text-white lg:text-5xl">
+            <h1 className="mt-4 max-w-2xl font-display text-4xl tracking-[-0.04em] text-white lg:text-5xl">
               {session?.user?.name?.split(" ")[0] || "You"} are closer to the next
               great role.
             </h1>
@@ -316,7 +316,7 @@ export default function JobSeekerOverview() {
       </div>
 
       <section className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(300px,0.8fr)]">
-        <Card className="border-white/80 bg-white/85 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.8)]">
+        <Card className="border-white/80 bg-white/94">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between gap-4">
               <div>
@@ -403,7 +403,7 @@ export default function JobSeekerOverview() {
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
-        <Card className="border-white/80 bg-white/85 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.8)]">
+        <Card className="border-white/80 bg-white/94">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between gap-4">
               <div>
@@ -469,7 +469,7 @@ export default function JobSeekerOverview() {
         </Card>
 
         <div className="space-y-6">
-          <Card className="border-white/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.92),_rgba(240,249,255,0.92))] shadow-[0_24px_60px_-40px_rgba(15,23,42,0.8)]">
+            <Card className="border-white/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.96),_rgba(240,249,255,0.92))]">
             <CardHeader className="pb-4">
               <CardTitle className="text-xl text-slate-950">Recommended direction</CardTitle>
               <p className="text-sm leading-6 text-slate-600">
@@ -501,7 +501,7 @@ export default function JobSeekerOverview() {
           </Card>
 
           {stats.profileCompletion < 100 && (
-            <Card className="border-amber-200/80 bg-[linear-gradient(180deg,_rgba(255,251,235,0.95),_rgba(254,243,199,0.75))] shadow-[0_24px_60px_-40px_rgba(146,64,14,0.45)]">
+            <Card className="border-amber-200/80 bg-[linear-gradient(180deg,_rgba(255,251,235,0.95),_rgba(254,243,199,0.75))]">
               <CardContent className="p-5">
                 <div className="flex items-start gap-4">
                   <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-white text-amber-600 shadow-sm">

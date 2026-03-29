@@ -24,19 +24,19 @@ export function StatsCard({
   icon,
 }: StatsCardProps) {
   return (
-    <Card className="border-white/80 bg-white/92 shadow-[0_20px_50px_-34px_rgba(15,23,42,0.75)]">
-      <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+    <Card className="border-white/80 bg-white/94">
+      <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-3">
         <div>
-          <CardTitle className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">
+          <CardTitle className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
             {title}
           </CardTitle>
         </div>
-        <div className="rounded-2xl bg-slate-50 p-3 text-slate-700 shadow-sm ring-1 ring-slate-200/80">
+        <div className="rounded-[1rem] bg-[linear-gradient(135deg,rgba(255,255,255,0.9),rgba(240,249,255,0.82))] p-3 text-slate-700 shadow-[0_12px_30px_-20px_rgba(15,23,42,0.3)] ring-1 ring-slate-200/80">
           {icon}
         </div>
       </CardHeader>
       <CardContent>
-        <div className="text-3xl font-bold tracking-tight text-slate-950">{value}</div>
+        <div className="text-4xl font-semibold tracking-[-0.04em] text-slate-950">{value}</div>
         {change ? (
           <div
             className={cn(

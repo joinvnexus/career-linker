@@ -99,13 +99,13 @@ export function ApplicationCard({
   const config = statusConfig[status];
 
   return (
-    <Card className="overflow-hidden border-white/80 bg-white/90 shadow-[0_18px_45px_-34px_rgba(15,23,42,0.75)]">
+    <Card className="overflow-hidden border-white/80 bg-white/94">
       <CardContent className="p-5">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
           <div className="flex min-w-0 gap-4">
             <div
               className={cn(
-                "flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-lg",
+                "flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-[1.2rem] bg-gradient-to-br text-white shadow-lg",
                 config.accent
               )}
             >
@@ -144,13 +144,9 @@ export function ApplicationCard({
             </div>
           </div>
 
-          <div className="flex items-center justify-end sm:justify-start">
+          <div className="flex items-center justify-end xl:justify-start">
             <Link href={`/jobs/${id}`}>
-              <Button
-                variant="outline"
-                size="sm"
-                className="border-slate-200 bg-white/90 text-slate-800 hover:bg-slate-50"
-              >
+              <Button variant="outline" size="sm">
                 View Details
                 <ChevronRight className="ml-1 h-4 w-4" />
               </Button>
@@ -164,11 +160,11 @@ export function ApplicationCard({
 
 export function ApplicationCardSkeleton() {
   return (
-    <Card className="border-white/80 bg-white/90 shadow-[0_18px_45px_-34px_rgba(15,23,42,0.75)]">
+    <Card className="border-white/80 bg-white/94">
       <CardContent className="p-5">
         <div className="animate-pulse">
           <div className="flex items-start gap-4">
-            <div className="h-14 w-14 rounded-2xl bg-slate-200" />
+            <div className="h-14 w-14 rounded-[1.2rem] bg-slate-200" />
             <div className="flex-1">
               <div className="h-5 w-3/4 rounded-full bg-slate-200" />
               <div className="mt-2 h-4 w-1/2 rounded-full bg-slate-200" />

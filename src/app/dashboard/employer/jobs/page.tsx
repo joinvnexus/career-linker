@@ -86,15 +86,15 @@ export default function EmployerJobsPage() {
 
   return (
     <div className="space-y-6 lg:space-y-8">
-      <section className="relative overflow-hidden rounded-[2rem] border border-white/80 bg-[linear-gradient(140deg,_rgba(15,23,42,0.96),_rgba(30,41,59,0.94)_40%,_rgba(8,145,178,0.86))] p-5 text-white shadow-[0_28px_80px_-45px_rgba(15,23,42,0.9)] lg:p-8">
+      <section className="surface-inverse relative overflow-hidden rounded-[2rem] border border-white/10 p-5 text-white lg:p-8">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.18),_transparent_25%),radial-gradient(circle_at_bottom_left,_rgba(56,189,248,0.16),_transparent_24%)]" />
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-sky-50">
+            <div className="eyebrow border-white/10 bg-white/10 text-sky-50">
               <Sparkles className="h-3.5 w-3.5" />
               Job management
             </div>
-            <h1 className="mt-4 text-3xl font-bold tracking-tight lg:text-5xl">Manage your active roles with less friction.</h1>
+            <h1 className="mt-4 font-display text-4xl tracking-[-0.04em] lg:text-5xl">Manage your active roles with less friction.</h1>
             <p className="mt-3 text-sm leading-7 text-slate-200 lg:text-base">
               Review payment state, keep listings current, and jump into edits or applicants from one clean view.
             </p>
@@ -109,7 +109,7 @@ export default function EmployerJobsPage() {
       </section>
 
       {jobs.length === 0 ? (
-        <Card className="border-white/80 bg-white/92 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.75)]">
+        <Card className="border-white/80 bg-white/94">
           <CardHeader className="text-center">
             <Eye className="mx-auto mb-4 h-16 w-16 text-slate-400" />
             <CardTitle className="text-2xl text-slate-950">No jobs posted yet</CardTitle>
@@ -130,7 +130,7 @@ export default function EmployerJobsPage() {
           {jobs.map((job) => (
             <Card
               key={job.id}
-              className="group border-white/80 bg-white/92 shadow-[0_20px_50px_-34px_rgba(15,23,42,0.75)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_55px_-34px_rgba(14,165,233,0.24)]"
+              className="group border-white/80 bg-white/94 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_55px_-34px_rgba(14,165,233,0.24)]"
             >
               <CardHeader>
                 <div className="flex items-start justify-between gap-4">

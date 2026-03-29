@@ -92,15 +92,15 @@ export default function EmployerDashboard() {
 
   return (
     <div className="space-y-6 lg:space-y-8">
-      <section className="relative overflow-hidden rounded-[2rem] border border-white/80 bg-[linear-gradient(140deg,_rgba(15,23,42,0.96),_rgba(8,47,73,0.92)_45%,_rgba(6,95,70,0.82))] p-5 text-white shadow-[0_28px_80px_-45px_rgba(15,23,42,0.9)] lg:p-8">
+      <section className="surface-inverse relative overflow-hidden rounded-[2rem] border border-white/10 p-5 text-white lg:p-8">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.18),_transparent_25%),radial-gradient(circle_at_bottom_left,_rgba(52,211,153,0.18),_transparent_24%)]" />
         <div className="relative grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(280px,0.8fr)]">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-sky-50">
+            <div className="eyebrow border-white/10 bg-white/10 text-sky-50">
               <Sparkles className="h-3.5 w-3.5" />
               Employer dashboard
             </div>
-            <h1 className="mt-4 text-3xl font-bold tracking-tight lg:text-5xl">
+            <h1 className="mt-4 font-display text-4xl tracking-[-0.04em] lg:text-5xl">
               {session?.user?.name?.split(" ")[0] || "Your team"} can hire with more clarity.
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-200 lg:text-base">
@@ -171,7 +171,7 @@ export default function EmployerDashboard() {
       </div>
 
       <section className="grid gap-6 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-        <Card className="border-white/80 bg-white/92 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.75)]">
+        <Card className="border-white/80 bg-white/94">
           <CardHeader>
             <CardTitle className="text-xl text-slate-950">Quick actions</CardTitle>
           </CardHeader>
@@ -203,7 +203,7 @@ export default function EmployerDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-white/80 bg-white/92 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.75)]">
+        <Card className="border-white/80 bg-white/94">
           <CardHeader>
             <CardTitle className="text-xl text-slate-950">Recent jobs</CardTitle>
           </CardHeader>
@@ -237,7 +237,7 @@ export default function EmployerDashboard() {
         </Card>
       </section>
 
-      <Card className="border-white/80 bg-white/92 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.75)]">
+      <Card className="border-white/80 bg-white/94">
         <CardHeader>
           <CardTitle className="text-xl text-slate-950">Recent applications</CardTitle>
         </CardHeader>
