@@ -227,12 +227,30 @@ export default function SavedJobsPage() {
       ) : (
         <div className="space-y-3">
           {filteredJobs.map((job) => (
-            <JobCard
-              key={job.id}
-              employerId={job.employerId}
-              job={job}
-              userRole="JOB_SEEKER"
-            />
+            <Link href={`/jobs/${job.slug}`} key={job.id}>
+              <Card className="border-white/80 bg-white/94 transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-base font-semibold text-slate-950">{job.title}</p>
+                      <p className="mt-1 text-sm text-slate-600">{job.companyName}</p>
+                      <div className="mt-3 flex flex-wrap gap-2 text-xs font-medium text-slate-500">
+                        <span className="rounded-full bg-slate-100 px-3 py-1">{job.location}</span>
+                        <span className="rounded-full bg-slate-100 px-3 py-1">
+                          {job.jobType.replaceAll("_", " ")}
+                        </span>
+                        <span className="rounded-full bg-slate-100 px-3 py-1">
+                          Saved {new Date(job.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700">
+                      Open
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       )}

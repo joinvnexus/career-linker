@@ -107,16 +107,18 @@ function SectionCard({
   title,
   subtitle,
   action,
+  id,
   children,
 }: {
   icon: typeof UserRound;
   title: string;
   subtitle: string;
   action?: React.ReactNode;
+  id?: string;
   children: React.ReactNode;
 }) {
   return (
-    <Card className="border-white/80 bg-white/90 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.8)]">
+    <Card className="scroll-mt-28 border-white/80 bg-white/94" id={id}>
       <CardHeader className="flex flex-col gap-4 border-b border-slate-100/80 pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-start gap-4">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-sm">
@@ -129,7 +131,7 @@ function SectionCard({
         </div>
         {action}
       </CardHeader>
-      <CardContent className="space-y-6 p-5 pt-5">{children}</CardContent>
+      <CardContent className="space-y-6 p-4 pt-5 sm:p-5 sm:pt-5">{children}</CardContent>
     </Card>
   );
 }
@@ -142,6 +144,9 @@ export default function ProfilePage() {
     resolver: zodResolver(jobSeekerProfileSchema) as never,
     defaultValues,
   });
+  const {
+    formState: { isDirty },
+  } = form;
   const watchedValues = form.watch();
   const skills = useFieldArray({ control: form.control, name: "skills" });
   const experiences = useFieldArray({ control: form.control, name: "experiences" });
@@ -285,17 +290,25 @@ export default function ProfilePage() {
     },
   ];
 
+  const sectionLinks = [
+    { id: "basic-information", label: "Basics" },
+    { id: "links-and-resume", label: "Links" },
+    { id: "skills", label: "Skills" },
+    { id: "experience", label: "Experience" },
+    { id: "education", label: "Education" },
+  ];
+
   return (
-    <div className="space-y-6 lg:space-y-8">
-      <section className="relative overflow-hidden rounded-[2rem] border border-white/80 bg-[linear-gradient(140deg,_rgba(15,23,42,0.96),_rgba(59,130,246,0.85)_45%,_rgba(14,165,233,0.78))] p-5 text-white shadow-[0_28px_80px_-45px_rgba(15,23,42,0.9)] lg:p-8">
+    <div className="space-y-6 pb-24 lg:space-y-8 lg:pb-0">
+      <section className="surface-inverse relative overflow-hidden rounded-[2rem] border border-white/10 p-5 text-white lg:p-8">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.18),_transparent_25%),radial-gradient(circle_at_bottom_left,_rgba(125,211,252,0.18),_transparent_22%)]" />
         <div className="relative grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(300px,0.85fr)]">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-sky-50">
+            <div className="eyebrow border-white/10 bg-white/10 text-sky-50">
               <Sparkles className="h-3.5 w-3.5" />
               Candidate profile
             </div>
-            <h1 className="mt-4 text-3xl font-bold tracking-tight lg:text-5xl">
+            <h1 className="mt-4 font-display text-4xl tracking-[-0.04em] lg:text-5xl">
               Shape the profile recruiters remember.
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-sky-50/85 lg:text-base">
@@ -304,7 +317,7 @@ export default function ProfilePage() {
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link href="/dashboard/job-seeker/profile/view">
-                <Button className="w-full bg-white text-slate-950 hover:bg-slate-100 sm:w-auto">
+                <Button className="w-full sm:w-auto" variant="inverse">
                   Preview Profile
                 </Button>
               </Link>
@@ -312,7 +325,8 @@ export default function ProfilePage() {
                 disabled={saving}
                 form="profileForm"
                 type="submit"
-                className="w-full bg-slate-950/40 text-white hover:bg-slate-950/55 sm:w-auto"
+                className="w-full border-white/20 bg-white/10 text-white hover:bg-white/15 sm:w-auto"
+                variant="outline"
               >
                 {saving ? (
                   <>
@@ -326,6 +340,17 @@ export default function ProfilePage() {
                   </>
                 )}
               </Button>
+            </div>
+            <div className="mt-5 flex gap-2 overflow-x-auto pb-1">
+              {sectionLinks.map((section) => (
+                <a
+                  key={section.id}
+                  href={`#${section.id}`}
+                  className="whitespace-nowrap rounded-full border border-white/15 bg-white/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-sky-50 transition-colors hover:bg-white/15"
+                >
+                  {section.label}
+                </a>
+              ))}
             </div>
           </div>
 
@@ -362,12 +387,9 @@ export default function ProfilePage() {
         </div>
       </section>
 
-      <form
-        className="space-y-6"
-        id="profileForm"
-        onSubmit={form.handleSubmit(handleSubmit)}
-      >
+      <form className="space-y-6" id="profileForm" onSubmit={form.handleSubmit(handleSubmit)}>
         <SectionCard
+          id="basic-information"
           icon={UserRound}
           title="Basic information"
           subtitle="Introduce yourself with a concise headline, summary, and core contact details."
@@ -408,6 +430,7 @@ export default function ProfilePage() {
         </SectionCard>
 
         <SectionCard
+          id="links-and-resume"
           icon={Link2}
           title="Links and resume"
           subtitle="Make it easy for recruiters to verify your profile and open your resume quickly."
@@ -441,6 +464,7 @@ export default function ProfilePage() {
         </SectionCard>
 
         <SectionCard
+          id="skills"
           icon={Wrench}
           title="Skills"
           subtitle="List the tools, technologies, and strengths that define your profile."
@@ -464,6 +488,7 @@ export default function ProfilePage() {
                   {...form.register(`skills.${index}.name`)}
                 />
                 <Button
+                  disabled={skills.fields.length === 1}
                   onClick={() => skills.remove(index)}
                   size="icon"
                   type="button"
@@ -477,6 +502,7 @@ export default function ProfilePage() {
         </SectionCard>
 
         <SectionCard
+          id="experience"
           icon={BriefcaseBusiness}
           title="Experience"
           subtitle="Highlight the work that proves your impact and the kind of roles you are ready for."
@@ -501,6 +527,7 @@ export default function ProfilePage() {
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <h3 className="font-semibold text-slate-950">Experience {index + 1}</h3>
                   <Button
+                    disabled={experiences.fields.length === 1}
                     onClick={() => experiences.remove(index)}
                     size="icon"
                     type="button"
@@ -518,10 +545,20 @@ export default function ProfilePage() {
                     {...form.register(`experiences.${index}.employmentType`)}
                   />
                   <Input type="date" {...form.register(`experiences.${index}.startDate`)} />
-                  <Input type="date" {...form.register(`experiences.${index}.endDate`)} />
+                  {!watchedValues.experiences?.[index]?.isCurrent ? (
+                    <Input type="date" {...form.register(`experiences.${index}.endDate`)} />
+                  ) : (
+                    <div className="flex min-h-12 items-center rounded-[1.15rem] border border-dashed border-slate-200 bg-white/60 px-4 text-sm text-slate-500">
+                      Current role, no end date needed
+                    </div>
+                  )}
                 </div>
-                <label className="flex items-center gap-2 text-sm text-slate-700">
-                  <input type="checkbox" {...form.register(`experiences.${index}.isCurrent`)} />
+                <label className="flex items-center gap-3 rounded-[1rem] border border-slate-200/80 bg-white/70 px-4 py-3 text-sm text-slate-700">
+                  <input
+                    className="h-4 w-4 rounded border-slate-300 text-slate-950 focus:ring-sky-500/40"
+                    type="checkbox"
+                    {...form.register(`experiences.${index}.isCurrent`)}
+                  />
                   I currently work here
                 </label>
                 <Textarea
@@ -535,6 +572,7 @@ export default function ProfilePage() {
         </SectionCard>
 
         <SectionCard
+          id="education"
           icon={GraduationCap}
           title="Education"
           subtitle="Show the credentials, coursework, or learning history that supports your path."
@@ -559,6 +597,7 @@ export default function ProfilePage() {
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <h3 className="font-semibold text-slate-950">Education {index + 1}</h3>
                   <Button
+                    disabled={educations.fields.length === 1}
                     onClick={() => educations.remove(index)}
                     size="icon"
                     type="button"
@@ -576,13 +615,23 @@ export default function ProfilePage() {
                   <Input
                     placeholder="Field of study"
                     {...form.register(`educations.${index}.fieldOfStudy`)}
+                   />
+                   <div className="hidden md:block" />
+                   <Input type="date" {...form.register(`educations.${index}.startDate`)} />
+                   {!watchedValues.educations?.[index]?.isCurrent ? (
+                     <Input type="date" {...form.register(`educations.${index}.endDate`)} />
+                   ) : (
+                     <div className="flex min-h-12 items-center rounded-[1.15rem] border border-dashed border-slate-200 bg-white/60 px-4 text-sm text-slate-500">
+                       Current study, no end date needed
+                     </div>
+                   )}
+                 </div>
+                <label className="flex items-center gap-3 rounded-[1rem] border border-slate-200/80 bg-white/70 px-4 py-3 text-sm text-slate-700">
+                  <input
+                    className="h-4 w-4 rounded border-slate-300 text-slate-950 focus:ring-sky-500/40"
+                    type="checkbox"
+                    {...form.register(`educations.${index}.isCurrent`)}
                   />
-                  <div className="hidden md:block" />
-                  <Input type="date" {...form.register(`educations.${index}.startDate`)} />
-                  <Input type="date" {...form.register(`educations.${index}.endDate`)} />
-                </div>
-                <label className="flex items-center gap-2 text-sm text-slate-700">
-                  <input type="checkbox" {...form.register(`educations.${index}.isCurrent`)} />
                   I currently study here
                 </label>
                 <Textarea
@@ -595,6 +644,27 @@ export default function ProfilePage() {
           </div>
         </SectionCard>
       </form>
+
+      {isDirty ? (
+        <div className="fixed inset-x-0 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] z-40 px-4 lg:hidden">
+          <div className="mx-auto max-w-md rounded-[1.5rem] border border-slate-200/80 bg-white/95 p-3 shadow-[0_24px_40px_-24px_rgba(15,23,42,0.35)] backdrop-blur">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold text-slate-950">Unsaved profile changes</p>
+                <p className="text-xs text-slate-500">Save before leaving this screen.</p>
+              </div>
+              <Button
+                disabled={saving}
+                form="profileForm"
+                size="sm"
+                type="submit"
+              >
+                {saving ? "Saving..." : "Save"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

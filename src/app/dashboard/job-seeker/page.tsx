@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   FileText,
   Bookmark,
@@ -39,11 +40,82 @@ type RecentActivity = {
 };
 
 type ApplicationSummary = {
+  id: string;
   status: string;
+  createdAt: string;
+  updatedAt?: string;
+  job?: {
+    title?: string;
+    employer?: {
+      employerProfile?: {
+        companyName?: string | null;
+      } | null;
+      name?: string | null;
+    } | null;
+  } | null;
+};
+
+type SavedJobSummary = {
+  id: string;
+  createdAt: string;
+  title: string;
+  employer?: {
+    employerProfile?: {
+      companyName?: string | null;
+    } | null;
+    name?: string | null;
+  } | null;
+};
+
+type ProfileSummary = {
+  headline?: string | null;
+  location?: string | null;
+  resumeUrl?: string | null;
+  websiteUrl?: string | null;
+  linkedinUrl?: string | null;
+  skills?: Array<{ id: string; name: string }>;
+  experiences?: Array<{ id: string; title: string }>;
+  educations?: Array<{ id: string; degree: string }>;
+};
+
+const formatRelativeDate = (value?: string): string => {
+  if (!value) return "Recently";
+
+  const timestamp = new Date(value).getTime();
+  if (Number.isNaN(timestamp)) return "Recently";
+
+  const minutes = Math.max(1, Math.round((Date.now() - timestamp) / 60000));
+  if (minutes < 60) return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
+
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+
+  const days = Math.round(hours / 24);
+  if (days < 30) return `${days} day${days === 1 ? "" : "s"} ago`;
+
+  const months = Math.round(days / 30);
+  return `${months} month${months === 1 ? "" : "s"} ago`;
+};
+
+const getProfileCompletion = (profile?: ProfileSummary | null): number => {
+  if (!profile) return 0;
+
+  let score = 0;
+  if (profile.headline?.trim()) score += 20;
+  if (profile.location?.trim()) score += 10;
+  if (profile.resumeUrl?.trim() || profile.websiteUrl?.trim() || profile.linkedinUrl?.trim()) {
+    score += 20;
+  }
+  if (profile.skills?.some((skill) => skill.name.trim())) score += 20;
+  if (profile.experiences?.some((experience) => experience.title.trim())) score += 15;
+  if (profile.educations?.some((education) => education.degree.trim())) score += 15;
+
+  return score;
 };
 
 export default function JobSeekerOverview() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [stats, setStats] = useState<Stats>({
     applications: 0,
     savedJobs: 0,
@@ -56,25 +128,74 @@ export default function JobSeekerOverview() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [appsRes, savedRes] = await Promise.all([
+        const [appsRes, savedRes, profileRes] = await Promise.all([
           fetch("/api/applications/my"),
           fetch("/api/users/saved-jobs"),
+          fetch("/api/profiles/seeker"),
         ]);
 
-        const [appsData, savedData] = await Promise.all([
+        const [appsData, savedData, profileData] = await Promise.all([
           appsRes.json(),
           savedRes.json(),
+          profileRes.json(),
         ]);
 
-        const applications = (appsData.applications || []).length;
-        const interviews = (appsData.applications || []).filter(
+        const applicationItems = (appsData.applications || []) as ApplicationSummary[];
+        const savedItems = (savedData || []) as SavedJobSummary[];
+        const profile = (profileData.profile || null) as ProfileSummary | null;
+
+        const applications = applicationItems.length;
+        const interviews = applicationItems.filter(
           (application: ApplicationSummary) => application.status === "INTERVIEW"
         ).length;
-        const savedJobs = (savedData || []).length;
-        const profileCompletion = Math.min(
-          95,
-          55 + applications * 5 + (savedJobs > 0 ? 10 : 0) + (interviews > 0 ? 10 : 0)
-        );
+        const savedJobs = savedItems.length;
+        const profileCompletion = getProfileCompletion(profile);
+
+        const applicationActivities = applicationItems
+          .slice(0, 3)
+          .map((application) => {
+            const companyName =
+              application.job?.employer?.employerProfile?.companyName ||
+              application.job?.employer?.name ||
+              "Employer";
+            const isInterview = application.status === "INTERVIEW";
+
+            return {
+              timestamp: application.updatedAt || application.createdAt || "",
+              activity: {
+              id: application.id,
+              type: (isInterview ? "interview" : "application") as RecentActivity["type"],
+              title: isInterview
+                ? `Interview in progress for ${application.job?.title || "your application"}`
+                : `Applied to ${application.job?.title || "a role"}`,
+              subtitle: `${companyName} | ${application.status.replaceAll("_", " ")}`,
+              date: formatRelativeDate(application.updatedAt || application.createdAt),
+              },
+            };
+          });
+
+        const savedActivities = savedItems.slice(0, 2).map((job) => ({
+          timestamp: job.createdAt || "",
+          activity: {
+            id: `saved-${job.id}`,
+            type: "profile" as const,
+            title: `Saved ${job.title}`,
+            subtitle:
+              job.employer?.employerProfile?.companyName ||
+              job.employer?.name ||
+              "Saved for later",
+            date: formatRelativeDate(job.createdAt),
+          },
+        }));
+
+        const nextActivities = [...applicationActivities, ...savedActivities]
+          .sort((left, right) => {
+            const leftDate = new Date(left.timestamp).getTime() || 0;
+            const rightDate = new Date(right.timestamp).getTime() || 0;
+            return rightDate - leftDate;
+          })
+          .map((item) => item.activity)
+          .slice(0, 4);
 
         setStats({
           applications,
@@ -83,29 +204,7 @@ export default function JobSeekerOverview() {
           profileCompletion,
         });
 
-        setActivities([
-          {
-            id: "1",
-            type: "application",
-            title: "Applied to Frontend Developer",
-            subtitle: "TechCorp | Pending",
-            date: "2 days ago",
-          },
-          {
-            id: "2",
-            type: "interview",
-            title: "Interview Scheduled",
-            subtitle: "Senior Product Manager | TechHub",
-            date: "1 day ago",
-          },
-          {
-            id: "3",
-            type: "profile",
-            title: "Profile viewed by recruiter",
-            subtitle: "ABC Company",
-            date: "3 hours ago",
-          },
-        ]);
+        setActivities(nextActivities);
       } catch (error) {
         console.error("Failed to fetch data", error);
       } finally {
@@ -283,9 +382,8 @@ export default function JobSeekerOverview() {
           value={stats.applications}
           icon={FileText}
           color="blue"
-          change="+1"
           onClick={() => {
-            window.location.href = "/dashboard/job-seeker/applications";
+            router.push("/dashboard/job-seeker/applications");
           }}
         />
         <MobileStatsCard
@@ -294,7 +392,7 @@ export default function JobSeekerOverview() {
           icon={Bookmark}
           color="emerald"
           onClick={() => {
-            window.location.href = "/dashboard/job-seeker/saved";
+            router.push("/dashboard/job-seeker/saved");
           }}
         />
         <MobileStatsCard
@@ -302,7 +400,9 @@ export default function JobSeekerOverview() {
           value={stats.interviews}
           icon={Calendar}
           color="purple"
-          change="+1"
+          onClick={() => {
+            router.push("/dashboard/job-seeker/applications");
+          }}
         />
         <MobileStatsCard
           label="Profile"
@@ -310,7 +410,7 @@ export default function JobSeekerOverview() {
           icon={TrendingUp}
           color="orange"
           onClick={() => {
-            window.location.href = "/dashboard/job-seeker/profile";
+            router.push("/dashboard/job-seeker/profile");
           }}
         />
       </div>
