@@ -1,7 +1,7 @@
 import { AuthProvider } from "@/components/auth-provider"
 import { siteConfig } from "@/config/site"
 import { Toaster } from "@/components/ui/toaster"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -24,6 +24,12 @@ export const metadata: Metadata = {
     title: siteConfig.title,
     description: siteConfig.description,
   },
+}
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 }
 
 export default function RootLayout({

@@ -43,7 +43,7 @@ export function BottomNav({ className }: BottomNavProps) {
       )}
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
-      <div className="mx-auto flex max-w-md items-center justify-around px-3 py-3">
+      <div className="grid w-full grid-cols-4 gap-1 px-2 py-2">
         {navItems.map((item) => {
           const isActive =
             pathname === item.href ||
@@ -54,7 +54,7 @@ export function BottomNav({ className }: BottomNavProps) {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex min-w-[70px] flex-col items-center justify-center gap-1.5 rounded-2xl px-3 py-2.5 transition-all duration-200",
+                "flex min-h-[60px] flex-col items-center justify-center gap-1.5 rounded-2xl px-2 py-2.5 transition-all duration-200",
                 isActive
                   ? "bg-slate-950 text-white shadow-sm"
                   : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"

@@ -304,25 +304,43 @@ export default function JobSeekerOverview() {
     },
   ];
 
+  const dashboardHighlights = [
+    {
+      label: "Applications",
+      value: stats.applications,
+      note: stats.applications > 0 ? "Active search" : "Start applying",
+    },
+    {
+      label: "Saved roles",
+      value: stats.savedJobs,
+      note: stats.savedJobs > 0 ? "Shortlist ready" : "Build a shortlist",
+    },
+    {
+      label: "Interviews",
+      value: stats.interviews,
+      note: stats.interviews > 0 ? "Prep in motion" : "Pipeline still early",
+    },
+  ];
+
   return (
-    <div className="space-y-6 lg:space-y-8">
-      <section className="surface-inverse relative overflow-hidden rounded-[2rem] border border-white/10 p-5 text-white lg:p-8">
+    <div className="space-y-4 lg:space-y-8">
+      <section className="surface-inverse relative overflow-hidden rounded-[2rem] border border-white/10 p-4 text-white sm:p-5 lg:p-8">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.28),_transparent_28%),radial-gradient(circle_at_bottom_left,_rgba(255,255,255,0.18),_transparent_24%)]" />
-        <div className="relative grid gap-8 lg:grid-cols-[minmax(0,1.3fr)_minmax(280px,0.9fr)]">
+        <div className="relative grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(280px,0.9fr)]">
           <div>
             <div className="eyebrow border-white/10 bg-white/10 text-sky-50">
               <Sparkles className="h-3.5 w-3.5" />
               Career dashboard
             </div>
-            <h1 className="mt-4 max-w-2xl font-display text-4xl tracking-[-0.04em] text-white lg:text-5xl">
+            <h1 className="mt-3.5 max-w-xl font-display text-[1.8rem] leading-[0.95] tracking-[-0.05em] text-white sm:text-[2.45rem] lg:text-5xl">
               {session?.user?.name?.split(" ")[0] || "You"} are closer to the next
               great role.
             </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-sky-50/85 lg:text-base">
+            <p className="mt-2.5 max-w-xl text-sm leading-6 text-sky-50/85 lg:text-base lg:leading-7">
               Track progress, sharpen your profile, and keep your pipeline active
               from one polished workspace.
             </p>
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-4 flex flex-col gap-2.5 sm:flex-row">
               <Link href="/jobs">
                 <Button className="w-full bg-white text-slate-950 hover:bg-slate-100 sm:w-auto">
                   Explore Jobs
@@ -338,23 +356,41 @@ export default function JobSeekerOverview() {
                 </Button>
               </Link>
             </div>
+            <div className="mt-4 grid grid-cols-3 gap-2.5">
+              {dashboardHighlights.map((item) => (
+                <div
+                  key={item.label}
+                  className="rounded-[1.2rem] border border-white/10 bg-white/10 px-3 py-2.5 backdrop-blur"
+                >
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-sky-50/70">
+                    {item.label}
+                  </p>
+                  <p className="mt-1.5 text-xl font-semibold tracking-tight text-white sm:text-2xl">
+                    {item.value}
+                  </p>
+                  <p className="mt-0.5 text-[11px] leading-4 text-sky-50/72 sm:text-sm sm:leading-5">
+                    {item.note}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="rounded-[1.75rem] border border-white/15 bg-white/10 p-4 backdrop-blur md:p-5">
+          <div className="rounded-[1.5rem] border border-white/15 bg-white/10 p-3.5 backdrop-blur md:p-5">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-sm font-semibold text-white">Next best move</p>
-                <p className="mt-1 text-sm leading-6 text-sky-50/80">
+                <p className="mt-1 text-sm leading-5 text-sky-50/80 sm:leading-6">
                   {stats.profileCompletion < 80
                     ? "Complete your profile to improve search visibility and role matching."
                     : "Your profile looks strong. Keep applying consistently to maintain momentum."}
                 </p>
               </div>
-              <div className="rounded-2xl bg-white/10 p-3">
-                <Target className="h-5 w-5 text-white" />
+                <div className="rounded-2xl bg-white/10 p-3">
+                  <Target className="h-5 w-5 text-white" />
+                </div>
               </div>
-            </div>
-            <div className="mt-5 rounded-2xl bg-slate-950/20 p-4">
+            <div className="mt-4 rounded-2xl bg-slate-950/20 p-3.5 sm:p-4">
               <div className="flex items-center justify-between text-sm text-sky-50/90">
                 <span>Profile completion</span>
                 <span className="font-semibold">{stats.profileCompletion}%</span>
@@ -376,12 +412,13 @@ export default function JobSeekerOverview() {
         </div>
       </section>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
         <MobileStatsCard
           label="Applications"
           value={stats.applications}
           icon={FileText}
           color="blue"
+          hint="Review the latest status changes in your application flow."
           onClick={() => {
             router.push("/dashboard/job-seeker/applications");
           }}
@@ -391,6 +428,7 @@ export default function JobSeekerOverview() {
           value={stats.savedJobs}
           icon={Bookmark}
           color="emerald"
+          hint="Jump back into the roles you wanted to compare later."
           onClick={() => {
             router.push("/dashboard/job-seeker/saved");
           }}
@@ -400,6 +438,7 @@ export default function JobSeekerOverview() {
           value={stats.interviews}
           icon={Calendar}
           color="purple"
+          hint="See roles that are moving toward recruiter conversations."
           onClick={() => {
             router.push("/dashboard/job-seeker/applications");
           }}
@@ -409,54 +448,62 @@ export default function JobSeekerOverview() {
           value={`${stats.profileCompletion}%`}
           icon={TrendingUp}
           color="orange"
+          hint="Tighten your profile details to improve recruiter visibility."
           onClick={() => {
             router.push("/dashboard/job-seeker/profile");
           }}
         />
       </div>
 
-      <section className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(300px,0.8fr)]">
+      <section className="grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)]">
         <Card className="border-white/80 bg-white/94">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <CardTitle className="text-xl text-slate-950">Quick actions</CardTitle>
-                <p className="mt-1 text-sm text-slate-600">
+          <CardHeader className="pb-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0">
+                <CardTitle className="text-lg text-slate-950 sm:text-xl">Quick actions</CardTitle>
+                <p className="mt-1 text-sm leading-5 text-slate-600 sm:leading-6">
                   Jump into the things that move your search forward.
                 </p>
               </div>
               <Link
                 href="/jobs"
-                className="hidden text-sm font-semibold text-sky-700 lg:inline-flex"
+                className="inline-flex text-sm font-semibold text-sky-700"
               >
                 Open jobs
               </Link>
             </div>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 lg:grid lg:grid-cols-3 lg:overflow-visible">
+            <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-3">
               {quickActions.map((action) => (
                 <Link
                   key={action.href}
                   href={action.href}
-                  className="min-w-[210px] flex-1 lg:min-w-0"
+                  className="block h-full"
                 >
-                  <div className="group h-full rounded-[1.75rem] border border-slate-200/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.9),_rgba(248,250,252,0.95))] p-4 transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-lg">
-                    <div
-                      className={cn(
-                        "flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-lg",
-                        action.color
-                      )}
-                    >
-                      <action.icon className="h-5 w-5" />
+                  <div className="group flex h-full min-h-[148px] flex-col rounded-[1.45rem] border border-slate-200/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.96),_rgba(248,250,252,0.96))] p-3.5 transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-lg sm:min-h-[164px] sm:rounded-[1.75rem] sm:p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div
+                        className={cn(
+                          "flex h-10 w-10 items-center justify-center rounded-[1rem] bg-gradient-to-br text-white shadow-lg sm:h-12 sm:w-12 sm:rounded-2xl",
+                          action.color
+                        )}
+                      >
+                        <action.icon className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
+                      </div>
+                      <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+                        Action
+                      </span>
                     </div>
-                    <p className="mt-5 text-base font-semibold text-slate-950">
-                      {action.label}
-                    </p>
-                    <p className="mt-1 text-sm leading-6 text-slate-600">
-                      {action.description}
-                    </p>
-                    <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-700">
+                    <div className="mt-4 flex-1">
+                      <p className="text-[15px] font-semibold text-slate-950 sm:text-base">
+                        {action.label}
+                      </p>
+                      <p className="mt-1 text-xs leading-5 text-slate-600 sm:text-sm sm:leading-6">
+                        {action.description}
+                      </p>
+                    </div>
+                    <div className="mt-3 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-slate-700 sm:mt-4 sm:text-sm sm:normal-case sm:tracking-normal">
                       Continue
                       <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </div>
@@ -468,32 +515,39 @@ export default function JobSeekerOverview() {
         </Card>
 
         <Card className="border-white/80 bg-slate-950 text-white shadow-[0_24px_60px_-40px_rgba(15,23,42,1)]">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-xl">This week&apos;s focus</CardTitle>
-            <p className="text-sm leading-6 text-slate-300">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg sm:text-xl">This week&apos;s focus</CardTitle>
+            <p className="text-sm leading-5 text-slate-300 sm:leading-6">
               A compact view of where your effort will have the biggest payoff.
             </p>
           </CardHeader>
-          <CardContent className="space-y-3 pt-0">
+          <CardContent className="grid gap-2.5 pt-0 sm:gap-3">
             {progressItems.map((item) => (
-              <div key={item.label} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div
+                key={item.label}
+                className="rounded-[1.25rem] border border-white/10 bg-white/5 p-3.5 sm:rounded-2xl sm:p-4"
+              >
                 <div className="flex items-start gap-3">
                   <div
                     className={cn(
-                      "flex h-11 w-11 items-center justify-center rounded-2xl ring-1",
+                      "flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[1rem] ring-1 sm:h-11 sm:w-11 sm:rounded-2xl",
                       item.tone
                     )}
                   >
-                    <item.icon className="h-5 w-5" />
+                    <item.icon className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
                   </div>
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                      {item.label}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-col gap-1 min-[440px]:flex-row min-[440px]:items-start min-[440px]:justify-between">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400 sm:text-xs sm:tracking-[0.18em]">
+                        {item.label}
+                      </p>
+                      <p className="text-xl font-bold tracking-tight text-white sm:text-2xl">
+                        {item.value}
+                      </p>
+                    </div>
+                    <p className="mt-1 text-xs leading-5 text-slate-300 sm:text-sm sm:leading-6">
+                      {item.note}
                     </p>
-                    <p className="mt-1 text-2xl font-bold tracking-tight text-white">
-                      {item.value}
-                    </p>
-                    <p className="mt-1 text-sm leading-6 text-slate-300">{item.note}</p>
                   </div>
                 </div>
               </div>
@@ -502,7 +556,7 @@ export default function JobSeekerOverview() {
         </Card>
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
+      <section className="grid gap-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
         <Card className="border-white/80 bg-white/94">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between gap-4">
@@ -522,7 +576,7 @@ export default function JobSeekerOverview() {
           </CardHeader>
           <CardContent className="pt-0">
             {activities.length === 0 ? (
-              <div className="rounded-[1.75rem] border border-dashed border-slate-200 bg-slate-50/80 py-10 text-center">
+                <div className="rounded-[1.5rem] border border-dashed border-slate-200 bg-slate-50/80 py-7 text-center sm:rounded-[1.75rem] sm:py-10">
                 <FileText className="mx-auto mb-3 h-12 w-12 text-slate-300" />
                 <p className="text-slate-600">No recent activity yet</p>
                 <Link href="/jobs">

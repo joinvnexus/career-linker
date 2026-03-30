@@ -197,7 +197,7 @@ export function WorkspaceShell({
             ) : null}
           </AnimatePresence>
 
-          <main className="min-w-0 pb-28">{children}</main>
+          <main className="min-w-0 pb-[calc(5.5rem+env(safe-area-inset-bottom))]">{children}</main>
           {mobileBottomNav}
         </div>
       </div>
