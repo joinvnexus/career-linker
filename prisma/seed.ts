@@ -137,7 +137,7 @@ const main = async (): Promise<void> => {
         requirements: `• ${job.experience} level experience\n• Strong communication skills\n• Problem-solving abilities\n• Teamwork and collaboration`,
         responsibilities: `• Work with cross-functional teams\n• Contribute to project success\n• Follow best practices\n• Communicate effectively`,
         location: job.location,
-        jobType: job.jobType as JobType,
+        jobType: job.jobType as "FULL_TIME" | "PART_TIME" | "REMOTE" | "CONTRACT" | "INTERNSHIP",
         experience: job.experience,
         salaryMin: job.salaryMin,
         salaryMax: job.salaryMax,
