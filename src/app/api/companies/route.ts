@@ -1,7 +1,6 @@
 import { JobStatus } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { Globe2, TrendingUp, Sparkles, Users2 } from "lucide-react";
 
 export async function GET(): Promise<NextResponse> {
   try {
@@ -73,7 +72,7 @@ export async function GET(): Promise<NextResponse> {
         roleCount: `${activeJobs}+`,
         accentClass: getAccentClass(tag),
         iconBg: getIconBg(tag),
-        icon: getIcon(tag),
+        iconName: getIconName(tag),
         iconColor: getIconColor(tag),
         location: employer.employerProfile?.location,
         industry: employer.employerProfile?.industry,
@@ -153,12 +152,12 @@ function getIconColor(tag: string): string {
   }
 }
 
-function getIcon(tag: string) {
+function getIconName(tag: string): string {
   switch (tag) {
-    case "product": return Globe2;
-    case "growth": return TrendingUp;
-    case "creative": return Sparkles;
-    case "remote": return Users2;
-    default: return Globe2;
+    case "product": return "Globe2";
+    case "growth": return "TrendingUp";
+    case "creative": return "Sparkles";
+    case "remote": return "Users2";
+    default: return "Globe2";
   }
 }

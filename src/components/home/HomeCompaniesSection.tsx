@@ -6,6 +6,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
   Building2,
+  Globe2,
+  Sparkles,
+  TrendingUp,
+  Users2,
   Plus,
   Clock,
   Layers,
@@ -28,7 +32,7 @@ type CompanyProfile = {
   roleCount: string;
   accentClass: string;
   iconBg: string;
-  icon: React.ComponentType<{ className?: string }>;
+  iconName: string;
   iconColor: string;
   location?: string;
   industry?: string;
@@ -43,6 +47,16 @@ const filterOptions: { label: string; value: FilterTag }[] = [
   { label: "Creative systems", value: "creative" },
   { label: "Remote-first", value: "remote" },
 ];
+
+function getIconComponent(iconName: string) {
+  switch (iconName) {
+    case "Globe2": return Globe2;
+    case "TrendingUp": return TrendingUp;
+    case "Sparkles": return Sparkles;
+    case "Users2": return Users2;
+    default: return Globe2;
+  }
+}
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -210,7 +224,7 @@ export function HomeCompaniesSection() {
                 </motion.div>
               ) : (
                 visibleCompanies.map((company, index) => {
-                  const Icon = company.icon;
+                  const Icon = getIconComponent(company.iconName);
 
                   return (
                     <motion.div
