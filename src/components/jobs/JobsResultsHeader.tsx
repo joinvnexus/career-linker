@@ -1,16 +1,9 @@
 "use client";
 
-import { ArrowUpDown, Clock, DollarSign, Search, SlidersHorizontal, Sparkles, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { ArrowUpDown, Clock, DollarSign, SlidersHorizontal, Sparkles, X, List, LayoutGrid } from "lucide-react";
 import type { JobsCategory, JobsFilterState } from "@/components/jobs/types";
 import { EXPERIENCE_LABELS, JOB_TYPE_LABELS, SALARY_LABELS } from "@/components/jobs/constants";
+import { cn } from "@/lib/utils";
 
 type JobsResultsHeaderProps = {
   categories: JobsCategory[];
@@ -18,36 +11,33 @@ type JobsResultsHeaderProps = {
   loading: boolean;
   total: number;
   sort: string;
+  layout: "list" | "grid";
   onSortChange: (value: string) => void;
+  onLayoutChange: (layout: "list" | "grid") => void;
   onOpenFilters: () => void;
   onClearAll: () => void;
   onRemoveFilter: (key: keyof JobsFilterState) => void;
 };
 
-const getCategoryLabel = (categories: JobsCategory[], categoryId: string) =>
-  categories.find((item) => item.id === categoryId)?.name ?? "Category";
+const getCategoryLabel = (categories: JobsCategory[], id: string) =>
+  categories.find((c) => c.id === id)?.name ?? "Category";
 
-const getActiveFilterChips = (categories: JobsCategory[], filters: JobsFilterState) => {
+const getActiveChips = (categories: JobsCategory[], filters: JobsFilterState) => {
   const chips: Array<{ key: keyof JobsFilterState; label: string }> = [];
-
-  if (filters.search) chips.push({ key: "search", label: `Search: ${filters.search}` });
-  if (filters.location) chips.push({ key: "location", label: `Location: ${filters.location}` });
-  if (filters.category) {
-    chips.push({
-      key: "category",
-      label: `Category: ${getCategoryLabel(categories, filters.category)}`,
-    });
-  }
-  if (filters.jobType) chips.push({ key: "jobType", label: `Type: ${JOB_TYPE_LABELS[filters.jobType]}` });
-  if (filters.experience) {
-    chips.push({ key: "experience", label: `Experience: ${EXPERIENCE_LABELS[filters.experience]}` });
-  }
-  if (filters.salaryMin) {
-    chips.push({ key: "salaryMin", label: `Salary: ${SALARY_LABELS[filters.salaryMin]}` });
-  }
-
+  if (filters.search) chips.push({ key: "search", label: `"${filters.search}"` });
+  if (filters.location) chips.push({ key: "location", label: filters.location });
+  if (filters.category) chips.push({ key: "category", label: getCategoryLabel(categories, filters.category) });
+  if (filters.jobType) chips.push({ key: "jobType", label: JOB_TYPE_LABELS[filters.jobType] });
+  if (filters.experience) chips.push({ key: "experience", label: EXPERIENCE_LABELS[filters.experience] });
+  if (filters.salaryMin) chips.push({ key: "salaryMin", label: `Min ${SALARY_LABELS[filters.salaryMin]}` });
   return chips;
 };
+
+const sortOptions = [
+  { value: "newest", label: "Newest first", icon: null },
+  { value: "deadline", label: "Deadline soonest", icon: Clock },
+  { value: "salary", label: "Highest salary", icon: DollarSign },
+] as const;
 
 export function JobsResultsHeader({
   categories,
@@ -55,90 +45,127 @@ export function JobsResultsHeader({
   loading,
   total,
   sort,
+  layout,
   onSortChange,
+  onLayoutChange,
   onOpenFilters,
   onClearAll,
   onRemoveFilter,
 }: JobsResultsHeaderProps) {
-  const activeChips = getActiveFilterChips(categories, filters);
-  const hasActiveFilters = activeChips.length > 0;
-  const contextParts = [filters.search, filters.location].filter(Boolean);
-  const summary =
-    contextParts.length > 0
-      ? `Showing matches for ${contextParts.join(" in ")}`
-      : "Use filters and sorting to shape a faster shortlist.";
+  const chips = getActiveChips(categories, filters);
 
   return (
-    <div className="space-y-4">
-      <div className="surface-panel flex flex-col gap-4 rounded-[1.8rem] border border-white/75 p-5 sm:flex-row sm:items-center sm:justify-between">
+    <div className="space-y-3">
+
+      {/* ── Count + sort row ── */}
+      <div className="flex items-center justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2">
-            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-400">Results</p>
-            {loading ? <Sparkles className="h-4 w-4 text-sky-500" /> : null}
-          </div>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
-            {loading ? "Refreshing..." : `${total.toLocaleString()} jobs found`}
-          </h2>
-          <p className="mt-1 text-sm text-slate-500">{summary}</p>
+          <p className="text-sm font-semibold text-slate-900">
+            {loading ? (
+              <span className="inline-flex items-center gap-1.5 text-slate-400">
+                <Sparkles className="h-3.5 w-3.5 animate-pulse" />
+                Searching...
+              </span>
+            ) : (
+              <>
+                {total.toLocaleString()} jobs found
+              </>
+            )}
+          </p>
+          {!loading && (
+            <p className="mt-0.5 text-xs text-slate-400">
+              {chips.length > 0
+                ? `Filtered by ${chips.map((c) => c.label).join(", ")}`
+                : "Showing all active listings"}
+            </p>
+          )}
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <Button className="rounded-full lg:hidden" onClick={onOpenFilters} variant="outline">
-            <SlidersHorizontal className="mr-2 h-4 w-4" />
+        <div className="flex items-center gap-2">
+          {/* Mobile filter trigger */}
+          <button
+            type="button"
+            onClick={onOpenFilters}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-50 lg:hidden"
+          >
+            <SlidersHorizontal className="h-3.5 w-3.5" />
             Filters
-            {hasActiveFilters ? (
-              <span className="ml-2 rounded-full bg-slate-950 px-2 py-0.5 text-xs text-white">
-                {activeChips.length}
+            {chips.length > 0 && (
+              <span className="rounded-full bg-slate-900 px-1.5 py-0.5 text-[10px] text-white">
+                {chips.length}
               </span>
-            ) : null}
-          </Button>
-          <Select onValueChange={onSortChange} value={sort}>
-            <SelectTrigger className="min-w-[190px] rounded-full">
-              <ArrowUpDown className="mr-2 h-4 w-4 text-slate-400" />
-              <SelectValue placeholder="Sort jobs" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="newest">Newest first</SelectItem>
-              <SelectItem value="deadline">
-                <span className="inline-flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-sky-600" />
-                  Closest deadline
-                </span>
-              </SelectItem>
-              <SelectItem value="salary">
-                <span className="inline-flex items-center gap-2">
-                  <DollarSign className="h-4 w-4 text-emerald-600" />
-                  Highest salary
-                </span>
-              </SelectItem>
-            </SelectContent>
-          </Select>
+            )}
+          </button>
+
+          {/* Layout toggle */}
+          <div className="hidden items-center gap-1 rounded-lg border border-slate-200 bg-white p-1 sm:flex">
+            <button
+              type="button"
+              onClick={() => onLayoutChange("list")}
+              className={cn(
+                "rounded p-1.5 text-xs transition-colors",
+                layout === "list"
+                  ? "bg-slate-900 text-white"
+                  : "text-slate-600 hover:bg-slate-50"
+              )}
+              title="List view"
+            >
+              <List className="h-3.5 w-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => onLayoutChange("grid")}
+              className={cn(
+                "rounded p-1.5 text-xs transition-colors",
+                layout === "grid"
+                  ? "bg-slate-900 text-white"
+                  : "text-slate-600 hover:bg-slate-50"
+              )}
+              title="Grid view"
+            >
+              <LayoutGrid className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
+          {/* Sort select */}
+          <div className="relative">
+            <ArrowUpDown className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+            <select
+              value={sort}
+              onChange={(e) => onSortChange(e.target.value)}
+              className="h-9 appearance-none rounded-lg border border-slate-200 bg-white pl-8 pr-8 text-xs font-semibold text-slate-600 focus:border-slate-400 focus:outline-none"
+            >
+              {sortOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
-      {hasActiveFilters ? (
-        <div className="flex flex-wrap items-center gap-2">
-          {activeChips.map((chip) => (
+      {/* ── Active filter chips ── */}
+      {chips.length > 0 && (
+        <div className="flex flex-wrap items-center gap-1.5">
+          {chips.map((chip) => (
             <button
-              key={`${chip.key}-${chip.label}`}
-              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 transition-all hover:border-slate-300 hover:text-slate-900"
-              onClick={() => onRemoveFilter(chip.key)}
+              key={chip.key}
               type="button"
+              onClick={() => onRemoveFilter(chip.key)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-900"
             >
               {chip.label}
-              <X className="h-3.5 w-3.5 text-slate-400" />
+              <X className="h-3 w-3 text-slate-400" />
             </button>
           ))}
-          <Button className="rounded-full" onClick={onClearAll} size="sm" variant="ghost">
+          <button
+            type="button"
+            onClick={onClearAll}
+            className="rounded-full px-2.5 py-1 text-xs font-semibold text-slate-400 hover:text-slate-600"
+          >
             Clear all
-          </Button>
-        </div>
-      ) : (
-        <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/85 px-3 py-2 shadow-[var(--shadow-soft)]">
-            <Search className="h-4 w-4" />
-            Start broad, then narrow by signal.
-          </span>
+          </button>
         </div>
       )}
     </div>
