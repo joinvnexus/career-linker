@@ -30,7 +30,7 @@ const navLinks = [
   { href: "/jobs", label: "Find Jobs" },
   { href: "/companies", label: "Companies" },
   { href: "/about", label: "About" },
-  { href: "/blog", label: "Insights" },
+  { href: "/blog", label: "Career Tips" },
 ] as const;
 
 const roleCopy: Record<
