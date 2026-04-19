@@ -14,25 +14,30 @@ import { cn } from "@/lib/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+type LayoutMode = "list" | "grid";
+
 type JobListItem = {
   id: string;
   slug: string;
   title: string;
-  description?: string;
+  companyName?: string;
   location: string;
   salaryMin?: number | null;
   salaryMax?: number | null;
   salaryType?: string | null;
   jobType: "FULL_TIME" | "PART_TIME" | "REMOTE" | "CONTRACT" | "INTERNSHIP";
-  experience?: string;
   status: "PENDING" | "ACTIVE" | "EXPIRED" | "DRAFT" | "REJECTED";
   createdAt: string;
   applicationDeadline?: string | null;
   employerId: string;
+  category?: { name: string };
   employer?: {
     id: string;
     name?: string | null;
-    employerProfile?: { companyName?: string | null } | null;
+    employerProfile?: {
+      companyName?: string | null;
+      companyLogo?: string | null;
+    } | null;
   };
 };
 
@@ -69,7 +74,7 @@ export default function JobsPage() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState("newest");
-  const [layout, setLayout] = useState<"list" | "grid">("list");
+  const [layout, setLayout] = useState<LayoutMode>("list");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [filters, setFilters] = useState<JobsFilterState>(INITIAL_FILTERS);
 
@@ -80,6 +85,19 @@ export default function JobsPage() {
     () => Math.max(Math.ceil(total / PAGE_SIZE), 1),
     [total]
   );
+
+  // Page numbers: current ± 2
+  const pageNumbers = useMemo(() => {
+    const nums: number[] = [];
+    for (
+      let i = Math.max(1, page - 2);
+      i <= Math.min(totalPages, page + 2);
+      i++
+    ) {
+      nums.push(i);
+    }
+    return nums;
+  }, [page, totalPages]);
 
   const sortedJobs = useMemo(() => {
     const next = [...jobs];
@@ -107,20 +125,6 @@ export default function JobsPage() {
     return next;
   }, [jobs, sort]);
 
-  // Pagination page numbers to show
-  const pageNumbers = useMemo(() => {
-    const pages: number[] = [];
-    const delta = 2;
-    for (
-      let i = Math.max(1, page - delta);
-      i <= Math.min(totalPages, page + delta);
-      i++
-    ) {
-      pages.push(i);
-    }
-    return pages;
-  }, [page, totalPages]);
-
   // ── Fetch categories ──
   useEffect(() => {
     const load = async () => {
@@ -137,7 +141,7 @@ export default function JobsPage() {
 
   // ── Fetch jobs ──
   useEffect(() => {
-    const fetch_ = async () => {
+    const fetchJobs = async () => {
       try {
         setLoading(true);
         const params = new URLSearchParams({
@@ -174,7 +178,7 @@ export default function JobsPage() {
         setLoading(false);
       }
     };
-    void fetch_();
+    void fetchJobs();
   }, [
     deferredSearch,
     deferredLocation,
@@ -190,9 +194,7 @@ export default function JobsPage() {
     setFilters((prev) => ({ ...prev, [key]: value }));
     setPage(1);
   };
-
   const removeFilter = (key: keyof JobsFilterState) => setFilter(key, "");
-
   const resetFilters = () => {
     setFilters(INITIAL_FILTERS);
     setPage(1);
@@ -202,9 +204,9 @@ export default function JobsPage() {
 
   return (
     <div className="min-h-screen py-8 sm:py-10 lg:py-12">
-      <div className="page-shell space-y-6">
+      <div className="page-shell space-y-5">
 
-        {/* ── Search header ── */}
+        {/* Search header */}
         <JobsSearchHeader
           filters={filters}
           loading={loading}
@@ -214,28 +216,28 @@ export default function JobsPage() {
           total={total}
         />
 
-        {/* ── Body: sidebar + results ── */}
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+        {/* Body */}
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
 
-          {/* Sidebar — sticky on desktop */}
-          <div className="hidden lg:block lg:w-52 lg:flex-shrink-0">
+          {/* Sidebar */}
+          <div className="hidden lg:block lg:w-52 lg:shrink-0">
             <div className="sticky top-24">
               <JobsFiltersPanel
                 categories={categories}
                 filters={filters}
                 onFilterChange={setFilter}
+                onReset={resetFilters}
               />
             </div>
           </div>
 
-          {/* Results column */}
+          {/* Results */}
           <div className="min-w-0 flex-1 space-y-3">
-
             <JobsResultsHeader
               categories={categories}
               filters={filters}
-              loading={loading}
               layout={layout}
+              loading={loading}
               onClearAll={resetFilters}
               onLayoutChange={setLayout}
               onOpenFilters={() => setMobileFiltersOpen(true)}
@@ -245,63 +247,77 @@ export default function JobsPage() {
               total={total}
             />
 
-            {/* ── Loading skeletons ── */}
+            {/* Skeletons */}
             {loading && (
-              <div className="space-y-2">
+              <div
+                className={cn(
+                  layout === "grid"
+                    ? "grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3"
+                    : "space-y-2"
+                )}
+              >
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <Skeleton key={i} className="h-20 w-full rounded-xl" />
+                  <Skeleton
+                    key={i}
+                    className={cn(
+                      "w-full rounded-2xl",
+                      layout === "grid" ? "h-48" : "h-20"
+                    )}
+                  />
                 ))}
               </div>
             )}
 
-            {/* ── Empty state ── */}
+            {/* Empty state */}
             {!loading && jobs.length === 0 && (
-              <div className="flex flex-col items-center rounded-xl border border-dashed border-slate-200 py-16 text-center">
-                <Briefcase className="mb-3 h-10 w-10 text-slate-300" />
-                <h3 className="text-base font-semibold text-slate-800">
+              <div className="surface-panel flex flex-col items-center rounded-2xl border border-dashed border-border py-16 text-center">
+                <Briefcase className="mb-3 h-10 w-10 text-muted-foreground/40" />
+                <h3 className="text-base font-semibold text-foreground">
                   No jobs found
                 </h3>
-                <p className="mt-1 max-w-sm text-sm text-slate-400">
+                <p className="mt-1 max-w-sm text-sm text-muted-foreground">
                   Try adjusting your filters or search terms.
                 </p>
                 <button
                   type="button"
                   onClick={resetFilters}
-                  className="mt-5 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+                  className="mt-5 rounded-xl border border-border bg-card px-5 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
                 >
                   Browse all jobs
                 </button>
               </div>
             )}
 
-            {/* ── Job cards ── */}
+            {/* Job list / grid */}
             {!loading && jobs.length > 0 && (
-              <div className={cn(
-                layout === "grid"
-                  ? "grid gap-4 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3"
-                  : "space-y-3"
-              )}>
+              <div
+                className={cn(
+                  layout === "grid"
+                    ? "grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3"
+                    : "space-y-2"
+                )}
+              >
                 {sortedJobs.map((job) => (
                   <JobCard
                     key={job.id}
-                    employerId={job.employerId}
                     job={job}
-                    layout={layout}
+                    variant={layout}
                     userId={session?.user?.id}
                     userRole={session?.user?.role}
+                    employerId={job.employerId}
                   />
                 ))}
               </div>
             )}
 
-            {/* ── Pagination ── */}
+            {/* Pagination */}
             {!loading && totalPages > 1 && (
-              <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
-                <p className="text-xs text-slate-400">
+              <div className="surface-panel flex items-center justify-between rounded-2xl border border-border px-4 py-3">
+                <p className="text-xs text-muted-foreground">
                   Page{" "}
-                  <span className="font-semibold text-slate-700">{page}</span>{" "}
+                  <span className="font-semibold text-foreground">{page}</span>{" "}
                   of{" "}
-                  <span className="font-semibold text-slate-700">
+                  <span className="font-semibold text-foreground">
                     {totalPages}
                   </span>{" "}
                   · {total.toLocaleString()} results
@@ -312,7 +328,7 @@ export default function JobsPage() {
                     type="button"
                     disabled={page <= 1}
                     onClick={() => setPage((p) => Math.max(p - 1, 1))}
-                    className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-500 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     ← Prev
                   </button>
@@ -322,11 +338,12 @@ export default function JobsPage() {
                       key={n}
                       type="button"
                       onClick={() => setPage(n)}
-                      className={
+                      className={cn(
+                        "rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
                         n === page
-                          ? "rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white"
-                          : "rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-500 transition-colors hover:bg-slate-50"
-                      }
+                          ? "bg-foreground text-background"
+                          : "border border-border bg-card text-muted-foreground hover:bg-secondary"
+                      )}
                     >
                       {n}
                     </button>
@@ -336,7 +353,7 @@ export default function JobsPage() {
                     type="button"
                     disabled={page >= totalPages}
                     onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-                    className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-500 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     Next →
                   </button>
@@ -347,7 +364,7 @@ export default function JobsPage() {
         </div>
       </div>
 
-      {/* ── Mobile filter modal ── */}
+      {/* Mobile filter modal */}
       <Modal
         description="Adjust filters to refine the job listing."
         onClose={() => setMobileFiltersOpen(false)}
@@ -358,6 +375,7 @@ export default function JobsPage() {
           categories={categories}
           filters={filters}
           onFilterChange={setFilter}
+          onReset={resetFilters}
         />
       </Modal>
     </div>

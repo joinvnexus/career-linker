@@ -1,9 +1,11 @@
 "use client";
 
-import { ArrowUpDown, Clock, DollarSign, SlidersHorizontal, Sparkles, X, List, LayoutGrid } from "lucide-react";
+import { ArrowUpDown, Clock, DollarSign, LayoutGrid, List, SlidersHorizontal, Sparkles, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 import type { JobsCategory, JobsFilterState } from "@/components/jobs/types";
 import { EXPERIENCE_LABELS, JOB_TYPE_LABELS, SALARY_LABELS } from "@/components/jobs/constants";
-import { cn } from "@/lib/utils";
+
+type LayoutMode = "list" | "grid";
 
 type JobsResultsHeaderProps = {
   categories: JobsCategory[];
@@ -11,9 +13,9 @@ type JobsResultsHeaderProps = {
   loading: boolean;
   total: number;
   sort: string;
-  layout: "list" | "grid";
+  layout: LayoutMode;
   onSortChange: (value: string) => void;
-  onLayoutChange: (layout: "list" | "grid") => void;
+  onLayoutChange: (value: LayoutMode) => void;
   onOpenFilters: () => void;
   onClearAll: () => void;
   onRemoveFilter: (key: keyof JobsFilterState) => void;
@@ -34,9 +36,9 @@ const getActiveChips = (categories: JobsCategory[], filters: JobsFilterState) =>
 };
 
 const sortOptions = [
-  { value: "newest", label: "Newest first", icon: null },
-  { value: "deadline", label: "Deadline soonest", icon: Clock },
-  { value: "salary", label: "Highest salary", icon: DollarSign },
+  { value: "newest", label: "Newest first" },
+  { value: "deadline", label: "Deadline soonest" },
+  { value: "salary", label: "Highest salary" },
 ] as const;
 
 export function JobsResultsHeader({
@@ -55,28 +57,23 @@ export function JobsResultsHeader({
   const chips = getActiveChips(categories, filters);
 
   return (
-    <div className="space-y-3">
-
-      {/* ── Count + sort row ── */}
+    <div className="space-y-2.5">
+      {/* Count + controls row */}
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold text-slate-900">
+          <p className="text-sm font-semibold text-foreground">
             {loading ? (
-              <span className="inline-flex items-center gap-1.5 text-slate-400">
-                <Sparkles className="h-3.5 w-3.5 animate-pulse" />
+              <span className="inline-flex items-center gap-1.5 text-muted-foreground">
+                <Sparkles className="h-3.5 w-3.5 animate-pulse text-primary" />
                 Searching...
               </span>
             ) : (
-              <>
-                {total.toLocaleString()} jobs found
-              </>
+              <>{total.toLocaleString()} jobs found</>
             )}
           </p>
-          {!loading && (
-            <p className="mt-0.5 text-xs text-slate-400">
-              {chips.length > 0
-                ? `Filtered by ${chips.map((c) => c.label).join(", ")}`
-                : "Showing all active listings"}
+          {!loading && chips.length > 0 && (
+            <p className="mt-0.5 text-[11px] text-muted-foreground">
+              Filtered by {chips.map((c) => c.label).join(", ")}
             </p>
           )}
         </div>
@@ -86,54 +83,24 @@ export function JobsResultsHeader({
           <button
             type="button"
             onClick={onOpenFilters}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-50 lg:hidden"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-3 py-2 text-xs font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground lg:hidden"
           >
             <SlidersHorizontal className="h-3.5 w-3.5" />
             Filters
             {chips.length > 0 && (
-              <span className="rounded-full bg-slate-900 px-1.5 py-0.5 text-[10px] text-white">
+              <span className="rounded-full bg-foreground px-1.5 py-0.5 text-[10px] text-background">
                 {chips.length}
               </span>
             )}
           </button>
 
-          {/* Layout toggle */}
-          <div className="hidden items-center gap-1 rounded-lg border border-slate-200 bg-white p-1 sm:flex">
-            <button
-              type="button"
-              onClick={() => onLayoutChange("list")}
-              className={cn(
-                "rounded p-1.5 text-xs transition-colors",
-                layout === "list"
-                  ? "bg-slate-900 text-white"
-                  : "text-slate-600 hover:bg-slate-50"
-              )}
-              title="List view"
-            >
-              <List className="h-3.5 w-3.5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => onLayoutChange("grid")}
-              className={cn(
-                "rounded p-1.5 text-xs transition-colors",
-                layout === "grid"
-                  ? "bg-slate-900 text-white"
-                  : "text-slate-600 hover:bg-slate-50"
-              )}
-              title="Grid view"
-            >
-              <LayoutGrid className="h-3.5 w-3.5" />
-            </button>
-          </div>
-
-          {/* Sort select */}
+          {/* Sort */}
           <div className="relative">
-            <ArrowUpDown className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+            <ArrowUpDown className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
             <select
               value={sort}
               onChange={(e) => onSortChange(e.target.value)}
-              className="h-9 appearance-none rounded-lg border border-slate-200 bg-white pl-8 pr-8 text-xs font-semibold text-slate-600 focus:border-slate-400 focus:outline-none"
+              className="h-9 appearance-none rounded-xl border border-border bg-card pl-8 pr-8 text-xs font-semibold text-foreground focus:border-ring focus:outline-none"
             >
               {sortOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -142,10 +109,40 @@ export function JobsResultsHeader({
               ))}
             </select>
           </div>
+
+          {/* Layout toggle */}
+          <div className="flex overflow-hidden rounded-xl border border-border">
+            <button
+              type="button"
+              onClick={() => onLayoutChange("list")}
+              aria-label="List view"
+              className={cn(
+                "flex items-center justify-center p-2 transition-colors",
+                layout === "list"
+                  ? "bg-foreground text-background"
+                  : "bg-card text-muted-foreground hover:bg-secondary"
+              )}
+            >
+              <List className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => onLayoutChange("grid")}
+              aria-label="Grid view"
+              className={cn(
+                "flex items-center justify-center p-2 transition-colors",
+                layout === "grid"
+                  ? "bg-foreground text-background"
+                  : "bg-card text-muted-foreground hover:bg-secondary"
+              )}
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* ── Active filter chips ── */}
+      {/* Active filter chips */}
       {chips.length > 0 && (
         <div className="flex flex-wrap items-center gap-1.5">
           {chips.map((chip) => (
@@ -153,16 +150,16 @@ export function JobsResultsHeader({
               key={chip.key}
               type="button"
               onClick={() => onRemoveFilter(chip.key)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-900"
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
             >
               {chip.label}
-              <X className="h-3 w-3 text-slate-400" />
+              <X className="h-3 w-3" />
             </button>
           ))}
           <button
             type="button"
             onClick={onClearAll}
-            className="rounded-full px-2.5 py-1 text-xs font-semibold text-slate-400 hover:text-slate-600"
+            className="rounded-full px-2.5 py-1 text-xs font-semibold text-muted-foreground hover:text-foreground"
           >
             Clear all
           </button>

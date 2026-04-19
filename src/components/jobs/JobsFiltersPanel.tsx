@@ -1,224 +1,141 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronDown, ChevronUp, Search, X } from "lucide-react";
+import { RotateCcw, SlidersHorizontal } from "lucide-react";
+import { cn } from "@/lib/utils";
 import type { JobsCategory, JobsFilterState } from "@/components/jobs/types";
 import { FILTER_SECTIONS } from "@/components/jobs/constants";
-import { cn } from "@/lib/utils";
 
 type JobsFiltersPanelProps = {
   categories: JobsCategory[];
   filters: JobsFilterState;
   onFilterChange: (key: keyof JobsFilterState, value: string) => void;
+  onReset: () => void;
 };
+
+function FilterOption({
+  label,
+  active,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "flex w-full items-center rounded-lg px-2 py-1.5 text-left text-xs transition-colors",
+        active
+          ? "bg-foreground text-background"
+          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+      )}
+    >
+      {label}
+    </button>
+  );
+}
 
 export function JobsFiltersPanel({
   categories,
   filters,
   onFilterChange,
+  onReset,
 }: JobsFiltersPanelProps) {
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
-    category: true,
-    jobType: true,
-    experience: true,
-    salary: false,
-  });
-
-  const activeFilterCount = Object.values(filters).filter(Boolean).length;
-
-  const toggleSection = (section: string) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
-  };
-
-  const clearAllFilters = () => {
-    Object.keys(filters).forEach(key => onFilterChange(key as keyof JobsFilterState, ""));
-  };
+  const activeCount = Object.values(filters).filter(Boolean).length;
 
   return (
-    <div className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-soft)]">
 
-      {/* ── Header with clear all ── */}
-      <div className="mb-6 flex items-center justify-between">
+      {/* Dark header */}
+      <div className="surface-inverse px-4 py-3.5">
         <div className="flex items-center gap-2">
-          <Search className="h-4 w-4 text-slate-400" />
-          <h3 className="text-sm font-semibold text-slate-900">Filters</h3>
-          {activeFilterCount > 0 && (
-            <span className="rounded-full bg-slate-900 px-2 py-0.5 text-[10px] font-semibold text-white">
-              {activeFilterCount}
-            </span>
-          )}
+          <SlidersHorizontal className="h-4 w-4 text-sky-300" />
+          <span className="text-sm font-semibold text-white">Filters</span>
         </div>
-        {activeFilterCount > 0 && (
-          <button
-            type="button"
-            onClick={clearAllFilters}
-            className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-slate-700"
-          >
-            <X className="h-3 w-3" />
-            Clear all
-          </button>
+        <p className="mt-0.5 text-[11px] text-slate-400">
+          Refine results below
+        </p>
+        {activeCount > 0 && (
+          <span className="mt-2 inline-block rounded-full bg-white/10 px-2.5 py-0.5 text-[10px] font-semibold text-sky-200">
+            {activeCount} active
+          </span>
         )}
       </div>
 
-      {/* ── Category ── */}
-      <div className="mb-4">
-        <button
-          type="button"
-          onClick={() => toggleSection("category")}
-          className="flex w-full items-center justify-between py-2 text-left"
-        >
-          <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
-            Category
-          </p>
-          {expandedSections.category ? (
-            <ChevronUp className="h-4 w-4 text-slate-400" />
-          ) : (
-            <ChevronDown className="h-4 w-4 text-slate-400" />
-          )}
-        </button>
+      {/* Category */}
+      <div className="border-b border-border p-3">
+        <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+          Category
+        </p>
+        <div className="space-y-0.5">
+          <FilterOption
+            label="All categories"
+            active={!filters.category}
+            onClick={() => onFilterChange("category", "")}
+          />
+          {categories.map((cat) => (
+            <FilterOption
+              key={cat.id}
+              label={cat.name}
+              active={filters.category === cat.id}
+              onClick={() => onFilterChange("category", cat.id)}
+            />
+          ))}
+        </div>
+      </div>
 
-        {expandedSections.category && (
-          <div className="mt-2 space-y-1">
-            <button
-              type="button"
-              onClick={() => onFilterChange("category", "")}
-              className={cn(
-                "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-all duration-200",
-                !filters.category
-                  ? "bg-slate-900 text-white shadow-sm"
-                  : "text-slate-600 hover:bg-slate-50 hover:shadow-sm"
-              )}
-            >
-              <div className={cn(
-                "h-2 w-2 rounded-full border-2",
-                !filters.category ? "border-white bg-white" : "border-slate-300"
-              )} />
-              <span className="flex-1">All categories</span>
-              {categories.length > 0 && (
-                <span className="text-xs text-slate-400">({categories.length})</span>
-              )}
-            </button>
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => onFilterChange("category", cat.id)}
-                className={cn(
-                  "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-all duration-200",
-                  filters.category === cat.id
-                    ? "bg-slate-900 text-white shadow-sm"
-                    : "text-slate-600 hover:bg-slate-50 hover:shadow-sm"
-                )}
-              >
-                <div className={cn(
-                  "h-2 w-2 rounded-full border-2",
-                  filters.category === cat.id ? "border-white bg-white" : "border-slate-300"
-                )} />
-                <span className="flex-1">{cat.name}</span>
-              </button>
+      {/* Dynamic filter sections */}
+      {FILTER_SECTIONS.map((section) => (
+        <div key={section.key} className="border-b border-border p-3">
+          <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+            {section.label}
+          </p>
+          <div className="space-y-0.5">
+            <FilterOption
+              label={`All ${section.label.toLowerCase()}`}
+              active={!filters[section.key]}
+              onClick={() => onFilterChange(section.key, "")}
+            />
+            {section.items.map((item) => (
+              <FilterOption
+                key={item.value}
+                label={item.label}
+                active={filters[section.key] === item.value}
+                onClick={() => onFilterChange(section.key, item.value)}
+              />
             ))}
           </div>
-        )}
-      </div>
-
-      {/* ── Dynamic filter sections ── */}
-      {FILTER_SECTIONS.map((section) => (
-        <div
-          key={section.key}
-          className="mb-4 border-t border-slate-100 pt-4"
-        >
-          <button
-            type="button"
-            onClick={() => toggleSection(section.key)}
-            className="flex w-full items-center justify-between py-2 text-left"
-          >
-            <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
-              {section.label}
-            </p>
-            {expandedSections[section.key] ? (
-              <ChevronUp className="h-4 w-4 text-slate-400" />
-            ) : (
-              <ChevronDown className="h-4 w-4 text-slate-400" />
-            )}
-          </button>
-
-          {expandedSections[section.key] && (
-            <div className="mt-2 space-y-1">
-              <button
-                type="button"
-                onClick={() => onFilterChange(section.key, "")}
-                className={cn(
-                  "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-all duration-200",
-                  !filters[section.key]
-                    ? "bg-slate-900 text-white shadow-sm"
-                    : "text-slate-600 hover:bg-slate-50 hover:shadow-sm"
-                )}
-              >
-                <div className={cn(
-                  "h-2 w-2 rounded-full border-2",
-                  !filters[section.key] ? "border-white bg-white" : "border-slate-300"
-                )} />
-                <span className="flex-1">All {section.label.toLowerCase()}</span>
-              </button>
-              {section.items.map((item) => (
-                <button
-                  key={item.value}
-                  type="button"
-                  onClick={() => onFilterChange(section.key, item.value)}
-                  className={cn(
-                    "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-all duration-200",
-                    filters[section.key] === item.value
-                      ? "bg-slate-900 text-white shadow-sm"
-                      : "text-slate-600 hover:bg-slate-50 hover:shadow-sm"
-                  )}
-                >
-                  <div className={cn(
-                    "h-2 w-2 rounded-full border-2",
-                    filters[section.key] === item.value ? "border-white bg-white" : "border-slate-300"
-                  )} />
-                  <span className="flex-1">{item.label}</span>
-                </button>
-              ))}
-            </div>
-          )}
         </div>
       ))}
 
-      {/* ── Salary min ── */}
-      <div className="mb-4 border-t border-slate-100 pt-4">
-        <button
-          type="button"
-          onClick={() => toggleSection("salary")}
-          className="flex w-full items-center justify-between py-2 text-left"
-        >
-          <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
-            Salary minimum
-          </p>
-          {expandedSections.salary ? (
-            <ChevronUp className="h-4 w-4 text-slate-400" />
-          ) : (
-            <ChevronDown className="h-4 w-4 text-slate-400" />
-          )}
-        </button>
-
-        {expandedSections.salary && (
-          <div className="mt-2">
-            <input
-              type="number"
-              placeholder="e.g. 40000"
-              value={filters.salaryMin}
-              onChange={(e) => onFilterChange("salaryMin", e.target.value)}
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-100"
-            />
-            <p className="mt-1 text-xs text-slate-400">
-              Enter minimum salary in your local currency
-            </p>
-          </div>
-        )}
+      {/* Salary min */}
+      <div className="border-b border-border p-3">
+        <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+          Salary min
+        </p>
+        <input
+          type="text"
+          placeholder="e.g. 40000"
+          value={filters.salaryMin}
+          onChange={(e) => onFilterChange("salaryMin", e.target.value)}
+          className="w-full rounded-lg border border-input bg-background px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none"
+        />
       </div>
+
+      {/* Reset */}
+      <button
+        type="button"
+        onClick={onReset}
+        disabled={activeCount === 0}
+        className="flex w-full items-center justify-center gap-1.5 py-3 text-[11px] font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        <RotateCcw className="h-3.5 w-3.5" />
+        {activeCount > 0
+          ? `Clear ${activeCount} filter${activeCount > 1 ? "s" : ""}`
+          : "No filters active"}
+      </button>
     </div>
   );
 }
