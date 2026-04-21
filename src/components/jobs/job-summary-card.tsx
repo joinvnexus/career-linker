@@ -11,12 +11,13 @@ import {
   Clock3,
   Users,
   Sparkles,
+  ExternalLink,
+  ArrowUpRight,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { JobShareButton } from "@/components/job-share-button";
 import { SaveJobButton } from "@/components/save-job-button";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface JobSummaryCardProps {
   job: {
@@ -51,19 +52,65 @@ interface JobSummaryCardProps {
 
 function formatSalary(min?: number | null, max?: number | null): string {
   if (!min && !max) return "Competitive";
-  const format = (val: number) => `$${val.toLocaleString()}`;
-  if (min && max) return `${format(min)} - ${format(max)}`;
-  if (min) return `${format(min)}+`;
-  return max ? `Up to ${format(max)}` : "Competitive";
+  const fmt = (v: number) => `$${v.toLocaleString()}`;
+  if (min && max) return `${fmt(min)} – ${fmt(max)}`;
+  if (min) return `${fmt(min)}+`;
+  return max ? `Up to ${fmt(max)}` : "Competitive";
 }
 
 function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
+  return new Date(dateString).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
   });
+}
+
+function SnapshotRow({
+  icon,
+  label,
+  value,
+  accent,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  accent?: "green" | "amber" | "none";
+}) {
+  return (
+    <div
+      className={cn(
+        "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm",
+        accent === "green" && "bg-emerald-50/80",
+        accent === "amber" && "bg-amber-50/70",
+        (!accent || accent === "none") && "bg-slate-50/80",
+      )}
+    >
+      <span
+        className={cn(
+          "flex-shrink-0",
+          accent === "green" && "text-emerald-600",
+          accent === "amber" && "text-amber-600",
+          (!accent || accent === "none") && "text-slate-500",
+        )}
+      >
+        {icon}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="text-xs text-slate-500">{label}</p>
+        <p
+          className={cn(
+            "mt-0.5 font-semibold",
+            accent === "green" && "text-emerald-700",
+            accent === "amber" && "text-amber-700",
+            (!accent || accent === "none") && "text-slate-800",
+          )}
+        >
+          {value}
+        </p>
+      </div>
+    </div>
+  );
 }
 
 export function JobSummaryCard({
@@ -75,187 +122,173 @@ export function JobSummaryCard({
 }: JobSummaryCardProps) {
   const companyName =
     job.employer?.employerProfile?.companyName || job.employer?.name || "Company";
-  const companyId = job.employer?.id;
+  const companyId   = job.employer?.id;
+  const isJobSeeker = userRole === "JOB_SEEKER";
+  const isEmployer  = userRole === "EMPLOYER";
 
   return (
-    <div className="space-y-6">
-      <Card className="sticky top-24 border-white/80 bg-white/94">
-        <CardContent className="p-6">
-          <div className="rounded-[1.75rem] bg-[linear-gradient(180deg,_rgba(15,23,42,0.98),_rgba(3,105,161,0.92))] p-5 text-white">
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-sky-100">
-              <Sparkles className="h-3.5 w-3.5" />
+    <div className="space-y-5">
+      {/* ── CTA CARD ── */}
+      <div className="sticky top-24 overflow-hidden rounded-3xl border border-white/80 bg-white/94 shadow-[0_20px_60px_-20px_rgba(15,23,42,0.18)]">
+        {/* dark gradient panel */}
+        <div className="relative overflow-hidden rounded-2xl m-5 bg-gradient-to-b from-slate-950 to-sky-900 p-5 text-white">
+          <div className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-sky-400/15 blur-2xl" />
+          <div className="relative">
+            <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-sky-200 ring-1 ring-white/10">
+              <Sparkles className="h-3 w-3" />
               Ready to move?
             </div>
-            <p className="mt-4 text-sm leading-6 text-slate-200">
-              This sidebar keeps the high-signal details close while you review the role.
+            <p className="text-sm leading-6 text-slate-300">
+              Keep high-signal details in view while reviewing the role. Apply when ready.
             </p>
 
             <div className="mt-5">
               {isOwner ? (
                 <Link href={`/dashboard/employer/jobs/${job.id}/edit`} className="block">
-                  <Button className="w-full bg-white text-slate-950 hover:bg-slate-100">
+                  <Button className="w-full bg-white font-bold text-slate-950 hover:bg-slate-100">
                     Edit This Job
                   </Button>
                 </Link>
-              ) : userRole === "JOB_SEEKER" ? (
+              ) : isJobSeeker ? (
                 <Button
                   onClick={onApplyClick}
                   disabled={isApplied}
-                  className="w-full bg-white text-slate-950 hover:bg-slate-100"
+                  className="w-full bg-white font-bold text-slate-950 hover:bg-slate-100 disabled:opacity-60"
                 >
-                  {isApplied ? "Application Submitted" : "Apply for this Job"}
+                  {isApplied ? "Application Submitted ✓" : "Apply for this Job"}
                 </Button>
-              ) : userRole === "EMPLOYER" ? (
-                <p className="rounded-2xl bg-white/10 p-4 text-center text-sm text-slate-200">
+              ) : isEmployer ? (
+                <p className="rounded-xl bg-white/10 p-4 text-center text-sm text-slate-300 ring-1 ring-white/10">
                   Employer accounts cannot apply to jobs.
                 </p>
               ) : (
                 <Link href="/login" className="block">
-                  <Button className="w-full bg-white text-slate-950 hover:bg-slate-100">
+                  <Button className="w-full bg-white font-bold text-slate-950 hover:bg-slate-100">
                     Sign in to Apply
                   </Button>
                 </Link>
               )}
             </div>
 
-            <div className="mt-4 flex gap-3">
-              {userRole === "JOB_SEEKER" && !isOwner && <SaveJobButton jobId={job.id} />}
-              <div className="flex-1">
-                <JobShareButton
-                  jobTitle={job.title}
-                  companyName={companyName}
-                  jobSlug={job.slug}
-                />
+            {isJobSeeker && !isOwner && (
+              <div className="mt-3 flex gap-2">
+                <div className="flex-shrink-0">
+                  <SaveJobButton jobId={job.id} />
+                </div>
+                <div className="flex-1">
+                  <JobShareButton
+                    jobTitle={job.title}
+                    companyName={companyName}
+                    jobSlug={job.slug}
+                  />
+                </div>
               </div>
-            </div>
+            )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      <Card className="border-white/80 bg-white/94">
-        <CardHeader>
-          <CardTitle className="text-lg text-slate-950">Job snapshot</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-start gap-3 rounded-2xl bg-slate-50/80 p-4">
-            <MapPin className="mt-0.5 h-5 w-5 flex-shrink-0 text-slate-500" />
-            <div>
-              <p className="font-medium text-slate-900">Location</p>
-              <p className="text-sm text-slate-600">{job.location}</p>
-            </div>
-          </div>
+        {/* snapshot rows */}
+        <div className="space-y-2 px-5 pb-5">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">
+            Job snapshot
+          </p>
 
-          <div className="flex items-start gap-3 rounded-2xl bg-emerald-50/70 p-4">
-            <DollarSign className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-600" />
-            <div>
-              <p className="font-medium text-slate-900">Salary range</p>
-              <p className="text-sm font-semibold text-emerald-700">
-                {formatSalary(job.salaryMin, job.salaryMax)}
-              </p>
-              {job.salaryType && <p className="text-xs text-slate-500">{job.salaryType}</p>}
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3 rounded-2xl bg-slate-50/80 p-4">
-            <Briefcase className="mt-0.5 h-5 w-5 flex-shrink-0 text-slate-500" />
-            <div>
-              <p className="font-medium text-slate-900">Job type</p>
-              <Badge variant="secondary" className="mt-1 rounded-full">
-                {job.jobType.replaceAll("_", " ")}
-              </Badge>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3 rounded-2xl bg-slate-50/80 p-4">
-            <Users className="mt-0.5 h-5 w-5 flex-shrink-0 text-slate-500" />
-            <div>
-              <p className="font-medium text-slate-900">Experience level</p>
-              <p className="text-sm text-slate-600">{job.experience}</p>
-            </div>
-          </div>
-
+          <SnapshotRow
+            icon={<MapPin className="h-4 w-4" />}
+            label="Location"
+            value={job.location}
+          />
+          <SnapshotRow
+            icon={<DollarSign className="h-4 w-4" />}
+            label={job.salaryType ?? "Salary range"}
+            value={formatSalary(job.salaryMin, job.salaryMax)}
+            accent="green"
+          />
+          <SnapshotRow
+            icon={<Briefcase className="h-4 w-4" />}
+            label="Job type"
+            value={job.jobType.replaceAll("_", " ")}
+          />
+          <SnapshotRow
+            icon={<Users className="h-4 w-4" />}
+            label="Experience level"
+            value={job.experience}
+          />
           {job.applicationDeadline && (
-            <div className="flex items-start gap-3 rounded-2xl bg-amber-50/70 p-4">
-              <Clock3 className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-600" />
-              <div>
-                <p className="font-medium text-slate-900">Application deadline</p>
-                <p className="text-sm text-amber-700">{formatDate(job.applicationDeadline)}</p>
-              </div>
-            </div>
+            <SnapshotRow
+              icon={<Clock3 className="h-4 w-4" />}
+              label="Application deadline"
+              value={formatDate(job.applicationDeadline)}
+              accent="amber"
+            />
           )}
+          <SnapshotRow
+            icon={<Calendar className="h-4 w-4" />}
+            label="Posted"
+            value={formatDate(job.createdAt)}
+          />
+        </div>
+      </div>
 
-          <div className="flex items-start gap-3 rounded-2xl bg-slate-50/80 p-4">
-            <Calendar className="mt-0.5 h-5 w-5 flex-shrink-0 text-slate-500" />
-            <div>
-              <p className="font-medium text-slate-900">Posted</p>
-              <p className="text-sm text-slate-600">{formatDate(job.createdAt)}</p>
-            </div>
+      {/* ── COMPANY CARD ── */}
+      <div className="rounded-3xl border border-white/80 bg-white/94 p-5 shadow-[0_20px_60px_-20px_rgba(15,23,42,0.12)]">
+        <p className="mb-4 text-sm font-semibold text-slate-900">About {companyName}</p>
+
+        <div className="flex items-center gap-3">
+          <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 shadow-md shadow-emerald-500/20">
+            <Building2 className="h-7 w-7 text-white" />
           </div>
-        </CardContent>
-      </Card>
-
-      <Card className="border-white/80 bg-white/94">
-        <CardHeader>
-          <CardTitle className="text-lg text-slate-950">About {companyName}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600">
-              <Building2 className="h-8 w-8 text-white" />
-            </div>
-            <div className="min-w-0">
-              <h3 className="truncate font-semibold text-slate-900">{companyName}</h3>
-              <p className="text-sm text-slate-500">
-                {job.employer?.employerProfile?.industry || "Technology"}
-              </p>
-            </div>
+          <div className="min-w-0">
+            <h3 className="truncate font-semibold text-slate-900">{companyName}</h3>
+            <p className="text-sm text-slate-500">
+              {job.employer?.employerProfile?.industry || "Technology"}
+            </p>
           </div>
+        </div>
 
+        <div className="mt-4 space-y-2">
           {job.employer?.employerProfile?.companySize && (
-            <div className="flex items-start gap-3 rounded-2xl bg-slate-50/80 p-4">
-              <Users className="mt-0.5 h-5 w-5 flex-shrink-0 text-slate-500" />
-              <div>
-                <p className="font-medium text-slate-900">Company size</p>
-                <p className="text-sm text-slate-600">
-                  {job.employer.employerProfile.companySize} employees
-                </p>
-              </div>
+            <div className="flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2.5 text-sm">
+              <Users className="h-4 w-4 text-slate-400" />
+              <span className="text-slate-600">
+                {job.employer.employerProfile.companySize} employees
+              </span>
             </div>
           )}
-
           {job.employer?.employerProfile?.location && (
-            <div className="flex items-start gap-3 rounded-2xl bg-slate-50/80 p-4">
-              <MapPin className="mt-0.5 h-5 w-5 flex-shrink-0 text-slate-500" />
-              <div>
-                <p className="font-medium text-slate-900">Headquarters</p>
-                <p className="text-sm text-slate-600">
-                  {job.employer.employerProfile.location}
-                </p>
-              </div>
+            <div className="flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2.5 text-sm">
+              <MapPin className="h-4 w-4 text-slate-400" />
+              <span className="text-slate-600">{job.employer.employerProfile.location}</span>
             </div>
           )}
+        </div>
 
+        <div className="mt-4 space-y-2">
           {companyId && (
             <Link href={`/companies/${companyId}`} className="block">
-              <Button variant="outline" className="w-full border-slate-200 bg-white/80">
+              <Button
+                variant="outline"
+                className="w-full border-slate-200 bg-white/80 text-slate-700 hover:bg-slate-50"
+              >
                 View Company Profile
+                <ArrowUpRight className="ml-1.5 h-3.5 w-3.5" />
               </Button>
             </Link>
           )}
-
           {job.employer?.employerProfile?.companyWebsite && (
             <a
               href={job.employer.employerProfile.companyWebsite}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-medium text-sky-700 hover:text-sky-800"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-sky-700 transition-colors hover:text-sky-800"
             >
               <Globe className="h-4 w-4" />
               Visit company website
+              <ExternalLink className="h-3 w-3 opacity-60" />
             </a>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,6 +1,14 @@
 "use client";
 
-import { FileText, CheckCircle, Lightbulb, Send, User, Star, Clock } from "lucide-react";
+import {
+  FileText,
+  CheckCircle,
+  Lightbulb,
+  Send,
+  User,
+  Star,
+  Clock,
+} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ApplicationTipsProps {
@@ -18,166 +26,177 @@ interface Tip {
 
 const generalTips: Tip[] = [
   {
-    icon: <FileText className="h-5 w-5 text-blue-500" />,
-    title: "Tailor Your Resume",
-    description: "Customize your resume to highlight skills and experience matching this role. Use keywords from the job description.",
+    icon: <FileText className="h-4 w-4 text-blue-500" />,
+    title: "Tailor your resume",
+    description:
+      "Highlight skills that match this role. Use keywords from the job description.",
   },
   {
-    icon: <Send className="h-5 w-5 text-emerald-500" />,
-    title: "Write a Strong Cover Letter",
-    description: "Explain why you're excited about this specific role and how your experience aligns with the job requirements.",
+    icon: <Send className="h-4 w-4 text-emerald-500" />,
+    title: "Write a strong cover letter",
+    description:
+      "Explain why you're excited about this role and how your experience aligns.",
   },
   {
-    icon: <CheckCircle className="h-5 w-5 text-purple-500" />,
-    title: "Proofread Everything",
-    description: "Double-check your application for spelling and grammar errors. First impressions matter!",
+    icon: <CheckCircle className="h-4 w-4 text-purple-500" />,
+    title: "Proofread everything",
+    description:
+      "Double-check for spelling and grammar errors before submitting.",
   },
   {
-    icon: <Clock className="h-5 w-5 text-amber-500" />,
-    title: "Apply Early",
-    description: "Submit your application as soon as possible. Many recruiters review applications on a rolling basis.",
+    icon: <Clock className="h-4 w-4 text-amber-500" />,
+    title: "Apply early",
+    description:
+      "Many recruiters review applications on a rolling basis — don't wait.",
   },
 ];
 
 const interviewTips: Tip[] = [
   {
-    icon: <User className="h-5 w-5 text-sky-500" />,
-    title: "Research the Company",
-    description: "Learn about the company's mission, values, recent news, and culture before your interview.",
+    icon: <User className="h-4 w-4 text-sky-500" />,
+    title: "Research the company",
+    description:
+      "Learn about the company's mission, values, and recent news before your interview.",
   },
   {
-    icon: <Lightbulb className="h-5 w-5 text-yellow-500" />,
-    title: "Prepare Examples",
-    description: "Have specific examples ready that demonstrate your skills and achievements relevant to this role.",
+    icon: <Lightbulb className="h-4 w-4 text-yellow-500" />,
+    title: "Prepare examples",
+    description:
+      "Have specific examples ready that demonstrate your skills and achievements.",
   },
   {
-    icon: <Star className="h-5 w-5 text-pink-500" />,
-    title: "Prepare Questions",
-    description: "Come ready with thoughtful questions about the role, team, and company to show your interest.",
+    icon: <Star className="h-4 w-4 text-pink-500" />,
+    title: "Prepare questions",
+    description:
+      "Come with thoughtful questions about the role, team, and company culture.",
   },
 ];
 
-function TipCard({ tip }: { tip: Tip }) {
+function TipRow({ tip }: { tip: Tip }) {
   return (
-    <div className="flex gap-4 rounded-xl bg-slate-50 p-4 transition-colors hover:bg-slate-100">
-      <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-white shadow-sm">
+    <div className="flex gap-3 rounded-xl bg-slate-50 px-3 py-3 transition-colors hover:bg-slate-100">
+      <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-white shadow-sm">
         {tip.icon}
       </div>
       <div>
-        <h4 className="font-semibold text-slate-900">{tip.title}</h4>
-        <p className="mt-1 text-sm text-slate-600">{tip.description}</p>
+        <p className="text-sm font-medium text-slate-900">{tip.title}</p>
+        <p className="mt-0.5 text-xs leading-relaxed text-slate-500">
+          {tip.description}
+        </p>
       </div>
     </div>
   );
 }
 
+const checklistItems = [
+  "Updated resume ready",
+  "Cover letter customized",
+  "Contact information current",
+  "LinkedIn profile complete",
+  "Portfolio / projects ready",
+  "References available",
+];
+
 export function ApplicationTips({
   jobType,
   experience,
 }: ApplicationTipsProps) {
-  // Generate role-specific tips based on job details
-  const getRoleSpecificTips = (): Tip[] => {
-    const tips: Tip[] = [];
-    
-    if (experience) {
-      tips.push({
-        icon: <Star className="h-5 w-5 text-indigo-500" />,
-        title: `${experience} Level Preparation`,
-        description: `As a ${experience} position, emphasize relevant project experience and be ready to discuss your career progression.`,
-      });
-    }
+  const roleSpecificTips: Tip[] = [];
 
-    if (jobType === "INTERNSHIP" || jobType === "PART_TIME") {
-      tips.push({
-        icon: <Clock className="h-5 w-5 text-teal-500" />,
-        title: "Flexible Schedule Ready",
-        description: "Be prepared to discuss your availability and how you'll balance this role with other commitments.",
-      });
-    }
+  if (experience) {
+    roleSpecificTips.push({
+      icon: <Star className="h-4 w-4 text-indigo-500" />,
+      title: `${experience} level preparation`,
+      description: `Emphasise relevant project experience and be ready to discuss your career progression.`,
+    });
+  }
 
-    if (jobType === "REMOTE") {
-      tips.push({
-        icon: <User className="h-5 w-5 text-cyan-500" />,
-        title: "Remote Work Setup",
-        description: "Be ready to discuss your home office setup, communication preferences, and tools you're proficient with.",
-      });
-    }
+  if (jobType === "INTERNSHIP" || jobType === "PART_TIME") {
+    roleSpecificTips.push({
+      icon: <Clock className="h-4 w-4 text-teal-500" />,
+      title: "Flexible schedule",
+      description:
+        "Be prepared to discuss your availability and how you'll balance other commitments.",
+    });
+  }
 
-    return tips;
-  };
-
-  const roleSpecificTips = getRoleSpecificTips();
+  if (jobType === "REMOTE") {
+    roleSpecificTips.push({
+      icon: <User className="h-4 w-4 text-cyan-500" />,
+      title: "Remote work setup",
+      description:
+        "Be ready to discuss your home office, communication preferences, and tools.",
+    });
+  }
 
   return (
-    <div className="space-y-8">
-      {/* Before Applying */}
-      <Card className="border-0 shadow-md">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <FileText className="h-5 w-5 text-blue-500" />
-            Before You Apply
+    <div className="space-y-4">
+      {/* Before applying */}
+      <Card className="border-slate-200 bg-white shadow-sm">
+        <CardHeader className="pb-3 pt-5">
+          <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-900">
+            <FileText className="h-4 w-4 text-blue-500" />
+            Before you apply
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
-          {generalTips.map((tip, index) => (
-            <TipCard key={index} tip={tip} />
+        <CardContent className="space-y-2 pb-5 pt-0">
+          {generalTips.map((tip, i) => (
+            <TipRow key={i} tip={tip} />
           ))}
         </CardContent>
       </Card>
 
-      {/* Role-Specific Tips */}
+      {/* Role-specific tips */}
       {roleSpecificTips.length > 0 && (
-        <Card className="border-0 shadow-md">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Lightbulb className="h-5 w-5 text-amber-500" />
-              Tips for This Role
+        <Card className="border-slate-200 bg-white shadow-sm">
+          <CardHeader className="pb-3 pt-5">
+            <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-900">
+              <Lightbulb className="h-4 w-4 text-amber-500" />
+              Tips for this role
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            {roleSpecificTips.map((tip, index) => (
-              <TipCard key={index} tip={tip} />
+          <CardContent className="space-y-2 pb-5 pt-0">
+            {roleSpecificTips.map((tip, i) => (
+              <TipRow key={i} tip={tip} />
             ))}
           </CardContent>
         </Card>
       )}
 
-      {/* Interview Preparation */}
-      <Card className="border-0 shadow-md">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <CheckCircle className="h-5 w-5 text-emerald-500" />
-            Interview Preparation
+      {/* Interview prep */}
+      <Card className="border-slate-200 bg-white shadow-sm">
+        <CardHeader className="pb-3 pt-5">
+          <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-900">
+            <CheckCircle className="h-4 w-4 text-emerald-500" />
+            Interview preparation
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
-          {interviewTips.map((tip, index) => (
-            <TipCard key={index} tip={tip} />
+        <CardContent className="space-y-2 pb-5 pt-0">
+          {interviewTips.map((tip, i) => (
+            <TipRow key={i} tip={tip} />
           ))}
         </CardContent>
       </Card>
 
-      {/* Application Checklist */}
-      <Card className="border-0 shadow-md">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <CheckCircle className="h-5 w-5 text-green-500" />
-            Application Checklist
+      {/* Checklist */}
+      <Card className="border-slate-200 bg-white shadow-sm">
+        <CardHeader className="pb-3 pt-5">
+          <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-900">
+            <CheckCircle className="h-4 w-4 text-green-500" />
+            Application checklist
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {[
-              "Updated resume ready",
-              "Cover letter customized",
-              "Contact information current",
-              "LinkedIn profile complete",
-              "Portfolio/projects ready",
-              "References available",
-            ].map((item, index) => (
-              <div key={index} className="flex items-center gap-2 text-sm text-slate-700">
-                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-100">
-                  <span className="text-xs font-medium text-slate-500">{index + 1}</span>
+        <CardContent className="pb-5 pt-0">
+          <div className="grid gap-2 sm:grid-cols-2">
+            {checklistItems.map((item, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-2.5 rounded-xl bg-slate-50 px-3 py-2.5 text-sm text-slate-700"
+              >
+                <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-white shadow-sm">
+                  <span className="text-[10px] font-semibold text-slate-400">
+                    {i + 1}
+                  </span>
                 </div>
                 {item}
               </div>
