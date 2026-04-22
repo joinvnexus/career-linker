@@ -1,0 +1,147 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif}
+.pg{background:var(--color-background-tertiary);color:var(--color-text-primary);display:flex;flex-direction:column}
+.nav{background:#042C53;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:54px}
+.logo{font-size:18px;font-weight:500;color:#B5D4F4}
+.logo span{color:#97C459}
+.admin-badge{font-size:10px;background:#EF4444;color:#fff;padding:2px 6px;border-radius:10px;margin-left:6px}
+.nav-r{display:flex;align-items:center;gap:10px}
+.notif{width:32px;height:32px;border-radius:50%;border:0.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;position:relative}
+.notif-dot{position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:#EF4444;border:1.5px solid #042C53}
+.av{width:32px;height:32px;border-radius:50%;background:#3B6D11;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;cursor:pointer}
+.nav-name{font-size:13px;color:#B5D4F4}
+.layout{display:grid;grid-template-columns:200px 1fr}
+.sidebar{background:#042C53;padding:.75rem 0;min-height:700px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 1rem;font-size:13px;color:#85B7EB;cursor:pointer}
+.nav-item:hover{background:rgba(255,255,255,.06)}
+.nav-item.active{background:rgba(255,255,255,.1);color:#E6F1FB;border-right:2px solid #B5D4F4}
+.nav-icon{width:16px;text-align:center;font-size:13px}
+.nav-section{font-size:10px;font-weight:500;color:#378ADD;text-transform:uppercase;letter-spacing:.04em;padding:8px 1rem 4px;margin-top:.25rem}
+.badge-count{margin-left:auto;font-size:10px;background:#EF4444;color:#fff;padding:1px 5px;border-radius:10px}
+.content{padding:1.25rem}
+.page-title{font-size:18px;font-weight:500;margin-bottom:1.25rem;color:var(--color-text-primary)}
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:1.25rem}
+.stat-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px}
+.stat-label{font-size:11px;color:var(--color-text-secondary);margin-bottom:5px}
+.stat-num{font-size:22px;font-weight:500}
+.stat-sub{font-size:10px;color:var(--color-text-secondary);margin-top:2px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1rem}
+.card-h{font-size:14px;font-weight:500;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.view-all{font-size:12px;color:#185FA5;cursor:pointer}
+.table{width:100%;border-collapse:collapse}
+.table th{font-size:11px;color:var(--color-text-secondary);text-align:left;padding:6px 8px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.table td{font-size:12px;padding:8px 8px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:middle}
+.table tr:last-child td{border-bottom:none}
+.user-cell{display:flex;align-items:center;gap:7px}
+.u-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0}
+.status-pill{font-size:10px;padding:2px 7px;border-radius:10px}
+.sp-active{background:#EAF3DE;color:#27500A}
+.sp-pending{background:#FAEEDA;color:#633806}
+.sp-banned{background:#FCEBEB;color:#791F1F}
+.sp-approved{background:#EAF3DE;color:#27500A}
+.sp-rejected{background:#FCEBEB;color:#791F1F}
+.sp-review{background:#E6F1FB;color:#0C447C}
+.action-btn{font-size:10px;padding:3px 8px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;cursor:pointer;color:var(--color-text-secondary);margin-right:3px}
+.approve-btn{font-size:10px;padding:3px 8px;border:0.5px solid #C0DD97;border-radius:var(--border-radius-md);background:#EAF3DE;cursor:pointer;color:#27500A;margin-right:3px}
+.reject-btn{font-size:10px;padding:3px 8px;border:0.5px solid #F7C1C1;border-radius:var(--border-radius-md);background:#FCEBEB;cursor:pointer;color:#791F1F}
+.metric-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:13px}
+.metric-row:last-child{border-bottom:none}
+.metric-label{color:var(--color-text-secondary)}
+.metric-bar{flex:1;height:6px;background:var(--color-background-secondary);border-radius:4px;margin:0 12px;align-self:center}
+.metric-fill{height:6px;border-radius:4px;background:#185FA5}
+</style>
+<div class="pg">
+<nav class="nav">
+  <div style="display:flex;align-items:center"><div class="logo">Hire<span>Hub</span></div><span class="admin-badge">Admin</span></div>
+  <div class="nav-r">
+    <div class="notif">🔔<div class="notif-dot"></div></div>
+    <div class="av">AD</div>
+    <span class="nav-name">Super Admin</span>
+  </div>
+</nav>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="nav-section">Overview</div>
+    <div class="nav-item active"><span class="nav-icon">📊</span>Analytics</div>
+    <div class="nav-item"><span class="nav-icon">🔔</span>Notifications<span class="badge-count">5</span></div>
+    <div class="nav-section">Users</div>
+    <div class="nav-item"><span class="nav-icon">👤</span>Job Seekers</div>
+    <div class="nav-item"><span class="nav-icon">🏢</span>Employers</div>
+    <div class="nav-section">Jobs</div>
+    <div class="nav-item"><span class="nav-icon">✅</span>Job Approvals<span class="badge-count">8</span></div>
+    <div class="nav-item"><span class="nav-icon">📋</span>All Jobs</div>
+    <div class="nav-section">Reports</div>
+    <div class="nav-item"><span class="nav-icon">🚩</span>Flagged Content<span class="badge-count">3</span></div>
+    <div class="nav-item"><span class="nav-icon">📄</span>Reports</div>
+    <div class="nav-section">System</div>
+    <div class="nav-item"><span class="nav-icon">💳</span>Payment Logs</div>
+    <div class="nav-item"><span class="nav-icon">⚙️</span>System Settings</div>
+    <div class="nav-item"><span class="nav-icon">📧</span>Email Templates</div>
+  </aside>
+  <main class="content">
+    <div class="page-title">Platform Analytics</div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-label">Total Users</div><div class="stat-num" style="color:#185FA5">88,420</div><div class="stat-sub">+1,240 this week</div></div>
+      <div class="stat-card"><div class="stat-label">Employers</div><div class="stat-num" style="color:#3B6D11">3,218</div><div class="stat-sub">+42 this week</div></div>
+      <div class="stat-card"><div class="stat-label">Active Jobs</div><div class="stat-num" style="color:#633806">12,406</div><div class="stat-sub">+208 today</div></div>
+      <div class="stat-card"><div class="stat-label">Applications</div><div class="stat-num" style="color:#3C3489">4.2M</div><div class="stat-sub">All time</div></div>
+      <div class="stat-card"><div class="stat-label">Revenue</div><div class="stat-num" style="color:#A32D2D">৳18.4L</div><div class="stat-sub">This month</div></div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-h">Pending Job Approvals<span class="badge-count" style="font-size:11px;background:#EF4444;color:#fff;padding:2px 6px;border-radius:10px">8</span> <span class="view-all">View all →</span></div>
+        <table class="table">
+          <thead><tr><th>Job Title</th><th>Company</th><th>Submitted</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td>Full-stack Developer</td><td>TechBD</td><td>Today</td><td><button class="approve-btn">Approve</button><button class="reject-btn">Reject</button></td></tr>
+            <tr><td>Sales Manager</td><td>ShopBD</td><td>Yesterday</td><td><button class="approve-btn">Approve</button><button class="reject-btn">Reject</button></td></tr>
+            <tr><td>HR Executive</td><td>CorpHR</td><td>2 days ago</td><td><button class="approve-btn">Approve</button><button class="reject-btn">Reject</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-h">Traffic by Category <span class="view-all">Details →</span></div>
+        <div class="metric-row"><span class="metric-label">Technology</span><div class="metric-bar"><div class="metric-fill" style="width:82%"></div></div><span>82%</span></div>
+        <div class="metric-row"><span class="metric-label">Marketing</span><div class="metric-bar"><div class="metric-fill" style="width:60%;background:#EF9F27"></div></div><span>60%</span></div>
+        <div class="metric-row"><span class="metric-label">Finance</span><div class="metric-bar"><div class="metric-fill" style="width:48%;background:#3B6D11"></div></div><span>48%</span></div>
+        <div class="metric-row"><span class="metric-label">Design</span><div class="metric-bar"><div class="metric-fill" style="width:35%;background:#534AB7"></div></div><span>35%</span></div>
+        <div class="metric-row"><span class="metric-label">Healthcare</span><div class="metric-bar"><div class="metric-fill" style="width:22%;background:#D85A30"></div></div><span>22%</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h">Recent User Registrations <span class="view-all">Manage users →</span></div>
+      <table class="table">
+        <thead><tr><th>User</th><th>Role</th><th>Registered</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><div class="user-cell"><div class="u-av" style="background:#E6F1FB;color:#0C447C">RA</div>Rahat Ahmed</div></td>
+            <td>Job Seeker</td><td>Today, 9:14am</td>
+            <td><span class="status-pill sp-active">Active</span></td>
+            <td><button class="action-btn">View</button><button class="action-btn">Ban</button></td>
+          </tr>
+          <tr>
+            <td><div class="user-cell"><div class="u-av" style="background:#EAF3DE;color:#27500A">MK</div>Mr. Karim</div></td>
+            <td>Employer</td><td>Yesterday</td>
+            <td><span class="status-pill sp-pending">Pending verify</span></td>
+            <td><button class="approve-btn">Verify</button><button class="action-btn">View</button></td>
+          </tr>
+          <tr>
+            <td><div class="user-cell"><div class="u-av" style="background:#FAEEDA;color:#633806">NH</div>Nazneen H.</div></td>
+            <td>Job Seeker</td><td>2 days ago</td>
+            <td><span class="status-pill sp-active">Active</span></td>
+            <td><button class="action-btn">View</button><button class="action-btn">Ban</button></td>
+          </tr>
+          <tr>
+            <td><div class="user-cell"><div class="u-av" style="background:#FCEBEB;color:#791F1F">XX</div>Unknown User</div></td>
+            <td>Employer</td><td>3 days ago</td>
+            <td><span class="status-pill sp-banned">Banned</span></td>
+            <td><button class="action-btn">Review</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</div>

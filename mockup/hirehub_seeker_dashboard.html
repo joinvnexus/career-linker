@@ -1,0 +1,157 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif}
+.pg{background:var(--color-background-tertiary);color:var(--color-text-primary);display:flex;flex-direction:column;min-height:700px}
+.nav{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:54px}
+.logo{font-size:18px;font-weight:500;color:#185FA5}.logo span{color:#3B6D11}
+.nav-r{display:flex;align-items:center;gap:12px}
+.notif{width:32px;height:32px;border-radius:50%;border:0.5px solid var(--color-border-secondary);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;position:relative}
+.notif-dot{position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:#EF4444;border:1.5px solid var(--color-background-primary)}
+.avatar{width:32px;height:32px;border-radius:50%;background:#E6F1FB;color:#0C447C;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;cursor:pointer}
+.layout{display:grid;grid-template-columns:220px 1fr;flex:1}
+.sidebar{background:var(--color-background-primary);border-right:0.5px solid var(--color-border-tertiary);padding:1rem 0}
+.user-card{padding:.75rem 1rem 1rem;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:.5rem}
+.u-avatar{width:48px;height:48px;border-radius:50%;background:#E6F1FB;color:#0C447C;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:500;margin-bottom:8px}
+.u-name{font-size:14px;font-weight:500}
+.u-role{font-size:12px;color:var(--color-text-secondary)}
+.profile-bar{margin-top:8px}
+.profile-label{display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary);margin-bottom:4px}
+.bar-track{height:5px;background:var(--color-background-secondary);border-radius:4px}
+.bar-fill{height:5px;border-radius:4px;background:#185FA5}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 1rem;font-size:13px;color:var(--color-text-secondary);cursor:pointer}
+.nav-item:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
+.nav-item.active{background:#E6F1FB;color:#0C447C;border-right:2px solid #185FA5;font-weight:500}
+.nav-icon{width:18px;text-align:center;font-size:14px}
+.nav-section{font-size:10px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.04em;padding:8px 1rem 4px;margin-top:.25rem}
+.badge-count{margin-left:auto;font-size:10px;background:#185FA5;color:#fff;padding:1px 6px;border-radius:10px}
+.content{padding:1.25rem;overflow-y:auto}
+.page-title{font-size:18px;font-weight:500;margin-bottom:1rem}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem}
+.stat-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px}
+.stat-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:6px}
+.stat-num{font-size:24px;font-weight:500}
+.stat-sub{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.cards-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem}
+.card-h{font-size:14px;font-weight:500;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.view-all{font-size:12px;color:#185FA5;cursor:pointer}
+.app-row{display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);align-items:center}
+.app-row:last-child{border-bottom:none}
+.app-logo{width:34px;height:34px;border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+.app-title{font-size:13px;font-weight:500}
+.app-co{font-size:11px;color:var(--color-text-secondary)}
+.app-status{margin-left:auto;font-size:10px;padding:2px 8px;border-radius:var(--border-radius-md)}
+.s-pending{background:#E6F1FB;color:#0C447C}
+.s-interview{background:#EAF3DE;color:#27500A}
+.s-rejected{background:#FCEBEB;color:#791F1F}
+.s-review{background:#FAEEDA;color:#633806}
+.rec-job{padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.rec-job:last-child{border-bottom:none}
+.rec-title{font-size:13px;font-weight:500;margin-bottom:2px}
+.rec-co{font-size:11px;color:var(--color-text-secondary)}
+.rec-sal{font-size:11px;color:#185FA5;margin-top:3px}
+.alert-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:13px}
+.alert-row:last-child{border-bottom:none}
+.toggle{width:36px;height:18px;background:#185FA5;border-radius:9px;position:relative;cursor:pointer}
+.toggle::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;right:2px;top:2px}
+.toggle.off{background:var(--color-border-secondary)}
+.toggle.off::after{right:auto;left:2px}
+</style>
+<div class="pg">
+<nav class="nav">
+  <div class="logo">Hire<span>Hub</span></div>
+  <div class="nav-r">
+    <div class="notif">🔔<div class="notif-dot"></div></div>
+    <div class="avatar">RA</div>
+    <span style="font-size:13px">Rahat Ahmed</span>
+  </div>
+</nav>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="user-card">
+      <div class="u-avatar">RA</div>
+      <div class="u-name">Rahat Ahmed</div>
+      <div class="u-role">Frontend Developer</div>
+      <div class="profile-bar">
+        <div class="profile-label"><span>Profile strength</span><span>72%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:72%"></div></div>
+      </div>
+    </div>
+    <div class="nav-section">Main</div>
+    <div class="nav-item active"><span class="nav-icon">📊</span>Overview</div>
+    <div class="nav-item"><span class="nav-icon">👤</span>My Profile</div>
+    <div class="nav-item"><span class="nav-icon">📄</span>Resume</div>
+    <div class="nav-section">Jobs</div>
+    <div class="nav-item"><span class="nav-icon">📋</span>Applied Jobs<span class="badge-count">8</span></div>
+    <div class="nav-item"><span class="nav-icon">❤️</span>Saved Jobs<span class="badge-count">14</span></div>
+    <div class="nav-item"><span class="nav-icon">🔔</span>Job Alerts<span class="badge-count">3</span></div>
+    <div class="nav-section">Resources</div>
+    <div class="nav-item"><span class="nav-icon">📚</span>Career Tips</div>
+    <div class="nav-item"><span class="nav-icon">⚙️</span>Settings</div>
+    <div class="nav-item" style="margin-top:.5rem;color:#A32D2D"><span class="nav-icon">🚪</span>Log Out</div>
+  </aside>
+  <main class="content">
+    <div class="page-title">Good morning, Rahat! 👋</div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-label">Applied Jobs</div><div class="stat-num" style="color:#185FA5">8</div><div class="stat-sub">+2 this week</div></div>
+      <div class="stat-card"><div class="stat-label">Interviews</div><div class="stat-num" style="color:#3B6D11">2</div><div class="stat-sub">1 upcoming</div></div>
+      <div class="stat-card"><div class="stat-label">Saved Jobs</div><div class="stat-num" style="color:#633806">14</div><div class="stat-sub">3 expiring soon</div></div>
+      <div class="stat-card"><div class="stat-label">Profile Views</div><div class="stat-num" style="color:#3C3489">47</div><div class="stat-sub">+12 this week</div></div>
+    </div>
+    <div class="cards-row">
+      <div class="card">
+        <div class="card-h">Recent Applications <span class="view-all">View all →</span></div>
+        <div class="app-row">
+          <div class="app-logo" style="background:#E6F1FB;color:#0C447C">GP</div>
+          <div><div class="app-title">Senior Frontend Dev</div><div class="app-co">Grameenphone · 2 days ago</div></div>
+          <span class="app-status s-review">Under review</span>
+        </div>
+        <div class="app-row">
+          <div class="app-logo" style="background:#EAF3DE;color:#27500A">BK</div>
+          <div><div class="app-title">React Developer</div><div class="app-co">bKash · 4 days ago</div></div>
+          <span class="app-status s-interview">Interview</span>
+        </div>
+        <div class="app-row">
+          <div class="app-logo" style="background:#FAEEDA;color:#633806">SH</div>
+          <div><div class="app-title">UI Engineer</div><div class="app-co">Shohoz · 1 week ago</div></div>
+          <span class="app-status s-pending">Pending</span>
+        </div>
+        <div class="app-row">
+          <div class="app-logo" style="background:#FAECE7;color:#712B13">PA</div>
+          <div><div class="app-title">Vue.js Developer</div><div class="app-co">Pathao · 2 weeks ago</div></div>
+          <span class="app-status s-rejected">Rejected</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h">Recommended Jobs <span class="view-all">Browse →</span></div>
+        <div class="rec-job">
+          <div class="rec-title">Next.js Engineer</div>
+          <div class="rec-co">SSL Wireless · Dhaka · Remote</div>
+          <div class="rec-sal">৳60k – ৳85k / month</div>
+        </div>
+        <div class="rec-job">
+          <div class="rec-title">Frontend Lead</div>
+          <div class="rec-co">Robi Axiata · Dhaka · Hybrid</div>
+          <div class="rec-sal">৳90k – ৳1.2L / month</div>
+        </div>
+        <div class="rec-job">
+          <div class="rec-title">UI Developer</div>
+          <div class="rec-co">Nagad · Dhaka · Full-time</div>
+          <div class="rec-sal">৳50k – ৳70k / month</div>
+        </div>
+        <div class="rec-job">
+          <div class="rec-title">React Native Dev</div>
+          <div class="rec-co">Chaldal · Dhaka · Remote OK</div>
+          <div class="rec-sal">৳55k – ৳75k / month</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h">Job Alerts <span class="view-all">Manage →</span></div>
+      <div class="alert-row"><span>Frontend Developer · Dhaka · Remote</span><div class="toggle"></div></div>
+      <div class="alert-row"><span>React Developer · Any Location · ৳50k+</span><div class="toggle"></div></div>
+      <div class="alert-row"><span>UI/UX Engineer · Dhaka · Full-time</span><div class="toggle off"></div></div>
+    </div>
+  </main>
+</div>
+</div>

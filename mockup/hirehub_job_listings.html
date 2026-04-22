@@ -1,0 +1,178 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif}
+.pg{background:var(--color-background-tertiary);color:var(--color-text-primary)}
+.nav{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:54px}
+.logo{font-size:18px;font-weight:500;color:#185FA5}.logo span{color:#3B6D11}
+.nav-links{display:flex;gap:1.25rem;list-style:none}
+.nav-links a{font-size:13px;color:var(--color-text-secondary);text-decoration:none}
+.nav-auth{display:flex;gap:8px}
+.btn-o{padding:5px 14px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:12px;background:transparent;color:var(--color-text-primary);cursor:pointer}
+.btn-p{padding:5px 14px;border:none;border-radius:var(--border-radius-md);font-size:12px;background:#185FA5;color:#fff;cursor:pointer}
+.search-bar{background:#185FA5;padding:1rem 1.5rem;display:flex;gap:8px;align-items:center}
+.s-input{flex:1;padding:8px 12px;border:none;border-radius:var(--border-radius-md);font-size:13px;outline:none}
+.btn-s{padding:8px 18px;background:#FAC775;color:#412402;border:none;border-radius:var(--border-radius-md);font-size:13px;font-weight:500;cursor:pointer}
+.body{display:grid;grid-template-columns:240px 1fr;gap:0}
+.sidebar{background:var(--color-background-primary);border-right:0.5px solid var(--color-border-tertiary);padding:1.25rem;min-height:600px}
+.filter-group{margin-bottom:1.25rem}
+.filter-label{font-size:12px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;display:block}
+.filter-option{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;color:var(--color-text-primary);cursor:pointer}
+.filter-option input{accent-color:#185FA5}
+.tag-btn{display:inline-block;margin:2px;padding:4px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:12px;color:var(--color-text-secondary);cursor:pointer;background:var(--color-background-secondary)}
+.tag-btn.active{background:#E6F1FB;color:#0C447C;border-color:#B5D4F4}
+.content{padding:1.25rem}
+.content-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.result-count{font-size:14px;color:var(--color-text-secondary)}
+.sort-sel{padding:6px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:13px;background:var(--color-background-primary);color:var(--color-text-primary)}
+.job-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;display:flex;gap:12px;margin-bottom:10px;cursor:pointer;position:relative}
+.job-card:hover{border-color:var(--color-border-secondary)}
+.job-card.featured{border-color:#B5D4F4;border-left:3px solid #185FA5}
+.logo-box{width:42px;height:42px;border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:center;font-weight:500;font-size:12px;flex-shrink:0;border:0.5px solid var(--color-border-tertiary)}
+.job-title{font-size:14px;font-weight:500;margin-bottom:2px}
+.job-co{font-size:12px;color:var(--color-text-secondary);margin-bottom:6px}
+.badges{display:flex;gap:6px;flex-wrap:wrap}
+.b{font-size:11px;padding:2px 7px;border-radius:var(--border-radius-md);border:0.5px solid}
+.b-bl{background:#E6F1FB;color:#0C447C;border-color:#B5D4F4}
+.b-gr{background:#EAF3DE;color:#27500A;border-color:#C0DD97}
+.b-am{background:#FAEEDA;color:#633806;border-color:#FAC775}
+.b-pu{background:#EEEDFE;color:#3C3489;border-color:#CECBF6}
+.salary{font-size:13px;font-weight:500;color:#185FA5;margin-top:6px}
+.job-right{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;min-width:80px}
+.time{font-size:11px;color:var(--color-text-secondary)}
+.save-btn{font-size:11px;padding:4px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-secondary);cursor:pointer}
+.feat-badge{position:absolute;top:10px;right:90px;font-size:10px;background:#E6F1FB;color:#0C447C;padding:2px 8px;border-radius:var(--border-radius-md)}
+.pagination{display:flex;gap:6px;justify-content:center;margin-top:1.25rem}
+.pg-btn{width:32px;height:32px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;background:transparent;color:var(--color-text-primary)}
+.pg-btn.active{background:#185FA5;color:#fff;border-color:#185FA5}
+.divider{border:none;border-top:0.5px solid var(--color-border-tertiary);margin:8px 0}
+</style>
+<div class="pg">
+<nav class="nav">
+  <div class="logo">Hire<span>Hub</span></div>
+  <ul class="nav-links"><li><a href="#">Find Jobs</a></li><li><a href="#">Companies</a></li><li><a href="#">Career Tips</a></li><li><a href="#">Post a Job</a></li></ul>
+  <div class="nav-auth"><button class="btn-o">Log in</button><button class="btn-p">Sign up</button></div>
+</nav>
+<div class="search-bar">
+  <input class="s-input" placeholder="Job title, skills or keywords..." style="max-width:320px" />
+  <input class="s-input" placeholder="Location..." style="max-width:200px" />
+  <button class="btn-s">Search</button>
+  <div style="display:flex;gap:6px;margin-left:8px">
+    <span class="tag-btn active">Remote</span>
+    <span class="tag-btn">Full-time</span>
+    <span class="tag-btn">Entry Level</span>
+  </div>
+</div>
+<div class="body">
+  <aside class="sidebar">
+    <div style="font-size:14px;font-weight:500;margin-bottom:1rem">Filters</div>
+    <div class="filter-group">
+      <span class="filter-label">Job Type</span>
+      <label class="filter-option"><input type="checkbox" checked /> Full-time</label>
+      <label class="filter-option"><input type="checkbox" /> Part-time</label>
+      <label class="filter-option"><input type="checkbox" checked /> Remote</label>
+      <label class="filter-option"><input type="checkbox" /> Freelance</label>
+      <label class="filter-option"><input type="checkbox" /> Internship</label>
+    </div>
+    <hr class="divider" />
+    <div class="filter-group">
+      <span class="filter-label">Experience Level</span>
+      <label class="filter-option"><input type="checkbox" /> Entry Level</label>
+      <label class="filter-option"><input type="checkbox" checked /> Mid Level</label>
+      <label class="filter-option"><input type="checkbox" checked /> Senior</label>
+      <label class="filter-option"><input type="checkbox" /> Manager</label>
+    </div>
+    <hr class="divider" />
+    <div class="filter-group">
+      <span class="filter-label">Salary Range</span>
+      <label class="filter-option"><input type="radio" name="sal" /> Under ৳30k</label>
+      <label class="filter-option"><input type="radio" name="sal" checked /> ৳30k – ৳60k</label>
+      <label class="filter-option"><input type="radio" name="sal" /> ৳60k – ৳1L</label>
+      <label class="filter-option"><input type="radio" name="sal" /> Above ৳1L</label>
+    </div>
+    <hr class="divider" />
+    <div class="filter-group">
+      <span class="filter-label">Category</span>
+      <span class="tag-btn active">Technology</span>
+      <span class="tag-btn">Design</span>
+      <span class="tag-btn">Marketing</span>
+      <span class="tag-btn">Finance</span>
+      <span class="tag-btn">Healthcare</span>
+      <span class="tag-btn">Education</span>
+    </div>
+    <hr class="divider" />
+    <div class="filter-group">
+      <span class="filter-label">Date Posted</span>
+      <label class="filter-option"><input type="radio" name="date" checked /> Last 24 hours</label>
+      <label class="filter-option"><input type="radio" name="date" /> Last 3 days</label>
+      <label class="filter-option"><input type="radio" name="date" /> Last week</label>
+      <label class="filter-option"><input type="radio" name="date" /> Last month</label>
+    </div>
+    <button style="width:100%;padding:8px;background:#EF4444;color:#fff;border:none;border-radius:var(--border-radius-md);font-size:12px;cursor:pointer;margin-top:4px">Clear all filters</button>
+  </aside>
+  <main class="content">
+    <div class="content-header">
+      <div class="result-count">Showing <strong>1,240</strong> jobs for "Frontend Developer"</div>
+      <select class="sort-sel"><option>Most Relevant</option><option>Newest First</option><option>Salary: High to Low</option></select>
+    </div>
+    <div class="job-card featured">
+      <span class="feat-badge">Featured</span>
+      <div class="logo-box" style="background:#E6F1FB;color:#0C447C">GP</div>
+      <div style="flex:1">
+        <div class="job-title">Senior Frontend Developer</div>
+        <div class="job-co">Grameenphone · Dhaka, Bangladesh</div>
+        <div class="badges"><span class="b b-bl">Full-time</span><span class="b b-gr">Remote</span><span class="b b-am">Senior</span><span class="b b-pu">React, TypeScript</span></div>
+        <div class="salary">৳80,000 – ৳1,20,000 / month</div>
+      </div>
+      <div class="job-right"><div class="time">2 days ago</div><button class="save-btn">Save</button></div>
+    </div>
+    <div class="job-card">
+      <div class="logo-box" style="background:#EAF3DE;color:#27500A">BK</div>
+      <div style="flex:1">
+        <div class="job-title">React Developer</div>
+        <div class="job-co">bKash Limited · Dhaka, Bangladesh</div>
+        <div class="badges"><span class="b b-bl">Full-time</span><span class="b b-am">Mid-level</span><span class="b b-pu">React, Redux</span></div>
+        <div class="salary">৳55,000 – ৳75,000 / month</div>
+      </div>
+      <div class="job-right"><div class="time">4 days ago</div><button class="save-btn">Saved ♥</button></div>
+    </div>
+    <div class="job-card">
+      <div class="logo-box" style="background:#FAEEDA;color:#633806">SH</div>
+      <div style="flex:1">
+        <div class="job-title">Frontend Engineer</div>
+        <div class="job-co">Shohoz · Chittagong, Bangladesh</div>
+        <div class="badges"><span class="b b-bl">Full-time</span><span class="b b-gr">Hybrid</span><span class="b b-am">Mid-level</span></div>
+        <div class="salary">৳45,000 – ৳65,000 / month</div>
+      </div>
+      <div class="job-right"><div class="time">5 days ago</div><button class="save-btn">Save</button></div>
+    </div>
+    <div class="job-card">
+      <div class="logo-box" style="background:#EEEDFE;color:#3C3489">PA</div>
+      <div style="flex:1">
+        <div class="job-title">Vue.js Developer</div>
+        <div class="job-co">Pathao · Dhaka, Bangladesh</div>
+        <div class="badges"><span class="b b-bl">Remote</span><span class="b b-am">Entry-level</span></div>
+        <div class="salary">৳30,000 – ৳45,000 / month</div>
+      </div>
+      <div class="job-right"><div class="time">1 week ago</div><button class="save-btn">Save</button></div>
+    </div>
+    <div class="job-card">
+      <div class="logo-box" style="background:#FAECE7;color:#712B13">RB</div>
+      <div style="flex:1">
+        <div class="job-title">UI Engineer (Next.js)</div>
+        <div class="job-co">Robi Axiata · Dhaka, Bangladesh</div>
+        <div class="badges"><span class="b b-bl">Full-time</span><span class="b b-am">Senior</span><span class="b b-pu">Next.js, Tailwind</span></div>
+        <div class="salary">৳70,000 – ৳1,00,000 / month</div>
+      </div>
+      <div class="job-right"><div class="time">2 weeks ago</div><button class="save-btn">Save</button></div>
+    </div>
+    <div class="pagination">
+      <button class="pg-btn active">1</button>
+      <button class="pg-btn">2</button>
+      <button class="pg-btn">3</button>
+      <button class="pg-btn">...</button>
+      <button class="pg-btn">24</button>
+      <button class="pg-btn">›</button>
+    </div>
+  </main>
+</div>
+</div>

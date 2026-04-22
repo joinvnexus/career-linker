@@ -1,0 +1,805 @@
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  .hh-page {
+    font-family: "Segoe UI", sans-serif;
+    background: var(--color-background-tertiary);
+    color: var(--color-text-primary);
+  }
+  .hh-nav {
+    background: var(--color-background-primary);
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .hh-logo {
+    font-size: 20px;
+    font-weight: 500;
+    color: #185fa5;
+  }
+  .hh-logo span {
+    color: #3b6d11;
+  }
+  .hh-nav-links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+  }
+  .hh-nav-links a {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+  }
+  .hh-nav-links a:hover {
+    color: var(--color-text-primary);
+  }
+  .hh-nav-auth {
+    display: flex;
+    gap: 8px;
+  }
+  .btn-outline {
+    padding: 6px 16px;
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    font-size: 13px;
+    background: transparent;
+    cursor: pointer;
+    color: var(--color-text-primary);
+  }
+  .btn-primary {
+    padding: 6px 16px;
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 13px;
+    background: #185fa5;
+    color: #fff;
+    cursor: pointer;
+  }
+  .hh-hero {
+    background: linear-gradient(135deg, #042c53 0%, #185fa5 60%, #0c447c 100%);
+    padding: 4rem 2rem 3rem;
+    text-align: center;
+  }
+  .hh-hero h1 {
+    font-size: 36px;
+    font-weight: 500;
+    color: #e6f1fb;
+    line-height: 1.25;
+    margin-bottom: 0.5rem;
+  }
+  .hh-hero h1 span {
+    color: #fac775;
+  }
+  .hh-hero p {
+    font-size: 15px;
+    color: #85b7eb;
+    margin-bottom: 2rem;
+  }
+  .hh-search-bar {
+    background: var(--color-background-primary);
+    border-radius: var(--border-radius-lg);
+    display: flex;
+    align-items: center;
+    max-width: 640px;
+    margin: 0 auto 2rem;
+    overflow: hidden;
+    border: 0.5px solid var(--color-border-tertiary);
+  }
+  .hh-search-field {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    color: var(--color-text-primary);
+    outline: none;
+  }
+  .hh-search-divider {
+    width: 0.5px;
+    height: 28px;
+    background: var(--color-border-tertiary);
+  }
+  .btn-search {
+    padding: 10px 20px;
+    background: #185fa5;
+    color: #fff;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .hh-hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+    margin-top: 1.5rem;
+  }
+  .hh-stat {
+    text-align: center;
+  }
+  .hh-stat-num {
+    font-size: 22px;
+    font-weight: 500;
+    color: #e6f1fb;
+  }
+  .hh-stat-label {
+    font-size: 12px;
+    color: #85b7eb;
+  }
+  .hh-categories {
+    padding: 2rem;
+    background: var(--color-background-primary);
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+  .hh-section-title {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    color: var(--color-text-primary);
+  }
+  .hh-section-sub {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin-bottom: 1.25rem;
+  }
+  .hh-cats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+  }
+  .hh-cat {
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 14px 12px;
+    text-align: center;
+    cursor: pointer;
+  }
+  .hh-cat:hover {
+    border-color: var(--color-border-info);
+  }
+  .hh-cat-icon {
+    font-size: 22px;
+    margin-bottom: 6px;
+  }
+  .hh-cat-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+  .hh-cat-count {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    margin-top: 2px;
+  }
+  .hh-main {
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+  }
+  .hh-jobs-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .hh-job-card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    cursor: pointer;
+  }
+  .hh-job-card:hover {
+    border-color: var(--color-border-secondary);
+  }
+  .hh-company-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--border-radius-md);
+    background: var(--color-background-info);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    font-size: 13px;
+    color: #0c447c;
+    flex-shrink: 0;
+    border: 0.5px solid var(--color-border-tertiary);
+  }
+  .hh-job-info {
+    flex: 1;
+  }
+  .hh-job-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: 2px;
+  }
+  .hh-job-company {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin-bottom: 6px;
+  }
+  .hh-job-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: var(--border-radius-md);
+    border: 0.5px solid;
+  }
+  .badge-blue {
+    background: #e6f1fb;
+    color: #0c447c;
+    border-color: #b5d4f4;
+  }
+  .badge-green {
+    background: #eaf3de;
+    color: #27500a;
+    border-color: #c0dd97;
+  }
+  .badge-amber {
+    background: #faeeda;
+    color: #633806;
+    border-color: #fac775;
+  }
+  .hh-job-salary {
+    font-size: 13px;
+    font-weight: 500;
+    color: #185fa5;
+    margin-top: 6px;
+  }
+  .hh-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .hh-card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 16px;
+  }
+  .hh-card-title {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  .hh-company-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+  .hh-company-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .hh-company-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--border-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .hh-company-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+  .hh-company-jobs {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+  }
+  .hh-alert-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .hh-alert-form input {
+    padding: 8px 12px;
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    font-size: 13px;
+    background: var(--color-background-secondary);
+    color: var(--color-text-primary);
+    outline: none;
+  }
+  .btn-block {
+    width: 100%;
+    padding: 9px;
+    background: #185fa5;
+    color: #fff;
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .hh-blog {
+    padding: 2rem;
+    background: var(--color-background-secondary);
+    border-top: 0.5px solid var(--color-border-tertiary);
+  }
+  .hh-blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .hh-blog-card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .hh-blog-thumb {
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+  }
+  .hh-blog-body {
+    padding: 12px;
+  }
+  .hh-blog-tag {
+    font-size: 11px;
+    color: #0c447c;
+    background: #e6f1fb;
+    padding: 2px 8px;
+    border-radius: var(--border-radius-md);
+    display: inline-block;
+    margin-bottom: 6px;
+  }
+  .hh-blog-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    line-height: 1.4;
+  }
+  .hh-blog-date {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    margin-top: 6px;
+  }
+  .hh-footer {
+    background: #042c53;
+    padding: 2rem;
+    text-align: center;
+  }
+  .hh-footer p {
+    font-size: 13px;
+    color: #85b7eb;
+  }
+  .hh-footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .hh-footer-links a {
+    font-size: 13px;
+    color: #b5d4f4;
+    text-decoration: none;
+  }
+  .view-all {
+    font-size: 13px;
+    color: #185fa5;
+    cursor: pointer;
+    text-align: right;
+    display: block;
+    margin-top: 10px;
+  }
+</style>
+
+<div class="hh-page">
+  <nav class="hh-nav">
+    <div class="hh-logo">Hire<span>Hub</span></div>
+    <ul class="hh-nav-links">
+      <li><a href="#">Find Jobs</a></li>
+      <li><a href="#">Companies</a></li>
+      <li><a href="#">Career Tips</a></li>
+      <li><a href="#">Post a Job</a></li>
+    </ul>
+    <div class="hh-nav-auth">
+      <button class="btn-outline">Log in</button>
+      <button class="btn-primary">Sign up</button>
+    </div>
+  </nav>
+
+  <section class="hh-hero">
+    <h1>Find Your <span>Dream Job</span><br />Start Your Journey Today</h1>
+    <p>Over 12,000+ jobs available from top companies across Bangladesh</p>
+    <div class="hh-search-bar">
+      <input class="hh-search-field" placeholder="Job title, keyword..." />
+      <div class="hh-search-divider"></div>
+      <input
+        class="hh-search-field"
+        placeholder="Location..."
+        style="max-width: 180px"
+      />
+      <button class="btn-search">Search Jobs</button>
+    </div>
+    <div style="font-size: 13px; color: #85b7eb; margin-bottom: 1.5rem">
+      Popular: Software Engineer, Marketing Manager, Data Analyst, UI/UX
+      Designer
+    </div>
+    <div class="hh-hero-stats">
+      <div class="hh-stat">
+        <div class="hh-stat-num">12,400+</div>
+        <div class="hh-stat-label">Live Jobs</div>
+      </div>
+      <div class="hh-stat">
+        <div class="hh-stat-num">3,200+</div>
+        <div class="hh-stat-label">Companies</div>
+      </div>
+      <div class="hh-stat">
+        <div class="hh-stat-num">85,000+</div>
+        <div class="hh-stat-label">Job Seekers</div>
+      </div>
+      <div class="hh-stat">
+        <div class="hh-stat-num">98%</div>
+        <div class="hh-stat-label">Satisfaction</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="hh-categories">
+    <div style="text-align: center; margin-bottom: 1.5rem">
+      <div class="hh-section-title">Browse by Category</div>
+      <div class="hh-section-sub">Explore thousands of jobs in your field</div>
+    </div>
+    <div class="hh-cats">
+      <div class="hh-cat">
+        <div class="hh-cat-icon">💻</div>
+        <div class="hh-cat-name">Technology</div>
+        <div class="hh-cat-count">2,340 jobs</div>
+      </div>
+      <div class="hh-cat">
+        <div class="hh-cat-icon">📊</div>
+        <div class="hh-cat-name">Marketing</div>
+        <div class="hh-cat-count">1,120 jobs</div>
+      </div>
+      <div class="hh-cat">
+        <div class="hh-cat-icon">🏦</div>
+        <div class="hh-cat-name">Finance</div>
+        <div class="hh-cat-count">980 jobs</div>
+      </div>
+      <div class="hh-cat">
+        <div class="hh-cat-icon">🎨</div>
+        <div class="hh-cat-name">Design</div>
+        <div class="hh-cat-count">750 jobs</div>
+      </div>
+      <div class="hh-cat">
+        <div class="hh-cat-icon">🏥</div>
+        <div class="hh-cat-name">Healthcare</div>
+        <div class="hh-cat-count">630 jobs</div>
+      </div>
+      <div class="hh-cat">
+        <div class="hh-cat-icon">📚</div>
+        <div class="hh-cat-name">Education</div>
+        <div class="hh-cat-count">510 jobs</div>
+      </div>
+      <div class="hh-cat">
+        <div class="hh-cat-icon">⚙️</div>
+        <div class="hh-cat-name">Engineering</div>
+        <div class="hh-cat-count">870 jobs</div>
+      </div>
+      <div class="hh-cat">
+        <div class="hh-cat-icon">🚚</div>
+        <div class="hh-cat-name">Logistics</div>
+        <div class="hh-cat-count">430 jobs</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="hh-main">
+    <div>
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 1rem;
+        "
+      >
+        <div class="hh-section-title" style="margin: 0">Featured Jobs</div>
+        <span class="view-all" style="margin: 0">View all jobs →</span>
+      </div>
+      <div class="hh-jobs-grid">
+        <div class="hh-job-card">
+          <div class="hh-company-logo">GX</div>
+          <div class="hh-job-info">
+            <div class="hh-job-title">Senior Frontend Developer</div>
+            <div class="hh-job-company">Grameenphone · Dhaka, Bangladesh</div>
+            <div class="hh-job-meta">
+              <span class="badge badge-blue">Full-time</span>
+              <span class="badge badge-green">Remote</span>
+              <span class="badge badge-amber">Senior</span>
+            </div>
+            <div class="hh-job-salary">৳80,000 – ৳1,20,000 / month</div>
+          </div>
+          <div
+            style="
+              font-size: 11px;
+              color: var(--color-text-secondary);
+              white-space: nowrap;
+            "
+          >
+            2 days ago
+          </div>
+        </div>
+        <div class="hh-job-card">
+          <div
+            class="hh-company-logo"
+            style="background: #eaf3de; color: #27500a"
+          >
+            BD
+          </div>
+          <div class="hh-job-info">
+            <div class="hh-job-title">Product Marketing Manager</div>
+            <div class="hh-job-company">bKash Limited · Dhaka, Bangladesh</div>
+            <div class="hh-job-meta">
+              <span class="badge badge-blue">Full-time</span>
+              <span class="badge badge-amber">Mid-level</span>
+            </div>
+            <div class="hh-job-salary">৳60,000 – ৳90,000 / month</div>
+          </div>
+          <div
+            style="
+              font-size: 11px;
+              color: var(--color-text-secondary);
+              white-space: nowrap;
+            "
+          >
+            4 days ago
+          </div>
+        </div>
+        <div class="hh-job-card">
+          <div
+            class="hh-company-logo"
+            style="background: #faeeda; color: #633806"
+          >
+            SH
+          </div>
+          <div class="hh-job-info">
+            <div class="hh-job-title">UI/UX Designer</div>
+            <div class="hh-job-company">Shohoz · Chittagong, Bangladesh</div>
+            <div class="hh-job-meta">
+              <span class="badge badge-blue">Full-time</span>
+              <span class="badge badge-green">Hybrid</span>
+            </div>
+            <div class="hh-job-salary">৳45,000 – ৳65,000 / month</div>
+          </div>
+          <div
+            style="
+              font-size: 11px;
+              color: var(--color-text-secondary);
+              white-space: nowrap;
+            "
+          >
+            1 week ago
+          </div>
+        </div>
+        <div class="hh-job-card">
+          <div
+            class="hh-company-logo"
+            style="background: #eeedfe; color: #3c3489"
+          >
+            PA
+          </div>
+          <div class="hh-job-info">
+            <div class="hh-job-title">Data Analyst</div>
+            <div class="hh-job-company">Pathao · Dhaka, Bangladesh</div>
+            <div class="hh-job-meta">
+              <span class="badge badge-blue">Full-time</span>
+              <span class="badge badge-amber">Entry-level</span>
+            </div>
+            <div class="hh-job-salary">৳35,000 – ৳50,000 / month</div>
+          </div>
+          <div
+            style="
+              font-size: 11px;
+              color: var(--color-text-secondary);
+              white-space: nowrap;
+            "
+          >
+            3 days ago
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hh-sidebar">
+      <div class="hh-card">
+        <div class="hh-card-title">Top Companies Hiring</div>
+        <div class="hh-company-row">
+          <div
+            class="hh-company-avatar"
+            style="background: #e6f1fb; color: #0c447c"
+          >
+            GP
+          </div>
+          <div>
+            <div class="hh-company-name">Grameenphone</div>
+            <div class="hh-company-jobs">42 open roles</div>
+          </div>
+        </div>
+        <div class="hh-company-row">
+          <div
+            class="hh-company-avatar"
+            style="background: #eaf3de; color: #27500a"
+          >
+            BK
+          </div>
+          <div>
+            <div class="hh-company-name">bKash Limited</div>
+            <div class="hh-company-jobs">28 open roles</div>
+          </div>
+        </div>
+        <div class="hh-company-row">
+          <div
+            class="hh-company-avatar"
+            style="background: #faeeda; color: #633806"
+          >
+            RB
+          </div>
+          <div>
+            <div class="hh-company-name">Robi Axiata</div>
+            <div class="hh-company-jobs">19 open roles</div>
+          </div>
+        </div>
+        <div class="hh-company-row">
+          <div
+            class="hh-company-avatar"
+            style="background: #eeedfe; color: #3c3489"
+          >
+            SH
+          </div>
+          <div>
+            <div class="hh-company-name">Shohoz</div>
+            <div class="hh-company-jobs">15 open roles</div>
+          </div>
+        </div>
+        <div class="hh-company-row">
+          <div
+            class="hh-company-avatar"
+            style="background: #faece7; color: #712b13"
+          >
+            PA
+          </div>
+          <div>
+            <div class="hh-company-name">Pathao</div>
+            <div class="hh-company-jobs">12 open roles</div>
+          </div>
+        </div>
+        <span class="view-all">View all companies →</span>
+      </div>
+
+      <div class="hh-card">
+        <div class="hh-card-title">Get Job Alerts</div>
+        <p
+          style="
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            margin-bottom: 10px;
+          "
+        >
+          Receive matching jobs directly to your inbox.
+        </p>
+        <div class="hh-alert-form">
+          <input placeholder="Your email address" />
+          <input placeholder="Preferred job title" />
+          <button class="btn-block">Create Alert</button>
+        </div>
+      </div>
+
+      <div class="hh-card" style="background: #042c53; border-color: #0c447c">
+        <div
+          style="
+            font-size: 15px;
+            font-weight: 500;
+            color: #e6f1fb;
+            margin-bottom: 6px;
+          "
+        >
+          Are you hiring?
+        </div>
+        <p style="font-size: 13px; color: #85b7eb; margin-bottom: 12px">
+          Post your jobs and reach thousands of qualified candidates.
+        </p>
+        <button
+          style="
+            width: 100%;
+            padding: 9px;
+            background: #fac775;
+            color: #412402;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 500;
+          "
+        >
+          Post a Job →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <section class="hh-blog">
+    <div class="hh-section-title">Career Tips & Resources</div>
+    <div class="hh-section-sub">
+      Expert advice to help you land your next role
+    </div>
+    <div class="hh-blog-grid">
+      <div class="hh-blog-card">
+        <div class="hh-blog-thumb" style="background: #e6f1fb">📝</div>
+        <div class="hh-blog-body">
+          <span class="hh-blog-tag">Resume Tips</span>
+          <div class="hh-blog-title">
+            How to write a CV that gets noticed in 2024
+          </div>
+          <div class="hh-blog-date">March 10, 2024</div>
+        </div>
+      </div>
+      <div class="hh-blog-card">
+        <div class="hh-blog-thumb" style="background: #eaf3de">🎯</div>
+        <div class="hh-blog-body">
+          <span class="hh-blog-tag" style="background: #eaf3de; color: #27500a"
+            >Interview</span
+          >
+          <div class="hh-blog-title">
+            Top 10 interview questions & how to answer them
+          </div>
+          <div class="hh-blog-date">March 5, 2024</div>
+        </div>
+      </div>
+      <div class="hh-blog-card">
+        <div class="hh-blog-thumb" style="background: #faeeda">💼</div>
+        <div class="hh-blog-body">
+          <span class="hh-blog-tag" style="background: #faeeda; color: #633806"
+            >Career Growth</span
+          >
+          <div class="hh-blog-title">
+            Switching careers at 30? Here's what you need to know
+          </div>
+          <div class="hh-blog-date">Feb 28, 2024</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="hh-footer">
+    <div class="hh-footer-links">
+      <a href="#">About Us</a>
+      <a href="#">For Employers</a>
+      <a href="#">Career Tips</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Contact</a>
+    </div>
+    <p>© 2024 HireHub · Bangladesh's #1 Job Platform</p>
+  </footer>
+</div>

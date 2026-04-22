@@ -1,0 +1,168 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif}
+.pg{background:var(--color-background-tertiary);color:var(--color-text-primary)}
+.nav{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:54px}
+.logo{font-size:18px;font-weight:500;color:#185FA5}.logo span{color:#3B6D11}
+.nav-links{display:flex;gap:1.25rem;list-style:none}.nav-links a{font-size:13px;color:var(--color-text-secondary);text-decoration:none}
+.btn-o{padding:5px 14px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:12px;background:transparent;color:var(--color-text-primary);cursor:pointer}
+.btn-p{padding:5px 14px;border:none;border-radius:var(--border-radius-md);font-size:12px;background:#185FA5;color:#fff;cursor:pointer}
+.cover{background:linear-gradient(135deg,#042C53,#185FA5);height:140px;position:relative}
+.co-header{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:0 1.5rem 1rem}
+.logo-wrap{display:flex;align-items:flex-end;gap:14px;margin-top:-32px;margin-bottom:.75rem}
+.co-logo{width:72px;height:72px;border-radius:var(--border-radius-lg);background:#E6F1FB;color:#0C447C;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:500;border:3px solid var(--color-background-primary)}
+.co-title-row{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.co-name{font-size:20px;font-weight:500}
+.verified{font-size:11px;background:#EAF3DE;color:#27500A;padding:2px 8px;border-radius:var(--border-radius-md)}
+.co-industry{font-size:13px;color:var(--color-text-secondary);margin-bottom:8px}
+.co-stats{display:flex;gap:20px}
+.stat{font-size:12px;color:var(--color-text-secondary)}
+.stat strong{color:var(--color-text-primary)}
+.co-actions{margin-left:auto;display:flex;gap:8px;align-items:flex-end;padding-bottom:4px}
+.tabs{display:flex;gap:0;border-bottom:0.5px solid var(--color-border-tertiary);padding:0 1.5rem;background:var(--color-background-primary)}
+.tab{padding:10px 18px;font-size:13px;cursor:pointer;border-bottom:2px solid transparent;color:var(--color-text-secondary)}
+.tab.active{color:#185FA5;border-bottom-color:#185FA5;font-weight:500}
+.body{display:grid;grid-template-columns:1fr 280px;gap:1.25rem;padding:1.25rem}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1rem}
+.section-h{font-size:14px;font-weight:500;margin-bottom:10px;padding-bottom:8px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.body-text{font-size:13px;color:var(--color-text-secondary);line-height:1.7}
+.info-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:13px}
+.info-row:last-child{border-bottom:none}
+.info-label{color:var(--color-text-secondary)}
+.job-row{display:flex;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--color-border-tertiary);cursor:pointer}
+.job-row:last-child{border-bottom:none}
+.jl-box{width:40px;height:40px;border-radius:var(--border-radius-md);background:#E6F1FB;color:#0C447C;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+.jl-title{font-size:13px;font-weight:500}
+.jl-meta{font-size:11px;color:var(--color-text-secondary)}
+.jl-sal{font-size:11px;color:#185FA5;margin-top:2px}
+.badge{font-size:10px;padding:2px 6px;border-radius:var(--border-radius-md);border:0.5px solid}
+.b-bl{background:#E6F1FB;color:#0C447C;border-color:#B5D4F4}
+.b-gr{background:#EAF3DE;color:#27500A;border-color:#C0DD97}
+.review-row{padding:10px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.review-row:last-child{border-bottom:none}
+.r-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.r-name{font-size:13px;font-weight:500}
+.stars{color:#EF9F27;font-size:12px}
+.r-role{font-size:11px;color:var(--color-text-secondary);margin-bottom:5px}
+.r-text{font-size:12px;color:var(--color-text-secondary);line-height:1.6}
+.sidebar-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem;margin-bottom:1rem}
+.sc-h{font-size:13px;font-weight:500;margin-bottom:10px}
+.rating-big{font-size:36px;font-weight:500;color:var(--color-text-primary);text-align:center;margin-bottom:4px}
+.rating-stars{text-align:center;font-size:18px;color:#EF9F27;margin-bottom:4px}
+.rating-count{font-size:12px;color:var(--color-text-secondary);text-align:center;margin-bottom:12px}
+.rating-bar{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:11px;color:var(--color-text-secondary)}
+.bar-track{flex:1;height:6px;background:var(--color-background-secondary);border-radius:4px}
+.bar-fill{height:6px;border-radius:4px;background:#EF9F27}
+</style>
+<div class="pg">
+<nav class="nav">
+  <div class="logo">Hire<span>Hub</span></div>
+  <ul class="nav-links"><li><a href="#">Find Jobs</a></li><li><a href="#">Companies</a></li><li><a href="#">Career Tips</a></li></ul>
+  <div style="display:flex;gap:8px"><button class="btn-o">Log in</button><button class="btn-p">Sign up</button></div>
+</nav>
+<div class="cover"></div>
+<div class="co-header">
+  <div class="logo-wrap">
+    <div class="co-logo">GP</div>
+    <div style="flex:1">
+      <div class="co-title-row"><div class="co-name">Grameenphone Ltd.</div><span class="verified">✓ Verified</span></div>
+      <div class="co-industry">Telecommunications · Dhaka, Bangladesh · Founded 1997</div>
+      <div class="co-stats">
+        <span class="stat"><strong>5,000+</strong> employees</span>
+        <span class="stat"><strong>42</strong> open jobs</span>
+        <span class="stat"><strong>4.8 ★</strong> rating</span>
+        <span class="stat"><strong>320</strong> reviews</span>
+      </div>
+    </div>
+    <div class="co-actions">
+      <button class="btn-o">Follow</button>
+      <button class="btn-p">View All Jobs →</button>
+    </div>
+  </div>
+</div>
+<div class="tabs">
+  <div class="tab active">Overview</div>
+  <div class="tab">Jobs (42)</div>
+  <div class="tab">Reviews</div>
+  <div class="tab">Photos</div>
+</div>
+<div class="body">
+  <div>
+    <div class="card">
+      <div class="section-h">About Grameenphone</div>
+      <p class="body-text">Grameenphone is the leading telecommunications service provider in Bangladesh, with over 80 million subscribers. As a subsidiary of Telenor Group, we are committed to connecting people and empowering communities through reliable and innovative digital solutions across Bangladesh.</p>
+      <p class="body-text" style="margin-top:10px">We foster a diverse, inclusive workplace where employees are encouraged to grow and innovate. Our mission is to empower society with connectivity and digital services.</p>
+    </div>
+    <div class="card">
+      <div class="section-h">Company Info</div>
+      <div class="info-row"><span class="info-label">Industry</span><span>Telecommunications</span></div>
+      <div class="info-row"><span class="info-label">Company size</span><span>5,000 – 10,000 employees</span></div>
+      <div class="info-row"><span class="info-label">Headquarters</span><span>Dhaka, Bangladesh</span></div>
+      <div class="info-row"><span class="info-label">Founded</span><span>1997</span></div>
+      <div class="info-row"><span class="info-label">Website</span><span style="color:#185FA5">grameenphone.com</span></div>
+      <div class="info-row"><span class="info-label">Type</span><span>Public Company (DSE listed)</span></div>
+    </div>
+    <div class="card">
+      <div class="section-h">Open Positions</div>
+      <div class="job-row">
+        <div class="jl-box">FE</div>
+        <div style="flex:1"><div class="jl-title">Senior Frontend Developer</div><div class="jl-meta">Full-time · Remote · Senior</div><div class="jl-sal">৳80k – ৳1.2L / month</div></div>
+        <span class="badge b-bl">2 days ago</span>
+      </div>
+      <div class="job-row">
+        <div class="jl-box">PM</div>
+        <div style="flex:1"><div class="jl-title">Product Manager</div><div class="jl-meta">Full-time · On-site · Mid-level</div><div class="jl-sal">৳90k – ৳1.3L / month</div></div>
+        <span class="badge b-bl">5 days ago</span>
+      </div>
+      <div class="job-row">
+        <div class="jl-box">DS</div>
+        <div style="flex:1"><div class="jl-title">Data Scientist</div><div class="jl-meta">Full-time · Hybrid · Senior</div><div class="jl-sal">৳1L – ৳1.5L / month</div></div>
+        <span class="badge b-bl">1 week ago</span>
+      </div>
+      <div style="text-align:center;margin-top:10px"><button class="btn-o" style="font-size:12px">View all 42 jobs →</button></div>
+    </div>
+    <div class="card">
+      <div class="section-h">Employee Reviews</div>
+      <div class="review-row">
+        <div class="r-head"><span class="r-name">Rahul Islam</span><span class="stars">★★★★★</span></div>
+        <div class="r-role">Software Engineer · 2 years</div>
+        <div class="r-text">Great company culture, excellent learning opportunities and competitive salary. Management is supportive and the work-life balance is reasonable.</div>
+      </div>
+      <div class="review-row">
+        <div class="r-head"><span class="r-name">Nazia Hossain</span><span class="stars">★★★★☆</span></div>
+        <div class="r-role">Marketing Analyst · 1.5 years</div>
+        <div class="r-text">Very professional environment with modern tools. Growth path is clear and colleagues are talented. Sometimes work can be demanding during campaign season.</div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="sidebar-card">
+      <div class="sc-h">Overall Rating</div>
+      <div class="rating-big">4.8</div>
+      <div class="rating-stars">★★★★★</div>
+      <div class="rating-count">Based on 320 reviews</div>
+      <div class="rating-bar"><span style="min-width:32px">5 ★</span><div class="bar-track"><div class="bar-fill" style="width:82%"></div></div><span>262</span></div>
+      <div class="rating-bar"><span style="min-width:32px">4 ★</span><div class="bar-track"><div class="bar-fill" style="width:12%"></div></div><span>38</span></div>
+      <div class="rating-bar"><span style="min-width:32px">3 ★</span><div class="bar-track"><div class="bar-fill" style="width:4%"></div></div><span>14</span></div>
+      <div class="rating-bar"><span style="min-width:32px">2 ★</span><div class="bar-track"><div class="bar-fill" style="width:2%"></div></div><span>4</span></div>
+      <div class="rating-bar"><span style="min-width:32px">1 ★</span><div class="bar-track"><div class="bar-fill" style="width:1%"></div></div><span>2</span></div>
+    </div>
+    <div class="sidebar-card">
+      <div class="sc-h">Benefits & Perks</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <span style="font-size:11px;background:var(--color-background-secondary);padding:4px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary)">Health Insurance</span>
+        <span style="font-size:11px;background:var(--color-background-secondary);padding:4px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary)">Annual Bonus</span>
+        <span style="font-size:11px;background:var(--color-background-secondary);padding:4px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary)">Remote Work</span>
+        <span style="font-size:11px;background:var(--color-background-secondary);padding:4px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary)">Provident Fund</span>
+        <span style="font-size:11px;background:var(--color-background-secondary);padding:4px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary)">Training & Dev</span>
+        <span style="font-size:11px;background:var(--color-background-secondary);padding:4px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary)">SIM Card</span>
+      </div>
+    </div>
+    <div class="sidebar-card" style="background:#042C53;border-color:#0C447C">
+      <div style="font-size:13px;font-weight:500;color:#E6F1FB;margin-bottom:6px">Ready to apply?</div>
+      <p style="font-size:12px;color:#85B7EB;margin-bottom:10px">Grameenphone has 42 open roles waiting for you.</p>
+      <button style="width:100%;padding:8px;background:#FAC775;color:#412402;border:none;border-radius:var(--border-radius-md);font-size:12px;font-weight:500;cursor:pointer">Browse All Jobs →</button>
+    </div>
+  </div>
+</div>
+</div>

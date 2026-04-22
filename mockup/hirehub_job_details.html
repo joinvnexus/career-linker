@@ -1,0 +1,152 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif}
+.pg{background:var(--color-background-tertiary);color:var(--color-text-primary)}
+.nav{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:54px}
+.logo{font-size:18px;font-weight:500;color:#185FA5}.logo span{color:#3B6D11}
+.nav-links{display:flex;gap:1.25rem;list-style:none}.nav-links a{font-size:13px;color:var(--color-text-secondary);text-decoration:none}
+.nav-auth{display:flex;gap:8px}
+.btn-o{padding:5px 14px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:12px;background:transparent;color:var(--color-text-primary);cursor:pointer}
+.btn-p{padding:5px 14px;border:none;border-radius:var(--border-radius-md);font-size:12px;background:#185FA5;color:#fff;cursor:pointer}
+.breadcrumb{padding:.75rem 1.5rem;font-size:12px;color:var(--color-text-secondary);background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.breadcrumb span{color:#185FA5}
+.body{display:grid;grid-template-columns:1fr 300px;gap:1.25rem;padding:1.25rem}
+.main-col{display:flex;flex-direction:column;gap:1rem}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem}
+.job-header{display:flex;gap:14px;align-items:flex-start}
+.logo-lg{width:64px;height:64px;border-radius:var(--border-radius-lg);display:flex;align-items:center;justify-content:center;font-weight:500;font-size:18px;background:#E6F1FB;color:#0C447C;border:0.5px solid var(--color-border-tertiary);flex-shrink:0}
+.job-title-lg{font-size:20px;font-weight:500;margin-bottom:4px}
+.company-name{font-size:14px;color:#185FA5;margin-bottom:8px}
+.meta-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.meta-item{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--color-text-secondary)}
+.badge{font-size:11px;padding:2px 8px;border-radius:var(--border-radius-md);border:0.5px solid}
+.b-bl{background:#E6F1FB;color:#0C447C;border-color:#B5D4F4}
+.b-gr{background:#EAF3DE;color:#27500A;border-color:#C0DD97}
+.b-am{background:#FAEEDA;color:#633806;border-color:#FAC775}
+.section-h{font-size:15px;font-weight:500;margin-bottom:10px;padding-bottom:8px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.body-text{font-size:13px;color:var(--color-text-secondary);line-height:1.7}
+.req-list{list-style:none;font-size:13px;color:var(--color-text-secondary);line-height:1.8}
+.req-list li::before{content:"→ ";color:#185FA5}
+.skill-tag{display:inline-block;margin:3px;padding:4px 12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:12px;background:var(--color-background-secondary);color:var(--color-text-primary)}
+.info-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:13px}
+.info-row:last-child{border-bottom:none}
+.info-label{color:var(--color-text-secondary)}
+.info-val{font-weight:500}
+.apply-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;position:sticky;top:10px}
+.salary-big{font-size:22px;font-weight:500;color:#185FA5;margin-bottom:4px}
+.deadline{font-size:12px;color:#A32D2D;background:#FCEBEB;padding:4px 10px;border-radius:var(--border-radius-md);display:inline-block;margin-bottom:1rem}
+.btn-apply{width:100%;padding:11px;background:#185FA5;color:#fff;border:none;border-radius:var(--border-radius-md);font-size:14px;font-weight:500;cursor:pointer;margin-bottom:8px}
+.btn-save{width:100%;padding:10px;background:transparent;color:var(--color-text-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:13px;cursor:pointer;margin-bottom:1rem}
+.share-row{display:flex;gap:8px;justify-content:center}
+.share-btn{flex:1;padding:7px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:11px;background:transparent;color:var(--color-text-secondary);cursor:pointer;text-align:center}
+.related-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-top:1rem}
+.rel-job{display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);cursor:pointer}
+.rel-job:last-child{border-bottom:none;padding-bottom:0}
+.rel-logo{width:36px;height:36px;border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+.rel-title{font-size:13px;font-weight:500}
+.rel-co{font-size:11px;color:var(--color-text-secondary)}
+.rel-sal{font-size:11px;color:#185FA5;margin-top:2px}
+</style>
+<div class="pg">
+<nav class="nav">
+  <div class="logo">Hire<span>Hub</span></div>
+  <ul class="nav-links"><li><a href="#">Find Jobs</a></li><li><a href="#">Companies</a></li><li><a href="#">Career Tips</a></li></ul>
+  <div class="nav-auth"><button class="btn-o">Log in</button><button class="btn-p">Sign up</button></div>
+</nav>
+<div class="breadcrumb">Jobs › Technology › <span>Senior Frontend Developer</span></div>
+<div class="body">
+  <div class="main-col">
+    <div class="card">
+      <div class="job-header">
+        <div class="logo-lg">GP</div>
+        <div style="flex:1">
+          <div class="job-title-lg">Senior Frontend Developer</div>
+          <div class="company-name">Grameenphone Ltd.</div>
+          <div class="meta-row">
+            <span class="meta-item">📍 Dhaka, Bangladesh</span>
+            <span class="meta-item">🕐 Full-time</span>
+            <span class="meta-item">💻 Remote</span>
+            <span class="meta-item">👤 Senior Level</span>
+          </div>
+          <div style="display:flex;gap:6px">
+            <span class="badge b-bl">React</span>
+            <span class="badge b-bl">TypeScript</span>
+            <span class="badge b-bl">Next.js</span>
+            <span class="badge b-gr">Remote OK</span>
+            <span class="badge b-am">5+ Years</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-h">About the role</div>
+      <p class="body-text">We are looking for an experienced Senior Frontend Developer to join our engineering team at Grameenphone. You will be responsible for building and maintaining high-quality web applications that serve millions of users across Bangladesh. You'll work closely with our product and design teams to deliver exceptional digital experiences.</p>
+    </div>
+    <div class="card">
+      <div class="section-h">Responsibilities</div>
+      <ul class="req-list">
+        <li>Develop and maintain scalable React/Next.js applications</li>
+        <li>Collaborate with designers and backend engineers</li>
+        <li>Write clean, maintainable TypeScript code with unit tests</li>
+        <li>Lead code reviews and mentor junior developers</li>
+        <li>Optimize application performance and loading speeds</li>
+        <li>Participate in agile ceremonies and sprint planning</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="section-h">Requirements</div>
+      <ul class="req-list">
+        <li>5+ years of experience in frontend development</li>
+        <li>Strong proficiency in React.js, TypeScript, and Next.js</li>
+        <li>Experience with state management (Redux / Zustand)</li>
+        <li>Solid understanding of web performance optimization</li>
+        <li>Bachelor's degree in Computer Science or equivalent</li>
+        <li>Strong communication skills in English & Bengali</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="section-h">Required Skills</div>
+      <span class="skill-tag">React.js</span><span class="skill-tag">TypeScript</span><span class="skill-tag">Next.js</span><span class="skill-tag">Tailwind CSS</span><span class="skill-tag">Redux</span><span class="skill-tag">REST API</span><span class="skill-tag">Git</span><span class="skill-tag">Figma</span><span class="skill-tag">Jest</span><span class="skill-tag">Agile / Scrum</span>
+    </div>
+    <div class="card">
+      <div class="section-h">Job Overview</div>
+      <div class="info-row"><span class="info-label">Published</span><span class="info-val">March 10, 2024</span></div>
+      <div class="info-row"><span class="info-label">Deadline</span><span class="info-val">April 10, 2024</span></div>
+      <div class="info-row"><span class="info-label">Vacancy</span><span class="info-val">2 positions</span></div>
+      <div class="info-row"><span class="info-label">Industry</span><span class="info-val">Telecommunications</span></div>
+      <div class="info-row"><span class="info-label">Location</span><span class="info-val">Dhaka, Bangladesh</span></div>
+      <div class="info-row"><span class="info-label">Work Type</span><span class="info-val">Remote</span></div>
+      <div class="info-row"><span class="info-label">Gender</span><span class="info-val">Any</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="apply-card">
+      <div class="salary-big">৳80k – ৳1.2L<span style="font-size:13px;font-weight:400;color:var(--color-text-secondary)"> / month</span></div>
+      <span class="deadline">Deadline: April 10, 2024</span>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem;font-size:12px;color:var(--color-text-secondary)"><span style="width:8px;height:8px;border-radius:50%;background:#3B6D11;display:inline-block"></span> 84 applicants so far</div>
+      <button class="btn-apply">Apply Now</button>
+      <button class="btn-save">Save Job</button>
+      <div class="share-row">
+        <div class="share-btn">Copy link</div>
+        <div class="share-btn">Share</div>
+        <div class="share-btn">Report</div>
+      </div>
+    </div>
+    <div class="related-card">
+      <div style="font-size:14px;font-weight:500;margin-bottom:10px">Similar Jobs</div>
+      <div class="rel-job">
+        <div class="rel-logo" style="background:#EAF3DE;color:#27500A">BK</div>
+        <div><div class="rel-title">React Developer</div><div class="rel-co">bKash · Dhaka</div><div class="rel-sal">৳55k–৳75k</div></div>
+      </div>
+      <div class="rel-job">
+        <div class="rel-logo" style="background:#FAEEDA;color:#633806">SH</div>
+        <div><div class="rel-title">Frontend Engineer</div><div class="rel-co">Shohoz · Chittagong</div><div class="rel-sal">৳45k–৳65k</div></div>
+      </div>
+      <div class="rel-job">
+        <div class="rel-logo" style="background:#EEEDFE;color:#3C3489">PA</div>
+        <div><div class="rel-title">Vue.js Developer</div><div class="rel-co">Pathao · Dhaka</div><div class="rel-sal">৳30k–৳45k</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

@@ -1,0 +1,169 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif}
+.pg{background:var(--color-background-tertiary);color:var(--color-text-primary)}
+.nav{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:54px}
+.logo{font-size:18px;font-weight:500;color:#185FA5}.logo span{color:#3B6D11}
+.nav-r{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--color-text-secondary)}
+.btn-o{padding:5px 14px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:12px;background:transparent;color:var(--color-text-primary);cursor:pointer}
+.btn-p{padding:5px 14px;border:none;border-radius:var(--border-radius-md);font-size:12px;background:#185FA5;color:#fff;cursor:pointer}
+.cover{background:linear-gradient(135deg,#042C53,#378ADD);height:120px}
+.profile-header{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:0 1.5rem .75rem}
+.avatar-row{display:flex;align-items:flex-end;gap:14px;margin-top:-36px;margin-bottom:10px}
+.av{width:72px;height:72px;border-radius:50%;background:#E6F1FB;color:#0C447C;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:500;border:3px solid var(--color-background-primary)}
+.user-info{flex:1}
+.u-name{font-size:20px;font-weight:500}
+.u-title{font-size:14px;color:var(--color-text-secondary);margin:2px 0 6px}
+.u-meta{display:flex;gap:14px;font-size:12px;color:var(--color-text-secondary)}
+.profile-actions{margin-left:auto;display:flex;gap:8px;align-items:flex-end;padding-bottom:4px}
+.tabs{display:flex;gap:0;padding:0 1.5rem;background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.tab{padding:10px 16px;font-size:13px;cursor:pointer;border-bottom:2px solid transparent;color:var(--color-text-secondary)}
+.tab.active{color:#185FA5;border-bottom-color:#185FA5;font-weight:500}
+.body{display:grid;grid-template-columns:1fr 280px;gap:1.25rem;padding:1.25rem}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1rem}
+.card-h{font-size:14px;font-weight:500;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.edit-btn{font-size:11px;color:#185FA5;cursor:pointer}
+.body-text{font-size:13px;color:var(--color-text-secondary);line-height:1.7}
+.exp-item{padding:10px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.exp-item:last-child{border-bottom:none;padding-bottom:0}
+.exp-title{font-size:13px;font-weight:500}
+.exp-co{font-size:12px;color:#185FA5}
+.exp-date{font-size:11px;color:var(--color-text-secondary);margin:2px 0 5px}
+.exp-desc{font-size:12px;color:var(--color-text-secondary);line-height:1.6}
+.edu-item{padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.edu-item:last-child{border-bottom:none;padding-bottom:0}
+.edu-deg{font-size:13px;font-weight:500}
+.edu-inst{font-size:12px;color:#185FA5}
+.edu-date{font-size:11px;color:var(--color-text-secondary)}
+.skill-tag{display:inline-block;margin:3px;padding:5px 12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:12px;background:var(--color-background-secondary)}
+.skill-tag.top{background:#E6F1FB;color:#0C447C;border-color:#B5D4F4}
+.sidebar-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem;margin-bottom:1rem}
+.sc-h{font-size:13px;font-weight:500;margin-bottom:10px}
+.completeness-num{font-size:28px;font-weight:500;color:#185FA5;text-align:center;margin-bottom:4px}
+.bar-track{height:8px;background:var(--color-background-secondary);border-radius:4px;margin-bottom:12px}
+.bar-fill{height:8px;border-radius:4px;background:#185FA5}
+.complete-item{display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 0}
+.check-done{color:#3B6D11;font-size:14px}
+.check-todo{color:var(--color-border-secondary);font-size:14px}
+.info-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+.info-row:last-child{border-bottom:none}
+.info-label{color:var(--color-text-secondary)}
+.resume-box{border:0.5px dashed var(--color-border-secondary);border-radius:var(--border-radius-md);padding:1rem;text-align:center;font-size:12px;color:var(--color-text-secondary);cursor:pointer}
+.resume-box:hover{border-color:#185FA5;background:#E6F1FB}
+.resume-icon{font-size:24px;margin-bottom:6px}
+</style>
+<div class="pg">
+<nav class="nav">
+  <div class="logo">Hire<span>Hub</span></div>
+  <div class="nav-r">
+    <span>Dashboard</span>
+    <button class="btn-o">Settings</button>
+    <button class="btn-p">Download CV</button>
+  </div>
+</nav>
+<div class="cover"></div>
+<div class="profile-header">
+  <div class="avatar-row">
+    <div class="av">RA</div>
+    <div class="user-info">
+      <div class="u-name">Rahat Ahmed</div>
+      <div class="u-title">Senior Frontend Developer · Available for hire</div>
+      <div class="u-meta"><span>📍 Dhaka, Bangladesh</span><span>📧 rahat@email.com</span><span>📞 +880 1700 000000</span><span>🔗 github.com/rahat</span></div>
+    </div>
+    <div class="profile-actions">
+      <button class="btn-o">Share Profile</button>
+      <button class="btn-p">Edit Profile</button>
+    </div>
+  </div>
+</div>
+<div class="tabs">
+  <div class="tab active">Profile</div>
+  <div class="tab">Resume</div>
+  <div class="tab">Applied Jobs</div>
+  <div class="tab">Saved Jobs</div>
+</div>
+<div class="body">
+  <div>
+    <div class="card">
+      <div class="card-h">About Me <span class="edit-btn">Edit</span></div>
+      <p class="body-text">Passionate Frontend Developer with 4+ years of experience building scalable web applications. Specializing in React, TypeScript, and Next.js with a strong eye for UI/UX design. Looking for challenging opportunities to contribute to impactful products in Bangladesh's growing tech industry.</p>
+    </div>
+    <div class="card">
+      <div class="card-h">Work Experience <span class="edit-btn">+ Add</span></div>
+      <div class="exp-item">
+        <div class="exp-title">Frontend Developer</div>
+        <div class="exp-co">Shohoz Ltd. · Full-time</div>
+        <div class="exp-date">Jan 2022 – Present · 2 yrs 3 mos</div>
+        <div class="exp-desc">Built and maintained the company's React-based booking platform serving 500K+ monthly users. Led migration from class components to hooks, improving performance by 40%.</div>
+      </div>
+      <div class="exp-item">
+        <div class="exp-title">Junior Web Developer</div>
+        <div class="exp-co">Brainstation-23 · Full-time</div>
+        <div class="exp-date">Jun 2020 – Dec 2021 · 1 yr 7 mos</div>
+        <div class="exp-desc">Developed responsive web interfaces for fintech clients using React and Tailwind CSS. Collaborated with backend teams on API integration.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h">Education <span class="edit-btn">+ Add</span></div>
+      <div class="edu-item">
+        <div class="edu-deg">B.Sc in Computer Science & Engineering</div>
+        <div class="edu-inst">Bangladesh University of Engineering and Technology (BUET)</div>
+        <div class="edu-date">2016 – 2020 · CGPA: 3.72 / 4.00</div>
+      </div>
+      <div class="edu-item">
+        <div class="edu-deg">Higher Secondary Certificate (HSC)</div>
+        <div class="edu-inst">Dhaka College · Science Group</div>
+        <div class="edu-date">2014 – 2016 · GPA: 5.00</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h">Skills <span class="edit-btn">Edit</span></div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:6px">Top Skills</div>
+        <span class="skill-tag top">React.js</span><span class="skill-tag top">TypeScript</span><span class="skill-tag top">Next.js</span><span class="skill-tag top">Tailwind CSS</span>
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:6px">Other Skills</div>
+        <span class="skill-tag">Redux</span><span class="skill-tag">GraphQL</span><span class="skill-tag">REST API</span><span class="skill-tag">Git</span><span class="skill-tag">Figma</span><span class="skill-tag">Jest</span><span class="skill-tag">Node.js</span><span class="skill-tag">PostgreSQL</span><span class="skill-tag">Agile</span>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="sidebar-card">
+      <div class="sc-h">Profile Completeness</div>
+      <div class="completeness-num">72%</div>
+      <div class="bar-track"><div class="bar-fill" style="width:72%"></div></div>
+      <div class="complete-item"><span class="check-done">✓</span> Basic info added</div>
+      <div class="complete-item"><span class="check-done">✓</span> Work experience added</div>
+      <div class="complete-item"><span class="check-done">✓</span> Education added</div>
+      <div class="complete-item"><span class="check-done">✓</span> Skills added</div>
+      <div class="complete-item"><span class="check-todo">○</span> Resume uploaded</div>
+      <div class="complete-item"><span class="check-todo">○</span> Profile photo added</div>
+      <div class="complete-item"><span class="check-todo">○</span> LinkedIn linked</div>
+    </div>
+    <div class="sidebar-card">
+      <div class="sc-h">Resume / CV</div>
+      <div class="resume-box">
+        <div class="resume-icon">📄</div>
+        <div>Drag & drop or click to upload</div>
+        <div style="margin-top:4px;color:var(--color-text-secondary)">PDF or DOCX · Max 5MB</div>
+      </div>
+    </div>
+    <div class="sidebar-card">
+      <div class="sc-h">Contact Details</div>
+      <div class="info-row"><span class="info-label">Email</span><span>rahat@email.com</span></div>
+      <div class="info-row"><span class="info-label">Phone</span><span>+880 1700 000000</span></div>
+      <div class="info-row"><span class="info-label">Location</span><span>Dhaka, BD</span></div>
+      <div class="info-row"><span class="info-label">Nationality</span><span>Bangladeshi</span></div>
+      <div class="info-row"><span class="info-label">Languages</span><span>Bengali, English</span></div>
+    </div>
+    <div class="sidebar-card">
+      <div class="sc-h">Job Preferences</div>
+      <div class="info-row"><span class="info-label">Job type</span><span>Full-time</span></div>
+      <div class="info-row"><span class="info-label">Work mode</span><span>Remote / Hybrid</span></div>
+      <div class="info-row"><span class="info-label">Expected salary</span><span>৳80k+ / mo</span></div>
+      <div class="info-row"><span class="info-label">Available from</span><span>Immediately</span></div>
+    </div>
+  </div>
+</div>
+</div>

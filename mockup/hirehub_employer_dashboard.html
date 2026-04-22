@@ -1,0 +1,163 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif}
+.pg{background:var(--color-background-tertiary);color:var(--color-text-primary);display:flex;flex-direction:column}
+.nav{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:54px}
+.logo{font-size:18px;font-weight:500;color:#185FA5}.logo span{color:#3B6D11}
+.nav-r{display:flex;align-items:center;gap:10px}
+.notif{width:32px;height:32px;border-radius:50%;border:0.5px solid var(--color-border-secondary);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;position:relative}
+.notif-dot{position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:#EF4444;border:1.5px solid var(--color-background-primary)}
+.avatar{width:32px;height:32px;border-radius:50%;background:#EAF3DE;color:#27500A;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;cursor:pointer}
+.btn-post{padding:7px 14px;background:#185FA5;color:#fff;border:none;border-radius:var(--border-radius-md);font-size:12px;cursor:pointer}
+.layout{display:grid;grid-template-columns:220px 1fr}
+.sidebar{background:var(--color-background-primary);border-right:0.5px solid var(--color-border-tertiary);padding:1rem 0;min-height:680px}
+.co-card{padding:.75rem 1rem 1rem;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:.5rem}
+.co-avatar{width:48px;height:48px;border-radius:var(--border-radius-md);background:#EAF3DE;color:#27500A;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:500;margin-bottom:8px}
+.co-name{font-size:14px;font-weight:500}
+.co-type{font-size:12px;color:var(--color-text-secondary)}
+.plan-badge{font-size:10px;background:#FAEEDA;color:#633806;padding:2px 8px;border-radius:10px;margin-top:5px;display:inline-block}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 1rem;font-size:13px;color:var(--color-text-secondary);cursor:pointer}
+.nav-item:hover{background:var(--color-background-secondary)}
+.nav-item.active{background:#E6F1FB;color:#0C447C;border-right:2px solid #185FA5;font-weight:500}
+.nav-icon{width:18px;text-align:center;font-size:14px}
+.nav-section{font-size:10px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.04em;padding:8px 1rem 4px;margin-top:.25rem}
+.badge-count{margin-left:auto;font-size:10px;background:#185FA5;color:#fff;padding:1px 6px;border-radius:10px}
+.content{padding:1.25rem}
+.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+.page-title{font-size:18px;font-weight:500}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem}
+.stat-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px}
+.stat-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:6px}
+.stat-num{font-size:24px;font-weight:500}
+.stat-sub{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1rem}
+.card-h{font-size:14px;font-weight:500;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.view-all{font-size:12px;color:#185FA5;cursor:pointer}
+.job-row{display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);align-items:center}
+.job-row:last-child{border-bottom:none}
+.job-title{font-size:13px;font-weight:500}
+.job-meta{font-size:11px;color:var(--color-text-secondary)}
+.job-stat{font-size:11px;color:#185FA5;margin-top:2px}
+.j-badge{font-size:10px;padding:2px 7px;border-radius:var(--border-radius-md);border:0.5px solid}
+.j-active{background:#EAF3DE;color:#27500A;border-color:#C0DD97}
+.j-expired{background:#FCEBEB;color:#791F1F;border-color:#F7C1C1}
+.j-draft{background:#F1EFE8;color:#444441;border-color:#D3D1C7}
+.app-table{width:100%;border-collapse:collapse}
+.app-table th{font-size:11px;color:var(--color-text-secondary);text-align:left;padding:6px 8px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.app-table td{font-size:12px;padding:9px 8px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:middle}
+.app-table tr:last-child td{border-bottom:none}
+.user-cell{display:flex;align-items:center;gap:8px}
+.u-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+.status-pill{font-size:10px;padding:3px 8px;border-radius:10px}
+.sp-new{background:#E6F1FB;color:#0C447C}
+.sp-short{background:#FAEEDA;color:#633806}
+.sp-intv{background:#EAF3DE;color:#27500A}
+.sp-hired{background:#E1F5EE;color:#085041}
+.sp-rej{background:#FCEBEB;color:#791F1F}
+.action-btn{font-size:10px;padding:3px 8px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;cursor:pointer;color:var(--color-text-secondary)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+</style>
+<div class="pg">
+<nav class="nav">
+  <div class="logo">Hire<span>Hub</span></div>
+  <div class="nav-r">
+    <div class="notif">🔔<div class="notif-dot"></div></div>
+    <div class="avatar">GP</div>
+    <span style="font-size:13px">Grameenphone</span>
+    <button class="btn-post">+ Post a Job</button>
+  </div>
+</nav>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="co-card">
+      <div class="co-avatar">GP</div>
+      <div class="co-name">Grameenphone Ltd.</div>
+      <div class="co-type">Telecommunications</div>
+      <span class="plan-badge">Premium Plan</span>
+    </div>
+    <div class="nav-section">Main</div>
+    <div class="nav-item active"><span class="nav-icon">📊</span>Overview</div>
+    <div class="nav-item"><span class="nav-icon">🏢</span>Company Profile</div>
+    <div class="nav-section">Jobs</div>
+    <div class="nav-item"><span class="nav-icon">📋</span>Posted Jobs<span class="badge-count">6</span></div>
+    <div class="nav-item"><span class="nav-icon">✏️</span>Post New Job</div>
+    <div class="nav-section">Applicants</div>
+    <div class="nav-item"><span class="nav-icon">👥</span>All Applicants<span class="badge-count">84</span></div>
+    <div class="nav-item"><span class="nav-icon">⭐</span>Shortlisted<span class="badge-count">12</span></div>
+    <div class="nav-item"><span class="nav-icon">📅</span>Interviews<span class="badge-count">4</span></div>
+    <div class="nav-section">Billing</div>
+    <div class="nav-item"><span class="nav-icon">💳</span>Payments</div>
+    <div class="nav-item"><span class="nav-icon">⚙️</span>Settings</div>
+    <div class="nav-item" style="margin-top:.5rem;color:#A32D2D"><span class="nav-icon">🚪</span>Log Out</div>
+  </aside>
+  <main class="content">
+    <div class="page-header">
+      <div class="page-title">Employer Dashboard</div>
+      <button class="btn-post">+ Post New Job</button>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-label">Active Jobs</div><div class="stat-num" style="color:#185FA5">5</div><div class="stat-sub">1 pending approval</div></div>
+      <div class="stat-card"><div class="stat-label">Total Applications</div><div class="stat-num" style="color:#3C3489">84</div><div class="stat-sub">+18 this week</div></div>
+      <div class="stat-card"><div class="stat-label">Shortlisted</div><div class="stat-num" style="color:#633806">12</div><div class="stat-sub">Ready to interview</div></div>
+      <div class="stat-card"><div class="stat-label">Hired</div><div class="stat-num" style="color:#3B6D11">3</div><div class="stat-sub">This month</div></div>
+    </div>
+    <div class="card">
+      <div class="card-h">Posted Jobs <span class="view-all">Manage all →</span></div>
+      <div class="job-row">
+        <div style="flex:1"><div class="job-title">Senior Frontend Developer</div><div class="job-meta">Full-time · Remote · Expires Apr 10</div><div class="job-stat">42 applicants · 8 shortlisted</div></div>
+        <span class="j-badge j-active">Active</span>
+        <button class="action-btn" style="margin-left:8px">Manage</button>
+      </div>
+      <div class="job-row">
+        <div style="flex:1"><div class="job-title">Product Manager</div><div class="job-meta">Full-time · On-site · Expires Apr 15</div><div class="job-stat">28 applicants · 4 shortlisted</div></div>
+        <span class="j-badge j-active">Active</span>
+        <button class="action-btn" style="margin-left:8px">Manage</button>
+      </div>
+      <div class="job-row">
+        <div style="flex:1"><div class="job-title">Data Scientist</div><div class="job-meta">Full-time · Hybrid · Expired Mar 20</div><div class="job-stat">14 applicants · 2 shortlisted</div></div>
+        <span class="j-badge j-expired">Expired</span>
+        <button class="action-btn" style="margin-left:8px">Renew</button>
+      </div>
+      <div class="job-row">
+        <div style="flex:1"><div class="job-title">DevOps Engineer (Draft)</div><div class="job-meta">Full-time · On-site · Not published</div><div class="job-stat">0 applicants</div></div>
+        <span class="j-badge j-draft">Draft</span>
+        <button class="action-btn" style="margin-left:8px">Edit</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h">Recent Applicants — Senior Frontend Developer <span class="view-all">View all 42 →</span></div>
+      <table class="app-table">
+        <thead>
+          <tr><th>Candidate</th><th>Experience</th><th>Applied</th><th>Status</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="user-cell"><div class="u-av" style="background:#E6F1FB;color:#0C447C">RA</div><div><div style="font-weight:500">Rahat Ahmed</div><div style="font-size:10px;color:var(--color-text-secondary)">3 yrs exp · Dhaka</div></div></div></td>
+            <td>3 years</td><td>2 days ago</td>
+            <td><span class="status-pill sp-new">New</span></td>
+            <td><button class="action-btn">Review</button></td>
+          </tr>
+          <tr>
+            <td><div class="user-cell"><div class="u-av" style="background:#EAF3DE;color:#27500A">NB</div><div><div style="font-weight:500">Nazneen Begum</div><div style="font-size:10px;color:var(--color-text-secondary)">6 yrs exp · Dhaka</div></div></div></td>
+            <td>6 years</td><td>3 days ago</td>
+            <td><span class="status-pill sp-short">Shortlisted</span></td>
+            <td><button class="action-btn">Interview</button></td>
+          </tr>
+          <tr>
+            <td><div class="user-cell"><div class="u-av" style="background:#FAEEDA;color:#633806">SK</div><div><div style="font-weight:500">Sabbir Khan</div><div style="font-size:10px;color:var(--color-text-secondary)">5 yrs exp · Chittagong</div></div></div></td>
+            <td>5 years</td><td>4 days ago</td>
+            <td><span class="status-pill sp-intv">Interview set</span></td>
+            <td><button class="action-btn">Schedule</button></td>
+          </tr>
+          <tr>
+            <td><div class="user-cell"><div class="u-av" style="background:#EEEDFE;color:#3C3489">MR</div><div><div style="font-weight:500">Mehedi Rahman</div><div style="font-size:10px;color:var(--color-text-secondary)">2 yrs exp · Dhaka</div></div></div></td>
+            <td>2 years</td><td>1 week ago</td>
+            <td><span class="status-pill sp-rej">Rejected</span></td>
+            <td><button class="action-btn">View</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</div>
