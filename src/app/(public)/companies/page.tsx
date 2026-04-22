@@ -169,10 +169,10 @@ export default function CompaniesPage() {
               <Building2 className="h-3.5 w-3.5" />
               Company directory
             </div>
-            <h1 className="mt-6 font-display text-4xl font-semibold leading-tight tracking-tight text-white sm:text-5xl">
+            <h1 className="mt-6 font-display text-4xl font-semibold leading-tight tracking-tight text-slate-500 sm:text-5xl">
               Explore Top Companies
             </h1>
-            <p className="mt-4 text-base leading-7 text-slate-300 sm:text-lg">
+            <p className="mt-4 text-base leading-7 text-slate-400 sm:text-lg">
               {companies.length}+ companies actively hiring in Bangladesh
             </p>
             
