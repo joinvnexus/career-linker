@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState, useMemo } from "react";
-import { ArrowLeft, ArrowRight, Building2, Globe2, MapPin, Sparkles, Star, TrendingUp, Users2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Building2, Globe2, MapPin, Sparkles, TrendingUp, Users2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -112,27 +112,6 @@ export default function CompaniesPage() {
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, selectedIndustry, sortBy]);
-
-  const renderStars = (rating: number) => {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    return (
-      <div className="flex gap-0.5">
-        {[...Array(5)].map((_, i) => (
-          <Star
-            key={i}
-            className={`h-3.5 w-3.5 ${
-              i < fullStars
-                ? "fill-amber-400 text-amber-400"
-                : i === fullStars && hasHalfStar
-                ? "fill-amber-400/50 text-amber-400"
-                : "fill-slate-200 text-slate-200"
-            }`}
-          />
-        ))}
-      </div>
-    );
-  };
 
   if (loading) {
     return (

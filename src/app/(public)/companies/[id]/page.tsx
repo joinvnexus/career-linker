@@ -153,7 +153,7 @@ export default function CompanyPage({ params }: { params: Promise<{ id: string }
         <div className="page-shell py-20 text-center">
           <Building2 className="mx-auto h-16 w-16 text-muted-foreground/50" />
           <h1 className="mt-4 text-2xl font-semibold">Company not found</h1>
-          <p className="mt-2 text-muted-foreground">The company you're looking for doesn't exist.</p>
+          <p className="mt-2 text-muted-foreground">The company youre looking for doesnt exist.</p>
           <Link href="/companies">
             <Button className="mt-6">Browse Companies</Button>
           </Link>
