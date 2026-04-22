@@ -324,25 +324,25 @@ export default function JobSeekerOverview() {
 
   return (
     <div className="space-y-4 lg:space-y-8">
-      <section className="surface-inverse relative overflow-hidden rounded-[2rem] border border-white/10 p-4 text-white sm:p-5 lg:p-8">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.28),_transparent_28%),radial-gradient(circle_at_bottom_left,_rgba(255,255,255,0.18),_transparent_24%)]" />
+      <section className="relative overflow-hidden rounded-[2rem] bg-[#042C53] p-4 text-white sm:p-5 lg:p-8">
+        <div className="absolute right-0 top-0 h-48 w-48 translate-x-12 -translate-y-12 rounded-full bg-sky-500/20 blur-3xl" />
+        <div className="absolute bottom-0 left-0 h-48 w-48 -translate-x-12 translate-y-12 rounded-full bg-emerald-500/15 blur-3xl" />
         <div className="relative grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(280px,0.9fr)]">
           <div>
-            <div className="eyebrow border-white/10 bg-white/10 text-sky-50">
+            <div className="eyebrow border-white/10 bg-white/10 text-sky-100">
               <Sparkles className="h-3.5 w-3.5" />
               Career dashboard
             </div>
             <h1 className="mt-3.5 max-w-xl font-display text-[1.8rem] leading-[0.95] tracking-[-0.05em] text-white sm:text-[2.45rem] lg:text-5xl">
-              {session?.user?.name?.split(" ")[0] || "You"} are closer to the next
-              great role.
+              Good morning, {session?.user?.name?.split(" ")[0] || "there"}! 👋
             </h1>
-            <p className="mt-2.5 max-w-xl text-sm leading-6 text-sky-50/85 lg:text-base lg:leading-7">
+            <p className="mt-2.5 max-w-xl text-sm leading-6 text-slate-300 lg:text-base lg:leading-7">
               Track progress, sharpen your profile, and keep your pipeline active
               from one polished workspace.
             </p>
             <div className="mt-4 flex flex-col gap-2.5 sm:flex-row">
               <Link href="/jobs">
-                <Button className="w-full bg-white text-slate-950 hover:bg-slate-100 sm:w-auto">
+                <Button className="w-full bg-[#FAC775] text-[#412402] hover:bg-amber-400 sm:w-auto">
                   Explore Jobs
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -362,13 +362,13 @@ export default function JobSeekerOverview() {
                   key={item.label}
                   className="rounded-[1.2rem] border border-white/10 bg-white/10 px-3 py-2.5 backdrop-blur"
                 >
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-sky-50/70">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400">
                     {item.label}
                   </p>
                   <p className="mt-1.5 text-xl font-semibold tracking-tight text-white sm:text-2xl">
                     {item.value}
                   </p>
-                  <p className="mt-0.5 text-[11px] leading-4 text-sky-50/72 sm:text-sm sm:leading-5">
+                  <p className="mt-0.5 text-[11px] leading-4 text-slate-400 sm:text-sm sm:leading-5">
                     {item.note}
                   </p>
                 </div>
@@ -424,30 +424,30 @@ export default function JobSeekerOverview() {
           }}
         />
         <MobileStatsCard
-          label="Saved Jobs"
-          value={stats.savedJobs}
-          icon={Bookmark}
-          color="emerald"
-          hint="Jump back into the roles you wanted to compare later."
-          onClick={() => {
-            router.push("/dashboard/job-seeker/saved");
-          }}
-        />
-        <MobileStatsCard
           label="Interviews"
           value={stats.interviews}
           icon={Calendar}
-          color="purple"
+          color="emerald"
           hint="See roles that are moving toward recruiter conversations."
           onClick={() => {
             router.push("/dashboard/job-seeker/applications");
           }}
         />
         <MobileStatsCard
-          label="Profile"
-          value={`${stats.profileCompletion}%`}
-          icon={TrendingUp}
+          label="Saved Jobs"
+          value={stats.savedJobs}
+          icon={Bookmark}
           color="orange"
+          hint="Jump back into the roles you wanted to compare later."
+          onClick={() => {
+            router.push("/dashboard/job-seeker/saved");
+          }}
+        />
+        <MobileStatsCard
+          label="Profile Views"
+          value={stats.profileCompletion}
+          icon={TrendingUp}
+          color="purple"
           hint="Tighten your profile details to improve recruiter visibility."
           onClick={() => {
             router.push("/dashboard/job-seeker/profile");
