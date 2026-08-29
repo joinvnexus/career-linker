@@ -25,6 +25,7 @@ export async function GET(
 ) {
   try {
     const params = await context.params;
+    const session = await getServerSession(authOptions);
     const job = await prisma.job.findFirst({
       where: {
         OR: [{ id: params.id }, { slug: params.id }],
@@ -38,7 +39,21 @@ export async function GET(
           },
         },
         category: true,
-        applications: {
+      },
+    });
+
+    if (!job) {
+      return NextResponse.json({ error: "Job not found" }, { status: 404 });
+    }
+
+    const canSeeApplications =
+      !!session?.user?.id &&
+      (session.user.role === "ADMIN" ||
+        (session.user.role === "EMPLOYER" && job.employerId === session.user.id));
+
+    const applications = canSeeApplications
+      ? await prisma.jobApplication.findMany({
+          where: { jobId: job.id },
           include: {
             seeker: {
               select: {
@@ -49,15 +64,11 @@ export async function GET(
             },
           },
           take: 5,
-        },
-      },
-    });
+          orderBy: { createdAt: "desc" },
+        })
+      : undefined;
 
-    if (!job) {
-      return NextResponse.json({ error: "Job not found" }, { status: 404 });
-    }
-
-    return NextResponse.json({ job });
+    return NextResponse.json({ job: { ...job, applications } });
   } catch {
     return NextResponse.json({ error: "Failed to fetch job" }, { status: 500 });
   }

@@ -1,5 +1,7 @@
 # Career-Linker
 
+![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen)
+
 Career-Linker is a full-stack job marketplace built with Next.js, TypeScript, Prisma, and PostgreSQL. It supports three core product surfaces in one codebase:
 
 - Public job discovery for candidates
@@ -144,3 +146,21 @@ Production deployment expects GitHub repository secrets for:
 - `VERCEL_PROJECT_ID`
 
 Detailed production notes are included in `SETUP.md`.
+
+## Live Demo
+
+<!-- TODO: Replace with your production URL -->
+https://your-domain.vercel.app
+
+## Screenshots
+
+<!-- TODO: Add screenshots to docs/screenshots/ and update paths below -->
+<!-- ![Dashboard](./docs/screenshots/dashboard.png) -->
+
+## License
+
+Copyright (c) 2026 Joinvnexus. All Rights Reserved. See [LICENSE](./LICENSE).
+
+## Security
+
+See [SECURITY.md](./SECURITY.md) for vulnerability reporting.

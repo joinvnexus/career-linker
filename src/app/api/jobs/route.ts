@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getServerSession } from "next-auth"
+import type { Session } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { z } from "zod"
 import { JobStatus, JobType } from "@prisma/client"
@@ -49,8 +50,24 @@ async function getOrCreateDefaultCategoryId() {
   return created.id
 }
 
+function canViewJobApplications(
+  session: Session | null,
+  employerId: string
+): boolean {
+  if (!session?.user?.id) {
+    return false
+  }
+
+  if (session.user.role === "ADMIN") {
+    return true
+  }
+
+  return session.user.role === "EMPLOYER" && employerId === session.user.id
+}
+
 export async function GET(req: NextRequest) {
   try {
+    const session = await getServerSession(authOptions)
     const { searchParams } = new URL(req.url)
     const slug = searchParams.get("slug") || ""
     const search = searchParams.get("search") || ""
@@ -100,20 +117,6 @@ export async function GET(req: NextRequest) {
               name: true,
             },
           },
-          applications: includeApplications
-            ? {
-                take: 5,
-                orderBy: { createdAt: "desc" as const },
-                include: {
-                  seeker: {
-                    select: {
-                      id: true,
-                      name: true,
-                    },
-                  },
-                },
-              }
-            : false,
         },
         orderBy: { createdAt: "desc" },
         skip: (page - 1) * limit,
@@ -122,7 +125,33 @@ export async function GET(req: NextRequest) {
       prisma.job.count({ where }),
     ])
 
-    return NextResponse.json({ jobs, total, page, pageSize: limit })
+    const jobsWithApplications = includeApplications
+      ? await Promise.all(
+          jobs.map(async (job) => {
+            if (!canViewJobApplications(session, job.employerId)) {
+              return job
+            }
+
+            const applications = await prisma.jobApplication.findMany({
+              where: { jobId: job.id },
+              take: 5,
+              orderBy: { createdAt: "desc" },
+              include: {
+                seeker: {
+                  select: {
+                    id: true,
+                    name: true,
+                  },
+                },
+              },
+            })
+
+            return { ...job, applications }
+          })
+        )
+      : jobs
+
+    return NextResponse.json({ jobs: jobsWithApplications, total, page, pageSize: limit })
   } catch {
     return NextResponse.json({ error: "Failed to fetch jobs" }, { status: 500 })
   }

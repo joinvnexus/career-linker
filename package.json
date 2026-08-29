@@ -2,6 +2,8 @@
   "name": "career-linker",
   "version": "0.1.0",
   "private": true,
+  "author": "Joinvnexus",
+  "license": "UNLICENSED",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
@@ -44,11 +46,9 @@
     "react-hook-form": "^7.71.2",
     "slugify": "^1.6.8",
     "sonner": "^2.0.7",
-    "sslcommerz": "^1.7.0",
     "stripe": "^20.4.1",
     "tailwind-merge": "^3.5.0",
     "tailwindcss-animate": "^1.0.7",
-    "tw-merge": "^0.0.1-alpha.3",
     "uploadthing": "^7.7.4",
     "zod": "^4.3.6"
   },
